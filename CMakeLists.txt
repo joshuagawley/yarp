@@ -3,6 +3,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(COMPILE_FLAGS -Wall -Wextra -Wpedantic)
 
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
