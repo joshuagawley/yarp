@@ -26,7 +26,7 @@ group 'setup'
 builddir=build
 test_install=0
 
-pacman -Syu --noconfirm cmake python
+pacman -Syu --noconfirm base-devel cmake python
 
 # Needed to ensure PATH is properly set for perl, etc.
 source /etc/profile
