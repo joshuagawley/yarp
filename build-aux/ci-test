@@ -1,0 +1,54 @@
+#!/bin/bash -le
+
+debug() {
+  echo "::debug::$*"
+}
+
+error() {
+  echo "::error::$*"
+}
+
+fatal() {
+  error "$*"
+  exit 1
+}
+
+group() {
+  echo "::group::$*"
+}
+
+endgroup() {
+  echo "::endgroup::"
+}
+
+group 'setup'
+
+builddir=build
+test_install=0
+
+pacman -Syu --noconfirm cmake python
+
+# Needed to ensure PATH is properly set for perl, etc.
+source /etc/profile
+
+endgroup
+
+# build
+group 'build'
+cmake -B "$builddir" \
+  -DCMAKE_INSTALL_PREFIX=/usr \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build "$builddir"
+endgroup
+
+# test
+group 'test'
+cd "$builddir" && ctest
+endgroup
+
+# install
+if (( test_install )); then
+  group 'install'
+  cmake --install . --config RelWithDebInfo 
+  endgroup
+fi
