@@ -3,6 +3,11 @@
 cmake_minimum_required(VERSION 3.15)
 project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
 
+# Allows arbitrary characters in test names in ```add_test``.
+cmake_policy(SET CMP0110 NEW)
+
+include(CTest)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(COMPILE_FLAGS -Wall -Wextra -Wpedantic)
@@ -18,3 +23,9 @@ add_executable(pacmanpp src/main.cc)
 target_compile_options(pacmanpp PRIVATE ${COMPILE_FLAGS})
 target_compile_features(pacmanpp PRIVATE cxx_std_23)
 set_target_properties(pacmanpp PROPERTIES CXX_EXTENSIONS OFF)
+
+if(BUILD_TESTING)
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
