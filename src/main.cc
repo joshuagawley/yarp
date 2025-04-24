@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
   if (argv[1][0] == '-') {
-    if (argv[1][1] == 'h') {
+    if (argv[1][1] == 'h' || (argv[1][1] == '-' && argv[1][2] == 'h')) {
       std::println("Usage: {} <operation>", argv[0]);
       std::println("operations:");
       std::println("  pacmanpp {{-h, --help}}     Show this help message");
