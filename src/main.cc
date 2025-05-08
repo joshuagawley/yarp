@@ -1,29 +1,26 @@
 // SPDX-License-Identifier: MIT
 
+#include <alpm.h>
+#include <alpm_list.h>
+
 #include <cstdlib>
 #include <print>
 
+#include "argument_parser.h"
+
 int main(int argc, char **argv) {
-  if (argc == 1) {
-    std::println("Error: no operation specified (use -h for help)");
-    return EXIT_FAILURE;
-  }
-  if (argc > 2) {
-    std::println("Error: too many arguments (use -h for help)");
-    return EXIT_FAILURE;
-  }
-  if (argv[1][0] == '-') {
-    if (argv[1][1] == 'h' || (argv[1][1] == '-' && argv[1][2] == 'h')) {
+  auto operation = pacmanpp::Operation::kNone;
+  pacmanpp::ArgumentParser arg_parser(argc, argv);
+  arg_parser.ParseArgs(operation);
+
+  switch (operation) {
+    case pacmanpp::Operation::kNone:
+      std::println("Error: no operation specified (use -h for help)");
+      return EXIT_FAILURE;
+    case pacmanpp::Operation::kHelp:
       std::println("Usage: {} <operation>", argv[0]);
       std::println("operations:");
       std::println("  pacmanpp {{-h, --help}}     Show this help message");
       return EXIT_SUCCESS;
-    } else {
-      std::println("Error: unknown option '{}'", argv[1]);
-      return EXIT_FAILURE;
-    }
   }
-
-  std::println("Hello, World!");
-  return 0;
 }

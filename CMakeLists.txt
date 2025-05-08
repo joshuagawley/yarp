@@ -18,7 +18,7 @@ if(WARNINGS_AS_ERRORS)
     list(APPEND COMPILE_FLAGS -Werror)
 endif()
 
-add_executable(pacmanpp src/main.cc)
+add_executable(pacmanpp src/main.cc src/argument_parser.h src/bitwise_enum.h)
 
 target_compile_options(pacmanpp PRIVATE ${COMPILE_FLAGS})
 target_compile_features(pacmanpp PRIVATE cxx_std_23)
