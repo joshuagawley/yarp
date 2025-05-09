@@ -1,26 +1,24 @@
 # SDPX-License-Identifier: MIT
 
-add_test(NAME "Outputs error when no arguments are given"
-         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/args001.py ${CMAKE_BINARY_DIR}/pacmanpp
-         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-         )
+function(pacmanpp_add_test)
+    cmake_parse_arguments(ARG "" "NAME;DESCRIPTION" "" ${ARGN})
 
-add_test(NAME "Outputs usage when help flag is given"
-         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/args002.py ${CMAKE_BINARY_DIR}/pacmanpp
-         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-         )
+    if(NOT ARG_NAME)
+        message(FATAL_ERROR "Could not find NAME")
+    endif()
 
-add_test(NAME "Outputs usage when long help flag is given"
-         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/args003.py ${CMAKE_BINARY_DIR}/pacmanpp
-         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-         )
+     if(NOT ARG_DESCRIPTION)
+        message(FATAL_ERROR "Could not find NAME")
+    endif()
 
-add_test(NAME "Outputs package name and description when query flag is given"
-COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/args004.py ${CMAKE_BINARY_DIR}/pacmanpp
-WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
+    add_test(NAME "${ARG_DESCRIPTION}"
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${ARG_NAME}.py ${CMAKE_BINARY_DIR}/pacmanpp
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+endfunction(pacmanpp_add_test)
 
-add_test(NAME "Outputs group when query flag is given and installed group is passed in"
-COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/args005.py ${CMAKE_BINARY_DIR}/pacmanpp
-WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
+pacmanpp_add_test(NAME args001 DESCRIPTION "Outputs errors when no arguments are given")
+pacmanpp_add_test(NAME args002 DESCRIPTION "Outputs usage when help flag is given")
+pacmanpp_add_test(NAME args003 DESCRIPTION "Outputs usage when long help flag is given")
+pacmanpp_add_test(NAME args004 DESCRIPTION "Outputs package name and description when query flag is given")
+pacmanpp_add_test(NAME args005 DESCRIPTION "Outputs group when query flag is given and installed group is passed in")
