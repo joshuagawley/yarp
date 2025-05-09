@@ -8,6 +8,9 @@ cmake_policy(SET CMP0110 NEW)
 
 include(CTest)
 
+#
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(COMPILE_FLAGS -Wall -Wextra -Wpedantic)
@@ -18,11 +21,15 @@ if(WARNINGS_AS_ERRORS)
     list(APPEND COMPILE_FLAGS -Werror)
 endif()
 
-add_executable(pacmanpp src/main.cc src/argument_parser.h src/bitwise_enum.h)
+find_package(Alpm REQUIRED)
+
+add_executable(pacmanpp src/main.cc src/argument_parser.h src/bitwise_enum.h src/alpm.h)
 
 target_compile_options(pacmanpp PRIVATE ${COMPILE_FLAGS})
 target_compile_features(pacmanpp PRIVATE cxx_std_23)
 set_target_properties(pacmanpp PROPERTIES CXX_EXTENSIONS OFF)
+
+target_link_libraries(pacmanpp PRIVATE Alpm::Alpm)
 
 if(BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
