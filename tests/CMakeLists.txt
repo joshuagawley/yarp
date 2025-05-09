@@ -22,3 +22,4 @@ pacmanpp_add_test(NAME args002 DESCRIPTION "Outputs usage when help flag is give
 pacmanpp_add_test(NAME args003 DESCRIPTION "Outputs usage when long help flag is given")
 pacmanpp_add_test(NAME args004 DESCRIPTION "Outputs package name and description when query flag is given")
 pacmanpp_add_test(NAME args005 DESCRIPTION "Outputs group when query flag is given and installed group is passed in")
+pacmanpp_add_test(NAME args006 DESCRIPTION "Outputs correct error message when querying for not installed packages")
