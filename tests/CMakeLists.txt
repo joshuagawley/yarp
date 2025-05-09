@@ -19,3 +19,8 @@ add_test(NAME "Outputs package name and description when query flag is given"
 COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/args004.py ${CMAKE_BINARY_DIR}/pacmanpp
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+add_test(NAME "Outputs group when query flag is given and installed group is passed in"
+COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/args005.py ${CMAKE_BINARY_DIR}/pacmanpp
+WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
