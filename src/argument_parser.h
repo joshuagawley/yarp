@@ -6,6 +6,8 @@
 #include <getopt.h>
 
 #include <array>
+#include <string>
+#include <vector>
 
 #include "bitwise_enum.h"
 
@@ -15,6 +17,7 @@ constexpr const char *kOptString = "hQ::";
 
 static constexpr std::array<struct option, 3> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
+    {"query", optional_argument, nullptr, 'Q'},
     {nullptr, 0, nullptr, 0},
 }};
 
@@ -22,7 +25,7 @@ static constexpr std::array<struct option, 3> kOpts = {{
 
 namespace pacmanpp {
 
-enum class Operation { kNone = 1 << 0, kHelp = 1 << 1 };
+enum class Operation { kNone = 1 << 0, kHelp = 1 << 1, kQuery = 1 << 2 };
 
 template <>
 struct util::EnableEnumBitwiseOperators<Operation> {
@@ -34,7 +37,8 @@ class ArgumentParser {
   constexpr ArgumentParser(const int argc, char **argv)
       : argc_(argc), argv_(argv) {}
 
-  constexpr void ParseArgs(Operation &operation) {
+  constexpr void ParseArgs(Operation &operation,
+                           std::vector<std::string> &targets) {
     int option_index = 0;
     int ch;
 
@@ -45,9 +49,21 @@ class ArgumentParser {
         case 'h':
           operation = Operation::kHelp;
           break;
+        case 'Q':
+          operation = Operation::kQuery;
+          break;
         default:
           operation = Operation::kNone;
           break;
+      }
+    }
+
+    // we need to process any remaining optional arguments after processing
+    // the command line arguments with getopt
+    if (operation == Operation::kQuery && option_index < argc_) {
+      // TODO: option_index doesn't update in getopt loop
+      for (int i = option_index + 2; i < argc_; ++i) {
+        targets.emplace_back(argv_[i]);
       }
     }
   };

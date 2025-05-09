@@ -5,7 +5,7 @@ import sys
 
 pacmanpp = sys.argv[1]
 
-expected = f"Usage: {pacmanpp} <operation>\noperations:\n  pacmanpp {{-h, --help}}     Show this help message\n"
+expected = f"Usage: {pacmanpp} <operation>\noperations:\n  pacmanpp {{-h, --help}}                  Show this help message\n  pacmanpp {{-Q, --query}} [package(s)]    Query installed packages\n"
 output = subprocess.run([pacmanpp, "-h"], capture_output=True, text=True).stdout
 
 if output != expected:
