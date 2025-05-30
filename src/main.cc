@@ -7,9 +7,7 @@
 
 #include "alpm.h"
 #include "argument_parser.h"
-
-constexpr const char *kPacmanRootPath = "/";
-constexpr const char *kPacmanDBPath = "/var/lib/pacman";
+#include "config.h"
 
 void HandleQuery(pacmanpp::Alpm &alpm,
                  const std::vector<std::string> &targets) {
@@ -42,7 +40,8 @@ void HandleQuery(pacmanpp::Alpm &alpm,
 }
 
 int main(int argc, char **argv) {
-  pacmanpp::Alpm alpm(kPacmanRootPath, kPacmanDBPath);
+  auto config = pacmanpp::Config::get();
+  pacmanpp::Alpm alpm(config.get_root(), config.get_db_path());
   auto operation = pacmanpp::Operation::kNone;
   std::vector<std::string> targets;
   pacmanpp::ArgumentParser arg_parser(argc, argv);

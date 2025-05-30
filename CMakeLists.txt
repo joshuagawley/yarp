@@ -23,7 +23,7 @@ endif()
 
 find_package(Alpm REQUIRED)
 
-add_executable(pacmanpp src/main.cc src/argument_parser.h src/bitwise_enum.h src/alpm.h)
+add_executable(pacmanpp src/main.cc src/argument_parser.h src/bitwise_enum.h src/alpm.h src/config.h)
 
 target_compile_options(pacmanpp PRIVATE ${COMPILE_FLAGS})
 target_compile_features(pacmanpp PRIVATE cxx_std_23)
