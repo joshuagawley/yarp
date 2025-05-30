@@ -3,6 +3,7 @@
 #ifndef PACMANPP_ARG_PARSER_H_
 #define PACMANPP_ARG_PARSER_H_
 
+#include <bits/getopt_core.h>
 #include <getopt.h>
 
 #include <array>
@@ -71,9 +72,9 @@ class ArgumentParser {
 
     // we need to process any remaining optional arguments after processing
     // the command line arguments with getopt
-    if (operation == Operation::kQuery && option_index < argc_) {
+    if (operation == Operation::kQuery && optind < argc_) {
       // TODO: option_index doesn't update in getopt loop
-      for (int i = option_index + 2; i < argc_; ++i) {
+      for (int i = optind; i < argc_; ++i) {
         targets.emplace_back(argv_[i]);
       }
     }
