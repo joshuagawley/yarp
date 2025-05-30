@@ -113,7 +113,7 @@ class Test:
     ) -> None:
         result = self.run(args)
         self.assert_returncode(result, expected_returncode)
-        self.assert_equals(result.stderr, expected_stdout, "Output mismatch")
+        self.assert_equals(result.stdout, expected_stdout, "Output mismatch")
 
     def test_error_contains(
         self, args: List[str], expected_error: str, expected_returncode: int = 1
