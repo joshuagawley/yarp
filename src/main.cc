@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
   auto operation = pacmanpp::Operation::kNone;
   std::vector<std::string> targets;
   pacmanpp::ArgumentParser arg_parser(argc, argv);
-  arg_parser.ParseArgs(operation, targets);
+  arg_parser.ParseArgs(operation, targets, config);
 
   auto alpm = pacmanpp::Alpm{config.get_root(), config.get_db_path()};
 

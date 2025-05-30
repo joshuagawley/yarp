@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "bitwise_enum.h"
+#include "config.h"
 
 namespace {
 
@@ -38,7 +39,7 @@ class ArgumentParser {
       : argc_(argc), argv_(argv) {}
 
   constexpr void ParseArgs(Operation &operation,
-                           std::vector<std::string> &targets) {
+                           std::vector<std::string> &targets, Config &config) {
     int option_index = 0;
     int ch;
 
