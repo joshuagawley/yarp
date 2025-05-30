@@ -1,18 +1,8 @@
 # SPDX-License-Identifier: MIT
 
-import subprocess
+import pptest
 import sys
 
-pacmanpp = sys.argv[1]
-
-expected = f"Usage: {pacmanpp} <operation>\noperations:\n  pacmanpp {{-h, --help}}                  Show this help message\n  pacmanpp {{-Q, --query}} [package(s)]    Query installed packages\n"
-output = subprocess.run([pacmanpp, "--help"], capture_output=True, text=True).stdout
-
-if output != expected:
-    print(f"Expected: {expected}")
-    print(f"Output: {output}")
-    return_code = 1
-else:
-    return_code = 0
-
-sys.exit(return_code)
+test = pptest.Test(sys.argv[1])
+test.test_help_output("--help")
+test.exit_with_result()
