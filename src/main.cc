@@ -40,7 +40,7 @@ void HandleQuery(pacmanpp::Alpm &alpm,
 }
 
 int main(int argc, char **argv) {
-  auto config = pacmanpp::Config::get();
+  auto &config = pacmanpp::Config::get();
   pacmanpp::Alpm alpm(config.get_root(), config.get_db_path());
   auto operation = pacmanpp::Operation::kNone;
   std::vector<std::string> targets;
