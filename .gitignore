@@ -4,3 +4,7 @@
 # Ignore IDE-specific files
 .vscode/
 .cache
+
+# Python
+Testing/
+__pycache__
