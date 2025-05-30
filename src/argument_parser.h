@@ -19,8 +19,8 @@ constexpr const char *kOptString = "hQ::";
 static constexpr std::array<struct option, 5> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
-    {"root", required_argument, nullptr, 0},
-    {"dbpath", required_argument, nullptr, 0},
+    {"root", required_argument, nullptr, 256},
+    {"dbpath", required_argument, nullptr, 256},
     {nullptr, 0, nullptr, 0},
 }};
 
@@ -56,7 +56,7 @@ class ArgumentParser {
           operation = Operation::kQuery;
           break;
         // Handle long-only options
-        case 0:
+        case 256:
           if (option_index == 2) {
             config.set_root(optarg);
           } else if (option_index == 3) {
