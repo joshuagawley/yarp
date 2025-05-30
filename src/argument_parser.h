@@ -16,9 +16,11 @@ namespace {
 
 constexpr const char *kOptString = "hQ::";
 
-static constexpr std::array<struct option, 3> kOpts = {{
+static constexpr std::array<struct option, 5> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
+    {"root", required_argument, nullptr, 0},
+    {"dbpath", required_argument, nullptr, 0},
     {nullptr, 0, nullptr, 0},
 }};
 
@@ -52,6 +54,14 @@ class ArgumentParser {
           break;
         case 'Q':
           operation = Operation::kQuery;
+          break;
+        // Handle long-only options
+        case 0:
+          if (option_index == 2) {
+            config.set_root(optarg);
+          } else if (option_index == 3) {
+            config.set_db_path(optarg);
+          }
           break;
         default:
           operation = Operation::kNone;
