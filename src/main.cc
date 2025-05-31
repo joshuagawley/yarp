@@ -45,7 +45,7 @@ void HandleQuery(pacmanpp::Alpm &alpm,
 }
 
 int main(int argc, char **argv) {
-  auto &config = pacmanpp::Config::get();
+  auto config = pacmanpp::Config();
   auto operation = pacmanpp::Operation::kNone;
   std::vector<std::string> targets;
   pacmanpp::ArgumentParser arg_parser(argc, argv);
