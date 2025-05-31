@@ -3,7 +3,6 @@
 #ifndef PACMANPP_ARG_PARSER_H_
 #define PACMANPP_ARG_PARSER_H_
 
-#include <bits/getopt_core.h>
 #include <getopt.h>
 
 #include <array>
@@ -15,13 +14,13 @@
 
 namespace {
 
-constexpr const char *kOptString = "hQ::";
+constexpr const char *kOptString = "b:hQ::r:";
 
 static constexpr std::array<struct option, 5> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
-    {"root", required_argument, nullptr, 256},
-    {"dbpath", required_argument, nullptr, 256},
+    {"root", required_argument, nullptr, 'r'},
+    {"dbpath", required_argument, nullptr, 'b'},
     {nullptr, 0, nullptr, 0},
 }};
 
@@ -56,13 +55,11 @@ class ArgumentParser {
         case 'Q':
           operation = Operation::kQuery;
           break;
-        // Handle long-only options
-        case 256:
-          if (option_index == 2) {
-            config.set_root(optarg);
-          } else if (option_index == 3) {
-            config.set_db_path(optarg);
-          }
+        case 'b':
+          config.set_db_path(optarg);
+          break;
+        case 'r':
+          config.set_root(optarg);
           break;
         default:
           operation = Operation::kNone;
