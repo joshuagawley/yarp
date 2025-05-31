@@ -3,12 +3,8 @@
 cmake_minimum_required(VERSION 3.23)
 project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
 
-# Allows arbitrary characters in test names in ```add_test``.
-cmake_policy(SET CMP0110 NEW)
-
 include(CTest)
 
-#
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
