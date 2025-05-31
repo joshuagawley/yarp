@@ -24,3 +24,4 @@ pacmanpp_add_test(NAME args004 DESCRIPTION "Accepts custom root and database pat
 pacmanpp_add_test(NAME query001 DESCRIPTION "Outputs package name and description when query flag is given")
 pacmanpp_add_test(NAME query002 DESCRIPTION "Outputs group when query flag is given and installed group is passed in")
 pacmanpp_add_test(NAME query003 DESCRIPTION "Outputs correct error message when querying for not installed packages")
+pacmanpp_add_test(NAME query004 DESCRIPTION "Outputs package name and description when long query flag is given")
