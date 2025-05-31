@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.23)
 project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
 
 # Allows arbitrary characters in test names in ```add_test``.
@@ -23,7 +23,34 @@ endif()
 
 find_package(Alpm REQUIRED)
 
-add_executable(pacmanpp src/main.cc src/app.cc src/argument_parser.h src/bitwise_enum.h src/alpm.h src/app.h src/config.h)
+set(
+    PACMANPP_SOURCES 
+    src/app.cc 
+    src/main.cc
+)
+
+set(
+    PACMANPP_HEADERS
+    src/alpm.h
+    src/app.h
+    src/argument_parser.h
+    src/bitwise_enum.h
+    src/config.h
+)
+
+add_executable(pacmanpp)
+
+target_sources(
+    pacmanpp
+    PRIVATE
+        ${PACMANPP_SOURCES}
+    
+    PUBLIC
+    FILE_SET HEADERS
+    TYPE HEADERS
+    FILES
+        ${PACMANPP_HEADERS}
+)
 
 target_compile_options(pacmanpp PRIVATE ${COMPILE_FLAGS})
 target_compile_features(pacmanpp PRIVATE cxx_std_23)
