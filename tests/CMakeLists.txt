@@ -21,6 +21,8 @@ pacmanpp_add_test(NAME args001 DESCRIPTION "Outputs errors when no arguments are
 pacmanpp_add_test(NAME args002 DESCRIPTION "Outputs usage when help flag is given")
 pacmanpp_add_test(NAME args003 DESCRIPTION "Outputs usage when long help flag is given")
 pacmanpp_add_test(NAME args004 DESCRIPTION "Accepts custom root and database paths with --root and --dbpath arguments")
+pacmanpp_add_test(NAME args005 DESCRIPTION "Outputs root and dbpath when short verbose flag is used")
+pacmanpp_add_test(NAME args006 DESCRIPTION "Outputs root and dbpath when long verbose flag is used")
 pacmanpp_add_test(NAME query001 DESCRIPTION "Outputs package name and description when query flag is given")
 pacmanpp_add_test(NAME query002 DESCRIPTION "Outputs group when query flag is given and installed group is passed in")
 pacmanpp_add_test(NAME query003 DESCRIPTION "Outputs correct error message when querying for not installed packages")
