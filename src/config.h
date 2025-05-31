@@ -17,9 +17,13 @@ class Config {
     return instance;
   }
 
+  constexpr bool IsVerbose() const noexcept { return verbose_; }
+
   constexpr std::string get_root() const noexcept { return root_; }
 
   constexpr std::string get_db_path() const noexcept { return db_path_; }
+
+  constexpr void set_verbose(bool verbose) { verbose_ = verbose; }
 
   void set_root(std::string_view new_root) noexcept { root_ = new_root; }
 
@@ -30,6 +34,7 @@ class Config {
  private:
   Config() {}
 
+  bool verbose_ = false;
   std::filesystem::path root_ = "/";
   std::filesystem::path db_path_ = "/var/lib/pacman";
 };

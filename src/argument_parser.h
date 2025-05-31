@@ -3,7 +3,6 @@
 #ifndef PACMANPP_ARG_PARSER_H_
 #define PACMANPP_ARG_PARSER_H_
 
-#include <bits/getopt_core.h>
 #include <getopt.h>
 
 #include <array>
@@ -15,13 +14,14 @@
 
 namespace {
 
-constexpr const char *kOptString = "hQ::";
+constexpr const char *kOptString = "hQ::v";
 
-static constexpr std::array<struct option, 5> kOpts = {{
+static constexpr std::array<struct option, 6> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
     {"root", required_argument, nullptr, 256},
     {"dbpath", required_argument, nullptr, 256},
+    {"verbose", no_argument, nullptr, 'v'},
     {nullptr, 0, nullptr, 0},
 }};
 
@@ -29,7 +29,12 @@ static constexpr std::array<struct option, 5> kOpts = {{
 
 namespace pacmanpp {
 
-enum class Operation { kNone = 1 << 0, kHelp = 1 << 1, kQuery = 1 << 2 };
+enum class Operation {
+  kNone = 1 << 0,
+  kHelp = 1 << 1,
+  kQuery = 1 << 2,
+  kVerbose = 1
+};
 
 template <>
 struct util::EnableEnumBitwiseOperators<Operation> {
@@ -55,6 +60,9 @@ class ArgumentParser {
           break;
         case 'Q':
           operation = Operation::kQuery;
+          break;
+        case 'v':
+          config.set_verbose(true);
           break;
         // Handle long-only options
         case 256:

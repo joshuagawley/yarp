@@ -9,6 +9,11 @@
 #include "argument_parser.h"
 #include "config.h"
 
+void PrintVerbose(const pacmanpp::Config &config) {
+  std::println("Root      : {}", config.get_root());
+  std::println("DB Path   : {}", config.get_db_path());
+}
+
 void HandleQuery(pacmanpp::Alpm &alpm,
                  const std::vector<std::string> &targets) {
   alpm_db_t *local_db = alpm.GetLocalDb();
@@ -45,6 +50,10 @@ int main(int argc, char **argv) {
   std::vector<std::string> targets;
   pacmanpp::ArgumentParser arg_parser(argc, argv);
   arg_parser.ParseArgs(operation, targets, config);
+
+  if (config.IsVerbose()) {
+    PrintVerbose(config);
+  }
 
   auto alpm = pacmanpp::Alpm{config.get_root(), config.get_db_path()};
 
