@@ -80,8 +80,8 @@ constexpr alpm_list_t *StringVectorToAlpmList(
 
 class Alpm {
  public:
-  Alpm(const char *root, const char *dbpath) {
-    handle_ = alpm_initialize(root, dbpath, &err);
+  Alpm(std::string_view root, std::string_view dbpath) {
+    handle_ = alpm_initialize(root.data(), dbpath.data(), &err);
     if (err != ALPM_ERR_OK) {
       throw std::runtime_error(std::format(
           "Error: failed to initialize alpm: {}", alpm_strerror(err)));
