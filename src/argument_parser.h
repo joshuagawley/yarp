@@ -3,6 +3,7 @@
 #ifndef PACMANPP_ARG_PARSER_H_
 #define PACMANPP_ARG_PARSER_H_
 
+#include <bits/getopt_core.h>
 #include <getopt.h>
 
 #include <array>
@@ -10,14 +11,17 @@
 #include <vector>
 
 #include "bitwise_enum.h"
+#include "config.h"
 
 namespace {
 
 constexpr const char *kOptString = "hQ::";
 
-static constexpr std::array<struct option, 3> kOpts = {{
+static constexpr std::array<struct option, 5> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
+    {"root", required_argument, nullptr, 256},
+    {"dbpath", required_argument, nullptr, 256},
     {nullptr, 0, nullptr, 0},
 }};
 
@@ -38,7 +42,7 @@ class ArgumentParser {
       : argc_(argc), argv_(argv) {}
 
   constexpr void ParseArgs(Operation &operation,
-                           std::vector<std::string> &targets) {
+                           std::vector<std::string> &targets, Config &config) {
     int option_index = 0;
     int ch;
 
@@ -52,6 +56,14 @@ class ArgumentParser {
         case 'Q':
           operation = Operation::kQuery;
           break;
+        // Handle long-only options
+        case 256:
+          if (option_index == 2) {
+            config.set_root(optarg);
+          } else if (option_index == 3) {
+            config.set_db_path(optarg);
+          }
+          break;
         default:
           operation = Operation::kNone;
           break;
@@ -60,9 +72,9 @@ class ArgumentParser {
 
     // we need to process any remaining optional arguments after processing
     // the command line arguments with getopt
-    if (operation == Operation::kQuery && option_index < argc_) {
+    if (operation == Operation::kQuery && optind < argc_) {
       // TODO: option_index doesn't update in getopt loop
-      for (int i = option_index + 2; i < argc_; ++i) {
+      for (int i = optind; i < argc_; ++i) {
         targets.emplace_back(argv_[i]);
       }
     }

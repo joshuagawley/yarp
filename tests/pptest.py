@@ -19,7 +19,7 @@ class TestResult:
 class TestEnvironment:
     def __enter__(self):
         self.temp_dir = tempfile.mkdtemp(prefix="pacmanpp_test_")
-        self.root = pathlib.Path(self.temp_dir)
+        self.root = pathlib.Path(self.temp_dir) / "root"
         self.db_path = self.root / "db"
 
         # Create directory structure
