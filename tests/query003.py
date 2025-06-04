@@ -4,5 +4,5 @@ import pptest
 import sys
 
 test = pptest.Test(sys.argv[1])
-test.test_help_output("--help")
+test.test_exact_output(["-Q", "firefox"], "Error: package firefox not found\n")
 test.exit_with_result()
