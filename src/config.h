@@ -9,13 +9,13 @@ namespace pacmanpp {
 
 class Config {
  public:
+  constexpr Config() {}
+
   Config(const Config &) = delete;
   Config &operator=(const Config &) = delete;
 
-  static Config &get() noexcept {
-    static Config instance;
-    return instance;
-  }
+  Config(Config &&) = delete;
+  Config &operator=(Config &&) = delete;
 
   constexpr bool IsVerbose() const noexcept { return verbose_; }
 
@@ -23,7 +23,7 @@ class Config {
 
   constexpr std::string get_db_path() const noexcept { return db_path_; }
 
-  constexpr void set_verbose(bool verbose) { verbose_ = verbose; }
+  constexpr void set_verbose(bool new_verbose) { verbose_ = new_verbose; }
 
   void set_root(std::string_view new_root) noexcept { root_ = new_root; }
 
@@ -32,8 +32,6 @@ class Config {
   }
 
  private:
-  Config() {}
-
   bool verbose_ = false;
   std::filesystem::path root_ = "/";
   std::filesystem::path db_path_ = "/var/lib/pacman";
