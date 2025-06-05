@@ -129,3 +129,9 @@ class Test:
         self.assert_contains(result.stdout, "operations:")
         self.assert_contains(result.stdout, "{-h, --help}")
         self.assert_contains(result.stdout, "{-Q, --query}")
+
+    def test_verbose_output(self, verbose_flag: str) -> None:
+        result = self.run([verbose_flag])
+        self.assert_returncode(result, 1)
+        self.assert_contains(result.stdout, "Root      : /")
+        self.assert_contains(result.stdout, "DB Path   : /var/lib/pacman")
