@@ -23,6 +23,7 @@ class App {
   void PrintVerbose() const;
   void HandleQuery(const std::vector<std::string> &targets);
   void PrintHelp() const;
+  void PrintPkgChangelog(alpm_pkg_t *pkg);
 
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
