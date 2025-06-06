@@ -116,6 +116,9 @@ class TestEnvironment:
 
         (pkg_dir / "desc").write_text(pkg.to_desc_format())
 
+        if pkg.changelog_entries:
+            (pkg_dir / "changelog").write_text(pkg.get_changelog_text())
+
 
 class Test:
     def __init__(self, pacmanpp_path: str) -> None:
