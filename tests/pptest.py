@@ -9,6 +9,27 @@ import tempfile
 from typing import Any, Dict, List, Optional
 
 
+class TestPackage:
+    def __init__(
+        self,
+        name: str,
+        version: str,
+        description: str = "Test package",
+    ) -> None:
+        self.name = name
+        self.version = version
+        self.description = description
+
+    def to_desc_format(self) -> str:
+        desc_parts = [
+            f"%NAME%\n{self.name}\n",
+            f"%VERSION%\n{self.version}\n",
+            f"%DESC%\n{self.description}",
+        ]
+
+        return "\n".join(desc_parts)
+
+
 class TestResult:
     def __init__(self, returncode: int, stdout: str, stderr: str) -> None:
         self.returncode = returncode
@@ -17,6 +38,9 @@ class TestResult:
 
 
 class TestEnvironment:
+    def __init__(self) -> None:
+        self.packages: Dict[str, TestPackage] = {}
+
     def __enter__(self):
         self.temp_dir = tempfile.mkdtemp(prefix="pacmanpp_test_")
         self.root = pathlib.Path(self.temp_dir) / "root"
@@ -38,17 +62,36 @@ class TestEnvironment:
         if self.temp_dir and os.path.exists(self.temp_dir):
             shutil.rmtree(self.temp_dir)
 
-    def add_package(
+    def add_package(self, pkg: TestPackage) -> None:
+        self.packages[pkg.name] = pkg
+        self._write_pkg_to_fs(pkg)
+
+    def create_package(
         self, name: str, version: str, description: str = "Test package"
-    ) -> None:
-        pkg_dir = self.db_path / "local" / f"{name}-{version}"
+    ) -> TestPackage:
+        pkg = TestPackage(name=name, version=version, description=description)
+        self.add_package(pkg)
+        return pkg
+
+    def get_package(self, name: str) -> Optional[TestPackage]:
+        return self.packages.get(name)
+
+    def remove_package(self, name: str) -> bool:
+        if name in self.packages:
+            pkg = self.packages[name]
+            del self.packages[name]
+
+            pkg_dir = self.db_path / "local" / f"{pkg.name}-{pkg.version}"
+            if pkg_dir.exists():
+                shutil.rmtree(pkg_dir)
+            return True
+        return False
+
+    def _write_pkg_to_fs(self, pkg: TestPackage) -> None:
+        pkg_dir = self.db_path / "local" / f"{pkg.name}-{pkg.version}"
         pkg_dir.mkdir(parents=True)
 
-        (pkg_dir / "desc").write_text(
-            f"%NAME%\n{name}\n\n"
-            f"%VERSION%\n{version}\n\n"
-            f"%DESC%\n{description}\n\n"
-        )
+        (pkg_dir / "desc").write_text(pkg.to_desc_format())
 
 
 class Test:

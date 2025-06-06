@@ -6,7 +6,7 @@ import sys
 test = pptest.Test(sys.argv[1])
 
 with pptest.TestEnvironment() as env:
-    env.add_package("foo", "1.0.0", "foo")
+    pkg = env.create_package("foo", "1.0.0", "foo")
 
     result = test.run(
         ["--root", str(env.root), "--dbpath", str(env.db_path), "-Q", "foobar"]
