@@ -32,6 +32,7 @@ set(
     src/argument_parser.h
     src/bitwise_enum.h
     src/config.h
+    src/operation.h
 )
 
 add_executable(pacmanpp)

@@ -9,8 +9,8 @@
 #include <string>
 #include <vector>
 
-#include "bitwise_enum.h"
 #include "config.h"
+#include "operation.h"
 
 namespace {
 
@@ -28,18 +28,6 @@ static constexpr std::array<struct option, 6> kOpts = {{
 }  // namespace
 
 namespace pacmanpp {
-
-enum class Operation {
-  kNone = 1 << 0,
-  kHelp = 1 << 1,
-  kQuery = 1 << 2,
-  kVerbose = 1
-};
-
-template <>
-struct util::EnableEnumBitwiseOperators<Operation> {
-  static constexpr bool enabled = true;
-};
 
 class ArgumentParser {
  public:
