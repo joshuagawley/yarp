@@ -9,6 +9,17 @@ import tempfile
 from typing import Any, Dict, List, Optional
 
 
+class TestChangelogEntry:
+    def __init__(self, version: str, changes: List[str]) -> None:
+        self.version = version
+        self.changes = changes
+
+    def to_changelog_format(self) -> str:
+        lines = [f"{self.version}:"]
+        lines.extend(self.changes)
+        return "\n".join(lines)
+
+
 class TestPackage:
     def __init__(
         self,
@@ -19,6 +30,18 @@ class TestPackage:
         self.name = name
         self.version = version
         self.description = description
+        self.changelog_entries: List[TestChangelogEntry] = []
+
+    def add_changelog_entry(self, version: str, changes: List[str]) -> None:
+        entry = TestChangelogEntry(version, changes)
+        self.changelog_entries.append(entry)
+
+    def get_changelog_text(self) -> str:
+        header = f"Changelog for {self.name}"
+        entries = "\n\n".join(
+            entry.to_changelog_format() for entry in self.changelog_entries
+        )
+        return f"{header}\n{entries}"
 
     def to_desc_format(self) -> str:
         desc_parts = [
