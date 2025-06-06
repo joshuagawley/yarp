@@ -12,7 +12,7 @@ with pptest.TestEnvironment() as env:
     pkg.add_changelog_entry("0.9.0", ["remove foo"])
 
     result = test.run(
-        ["--root", str(env.root), "--dbpath", str(env.db_path), "-Qc", "bar"]
+        ["--root", str(env.root), "--dbpath", str(env.db_path), "-Qc", "foo"]
     )
 
     test.assert_returncode(result, 0)

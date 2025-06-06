@@ -19,7 +19,7 @@ with pptest.TestEnvironment() as env:
             str(env.db_path),
             "-Q",
             "--changelog",
-            "bar",
+            "foo",
         ]
     )
 
