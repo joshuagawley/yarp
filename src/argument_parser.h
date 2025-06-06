@@ -14,11 +14,12 @@
 
 namespace {
 
-constexpr const char *kOptString = "hQ::v";
+constexpr const char *kOptString = "hQcv";
 
-static constexpr std::array<struct option, 6> kOpts = {{
+static constexpr std::array<struct option, 7> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
+    {"changelog", no_argument, nullptr, 'c'},
     {"root", required_argument, nullptr, 256},
     {"dbpath", required_argument, nullptr, 256},
     {"verbose", no_argument, nullptr, 'v'},
@@ -34,7 +35,7 @@ class ArgumentParser {
   constexpr ArgumentParser(const int argc, char **argv)
       : argc_(argc), argv_(argv) {}
 
-  constexpr void ParseArgs(Operation &operation,
+  constexpr void ParseArgs(Operation &operation, QueryOptions &query_options,
                            std::vector<std::string> &targets, Config &config) {
     int option_index = 0;
     int ch;
@@ -48,6 +49,9 @@ class ArgumentParser {
           break;
         case 'Q':
           operation = Operation::kQuery;
+          break;
+        case 'c':
+          query_options |= QueryOptions::kChangelog;
           break;
         case 'v':
           config.set_verbose(true);

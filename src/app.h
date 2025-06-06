@@ -8,8 +8,8 @@
 #include <vector>
 
 #include "alpm.h"
-#include "argument_parser.h"
 #include "config.h"
+#include "src/operation.h"
 
 namespace pacmanpp {
 
@@ -28,6 +28,7 @@ class App {
   std::unique_ptr<Alpm> alpm_;
   Config config_;
   Operation operation_ = Operation::kNone;
+  QueryOptions query_options_ = QueryOptions::kNone;
   std::vector<std::string> targets_;
   const char *program_name_;
 };
