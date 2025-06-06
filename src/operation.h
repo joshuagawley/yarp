@@ -16,7 +16,7 @@ enum class Operation : std::uint8_t {
 };
 
 template <>
-struct util::EnableEnumBitwiseOperators<Operation> {
+struct EnableEnumBitwiseOperators<Operation> {
   static constexpr bool enabled = true;
 };
 
@@ -37,7 +37,7 @@ enum class QueryOptions : std::uint16_t {
 };
 
 template <>
-struct util::EnableEnumBitwiseOperators<QueryOptions> {
+struct EnableEnumBitwiseOperators<QueryOptions> {
   static constexpr bool enabled = true;
 };
 
