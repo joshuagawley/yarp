@@ -9,7 +9,7 @@
 
 namespace pacmanpp {
 
-enum class Operation {
+enum class Operation : std::uint8_t {
   kNone = 1 << 0,
   kHelp = 1 << 1,
   kQuery = 1 << 2,
