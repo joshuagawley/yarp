@@ -47,7 +47,7 @@ class TestPackage:
         desc_parts = [
             f"%NAME%\n{self.name}\n",
             f"%VERSION%\n{self.version}\n",
-            f"%DESC%\n{self.description}",
+            f"%DESC%\n{self.description}\n",
         ]
 
         return "\n".join(desc_parts)
