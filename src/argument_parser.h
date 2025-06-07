@@ -20,8 +20,8 @@ static constexpr std::array<struct option, 7> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
     {"changelog", no_argument, nullptr, 'c'},
-    {"root", required_argument, nullptr, 256},
-    {"dbpath", required_argument, nullptr, 256},
+    {"root", required_argument, nullptr, 'r'},
+    {"dbpath", required_argument, nullptr, 'b'},
     {"verbose", no_argument, nullptr, 'v'},
     {nullptr, 0, nullptr, 0},
 }};
@@ -57,12 +57,11 @@ class ArgumentParser {
           config.set_verbose(true);
           break;
         // Handle long-only options
-        case 256:
-          if (option_index == 2) {
-            config.set_root(optarg);
-          } else if (option_index == 3) {
-            config.set_db_path(optarg);
-          }
+        case 'r':
+          config.set_root(optarg);
+          break;
+        case 'b':
+          config.set_db_path(optarg);
           break;
         default:
           operation = Operation::kNone;
