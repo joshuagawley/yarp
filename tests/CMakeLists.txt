@@ -26,3 +26,5 @@ pacmanpp_add_test(NAME args006 DESCRIPTION "Outputs root and dbpath when long ve
 pacmanpp_add_test(NAME query001 DESCRIPTION "Outputs package name and description when query flag is given")
 pacmanpp_add_test(NAME query002 DESCRIPTION "Outputs group when query flag is given and installed group is passed in")
 pacmanpp_add_test(NAME query003 DESCRIPTION "Outputs correct error message when querying for not installed packages")
+pacmanpp_add_test(NAME changelog001 DESCRIPTION "Outputs changelog when short changelog flag is given")
+pacmanpp_add_test(NAME changelog002 DESCRIPTION "Outputs changelog when long changelog flag is given")

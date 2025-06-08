@@ -106,6 +106,23 @@ class Alpm {
     return alpm_db_get_pkg(db, name.data());
   }
 
+  static const char *PkgGetName(alpm_pkg_t *pkg) {
+    return alpm_pkg_get_name(pkg);
+  }
+
+  static void *PkgChangelogOpen(alpm_pkg_t *pkg) {
+    return alpm_pkg_changelog_open(pkg);
+  }
+
+  static std::size_t PkgChangelogRead(void *ptr, std::size_t size,
+                                      const alpm_pkg_t *pkg, void *fp) {
+    return alpm_pkg_changelog_read(ptr, size, pkg, fp);
+  }
+
+  static int PkgChangelogClose(const alpm_pkg_t *pkg, void *fp) {
+    return alpm_pkg_changelog_close(pkg, fp);
+  }
+
  private:
   alpm_handle_t *handle_;
   alpm_errno_t err = ALPM_ERR_OK;

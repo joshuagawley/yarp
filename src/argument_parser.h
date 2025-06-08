@@ -9,18 +9,19 @@
 #include <string>
 #include <vector>
 
-#include "bitwise_enum.h"
 #include "config.h"
+#include "operation.h"
 
 namespace {
 
-constexpr const char *kOptString = "hQ::v";
+constexpr const char *kOptString = "hQcv";
 
-static constexpr std::array<struct option, 6> kOpts = {{
+static constexpr std::array<struct option, 7> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
-    {"root", required_argument, nullptr, 256},
-    {"dbpath", required_argument, nullptr, 256},
+    {"changelog", no_argument, nullptr, 'c'},
+    {"root", required_argument, nullptr, 'r'},
+    {"dbpath", required_argument, nullptr, 'b'},
     {"verbose", no_argument, nullptr, 'v'},
     {nullptr, 0, nullptr, 0},
 }};
@@ -29,24 +30,12 @@ static constexpr std::array<struct option, 6> kOpts = {{
 
 namespace pacmanpp {
 
-enum class Operation {
-  kNone = 1 << 0,
-  kHelp = 1 << 1,
-  kQuery = 1 << 2,
-  kVerbose = 1
-};
-
-template <>
-struct util::EnableEnumBitwiseOperators<Operation> {
-  static constexpr bool enabled = true;
-};
-
 class ArgumentParser {
  public:
   constexpr ArgumentParser(const int argc, char **argv)
       : argc_(argc), argv_(argv) {}
 
-  constexpr void ParseArgs(Operation &operation,
+  constexpr void ParseArgs(Operation &operation, QueryOptions &query_options,
                            std::vector<std::string> &targets, Config &config) {
     int option_index = 0;
     int ch;
@@ -61,16 +50,18 @@ class ArgumentParser {
         case 'Q':
           operation = Operation::kQuery;
           break;
+        case 'c':
+          query_options |= QueryOptions::kChangelog;
+          break;
         case 'v':
           config.set_verbose(true);
           break;
         // Handle long-only options
-        case 256:
-          if (option_index == 2) {
-            config.set_root(optarg);
-          } else if (option_index == 3) {
-            config.set_db_path(optarg);
-          }
+        case 'r':
+          config.set_root(optarg);
+          break;
+        case 'b':
+          config.set_db_path(optarg);
           break;
         default:
           operation = Operation::kNone;
