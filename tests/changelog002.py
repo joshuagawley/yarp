@@ -6,10 +6,12 @@ import sys
 test = pptest.Test(sys.argv[1])
 
 with pptest.TestEnvironment() as env:
-    pkg = env.create_package("foo", "1.0.0", "foo")
+    pkg = pptest.TestPackage("foo", "1.0.0", "foo")
 
     pkg.add_changelog_entry("1.0.0", ["stable release"])
     pkg.add_changelog_entry("0.9.0", ["remove foo"])
+
+    env.add_package(pkg)
 
     result = test.run(
         [
