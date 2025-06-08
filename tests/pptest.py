@@ -37,11 +37,9 @@ class TestPackage:
         self.changelog_entries.append(entry)
 
     def get_changelog_text(self) -> str:
-        header = f"Changelog for {self.name}"
-        entries = "\n\n".join(
+        return "\n\n".join(
             entry.to_changelog_format() for entry in self.changelog_entries
         )
-        return f"{header}\n{entries}"
 
     def to_desc_format(self) -> str:
         desc_parts = [
