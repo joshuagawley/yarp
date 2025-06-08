@@ -66,11 +66,10 @@ class TestEnvironment:
 
     def __enter__(self):
         self.temp_dir = tempfile.mkdtemp(prefix="pacmanpp_test_")
-        self.root = pathlib.Path(self.temp_dir) / "root"
+        self.root = pathlib.Path(self.temp_dir)
         self.db_path = self.root / "db"
 
         # Create directory structure
-        self.root.mkdir(parents=True)
         self.db_path.mkdir(parents=True)
 
         # Create a minimal ALPM database structure
