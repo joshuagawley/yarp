@@ -45,9 +45,9 @@ class TestPackage:
 
     def to_desc_format(self) -> str:
         desc_parts = [
-            f"%NAME%\n{self.name}\n",
-            f"%VERSION%\n{self.version}\n",
-            f"%DESC%\n{self.description}\n",
+            f"%NAME%\n{self.name}\n\n",
+            f"%VERSION%\n{self.version}\n\n",
+            f"%DESC%\n{self.description}\n\n",
         ]
 
         return "\n".join(desc_parts)
