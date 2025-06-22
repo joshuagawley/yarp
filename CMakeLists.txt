@@ -21,6 +21,7 @@ find_package(Alpm REQUIRED)
 
 set(
     PACMANPP_SOURCES 
+    src/alpm.cc
     src/app.cc 
     src/main.cc
 )
