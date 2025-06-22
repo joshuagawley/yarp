@@ -88,7 +88,7 @@ void App::HandleQuery(const std::vector<std::string> &targets) {
         QueryOptions::kChangelog) {
       PrintPkgChangelog(pkg);
     } else {
-      std::println("{} {}", alpm_pkg_get_name(pkg), alpm_pkg_get_version(pkg));
+      std::println("{} {}", alpm_->PkgGetName(pkg), alpm_->PkgGetVersion(pkg));
     }
   }
 

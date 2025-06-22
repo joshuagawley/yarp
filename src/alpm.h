@@ -8,8 +8,6 @@
 
 #include <cstddef>
 #include <cstring>
-#include <format>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -80,48 +78,25 @@ constexpr alpm_list_t *StringVectorToAlpmList(
 
 class Alpm {
  public:
-  Alpm(std::string_view root, std::string_view dbpath) {
-    handle_ = alpm_initialize(root.data(), dbpath.data(), &err);
-    if (err != ALPM_ERR_OK) {
-      throw std::runtime_error(std::format(
-          "Error: failed to initialize alpm: {}", alpm_strerror(err)));
-    }
-  }
+  Alpm(std::string_view root, std::string_view dbpath);
+  ~Alpm();
 
-  ~Alpm() { alpm_release(handle_); }
+  alpm_db_t *GetLocalDb() const;
 
-  alpm_db_t *GetLocalDb() const {
-    alpm_db_t *db = alpm_get_localdb(handle_);
-    if (db == nullptr) {
-      throw std::runtime_error("Error: failed to get local database");
-    }
-    return db;
-  }
+  static alpm_list_t *DbGetPkgCache(alpm_db_t *db);
 
-  static alpm_list_t *DbGetPkgCache(alpm_db_t *db) {
-    return alpm_db_get_pkgcache(db);
-  }
+  static alpm_pkg_t *DbGetPkg(alpm_db_t *db, std::string_view name);
 
-  static alpm_pkg_t *DbGetPkg(alpm_db_t *db, std::string_view name) {
-    return alpm_db_get_pkg(db, name.data());
-  }
+  static const char *PkgGetName(alpm_pkg_t *pkg);
 
-  static const char *PkgGetName(alpm_pkg_t *pkg) {
-    return alpm_pkg_get_name(pkg);
-  }
+  static const char *PkgGetVersion(alpm_pkg_t *pkg);
 
-  static void *PkgChangelogOpen(alpm_pkg_t *pkg) {
-    return alpm_pkg_changelog_open(pkg);
-  }
+  static void *PkgChangelogOpen(alpm_pkg_t *pkg);
 
   static std::size_t PkgChangelogRead(void *ptr, std::size_t size,
-                                      const alpm_pkg_t *pkg, void *fp) {
-    return alpm_pkg_changelog_read(ptr, size, pkg, fp);
-  }
+                                      const alpm_pkg_t *pkg, void *fp);
 
-  static int PkgChangelogClose(const alpm_pkg_t *pkg, void *fp) {
-    return alpm_pkg_changelog_close(pkg, fp);
-  }
+  static int PkgChangelogClose(const alpm_pkg_t *pkg, void *fp);
 
  private:
   alpm_handle_t *handle_;
