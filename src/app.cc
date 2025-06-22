@@ -3,6 +3,7 @@
 #include "app.h"
 
 #include <alpm.h>
+#include <alpm_list.h>
 
 #include <print>
 #include <span>
@@ -56,12 +57,15 @@ void App::PrintHelp() const {
 
 void App::HandleQuery(const std::vector<std::string> &targets) {
   alpm_db_t *local_db = alpm_->GetLocalDb();
-
   alpm_list_t *results = nullptr;
+
   if (targets.empty()) {
+    // Get the entire package cache if no specific targets are given
+
+    // NB: This list is owned by the alpm library and should not be freed
+    // manually
     results = alpm_->DbGetPkgCache(local_db);
     if (results == nullptr) {
-      alpm_list_free(results);
       throw std::runtime_error("Error: no packages found in local database");
     }
   } else {
@@ -86,7 +90,10 @@ void App::HandleQuery(const std::vector<std::string> &targets) {
     }
   }
 
-  alpm_list_free(results);
+  // Only free the list if we created it ourselves (when targets is not empty)
+  if (!targets.empty()) {
+    alpm_list_free(results);
+  }
 }
 
 void App::PrintPkgChangelog(alpm_pkg_t *pkg) {
