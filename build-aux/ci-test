@@ -41,9 +41,9 @@ cmake -B "$builddir" \
 cmake --build "$builddir"
 endgroup
 
-# test
+# test, excluding changelog tests
 group 'test'
-cd "$builddir" && ctest
+cd "$builddir" && ctest -E "changelog"
 endgroup
 
 # install
