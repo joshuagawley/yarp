@@ -110,6 +110,10 @@ class Alpm {
     return alpm_pkg_get_name(pkg);
   }
 
+  static const char *PkgGetVersion(alpm_pkg_t *pkg) {
+    return alpm_pkg_get_version(pkg);
+  }
+
   static void *PkgChangelogOpen(alpm_pkg_t *pkg) {
     return alpm_pkg_changelog_open(pkg);
   }
