@@ -7,6 +7,8 @@
 
 #include <print>
 #include <span>
+#include <string_view>
+#include <vector>
 
 #include "argument_parser.h"
 #include "operation.h"
@@ -97,22 +99,27 @@ void App::HandleQuery(const std::vector<std::string> &targets) {
 }
 
 void App::PrintPkgChangelog(alpm_pkg_t *pkg) {
-  void *fp = nullptr;
+  void *fp = alpm_->PkgChangelogOpen(pkg);
   const char *pkg_name = alpm_->PkgGetName(pkg);
 
-  if ((fp = alpm_->PkgChangelogOpen(pkg)) == nullptr) {
+  if (fp == nullptr) {
     std::println(stderr, "No changelog available for {}", pkg_name);
     return;
   }
 
-  std::println("Changelog for {}", pkg_name);
-  char buf[1024];
-  std::size_t ret = 0;
-  while ((ret = alpm_->PkgChangelogRead(buf, 1024, pkg, fp))) {
-    fwrite(buf, 1, ret, stdout);
+  std::println("Changelog for {}:", pkg_name);
+
+  std::array<char, 1024> buffer;
+  std::size_t bytes_read = 0;
+
+  while ((bytes_read = alpm_->PkgChangelogRead(buffer.data(), buffer.size(),
+                                               pkg, fp)) > 0) {
+    // Use std::print to output the data
+    std::print("{}", std::string_view(buffer.data(), bytes_read));
   }
+
   alpm_->PkgChangelogClose(pkg, fp);
-  putchar('\n');
+  std::println("");  // Add newline at the end
 }
 
 }  // namespace pacmanpp
