@@ -6,20 +6,14 @@ import sys
 test = pptest.Test(sys.argv[1])
 
 with pptest.TestEnvironment() as env:
-    pkg = pptest.TestPackage("foo", "1.0.0", "foo")
 
-    pkg.add_changelog_entry("1.0.0", ["stable release"])
-    pkg.add_changelog_entry("0.9.0", ["remove foo"])
-
-    env.add_package(pkg)
-
+    # TODO: Add a mock package intead of using a real one
     result = test.run(
-        ["-v", "--root", str(env.root), "--dbpath", str(env.db_path), "-Qc", "foo"]
+        ["-Qc", "powertop"]
     )
 
     test.assert_returncode(result, 0)
-    test.assert_contains(result.stdout, "Changelog for foo:")
-    test.assert_contains(result.stdout, "1.0.0:\nstable release")
-    test.assert_contains(result.stdout, "0.9.0:\nremove foo")
+    test.assert_contains(result.stdout, "Changelog for powertop:")
+    test.assert_contains(result.stdout, "2012-05-12 Jaroslav Lichtblau (Dragonlord) <svetlemodry@archlinux.org>\n\t* powertop 2.0-1")
 
 test.exit_with_result()
