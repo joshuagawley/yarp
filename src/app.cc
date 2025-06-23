@@ -103,6 +103,8 @@ void App::HandleQuery(const std::vector<std::string> &targets) {
     if ((query_options_ & QueryOptions::kChangelog) ==
         QueryOptions::kChangelog) {
       PrintPkgChangelog(pkg);
+    } else if ((query_options_ & QueryOptions::kInfo) == QueryOptions::kInfo) {
+      PrintPkgInfo(pkg);
     } else {
       std::println("{} {}", alpm_->PkgGetName(pkg), alpm_->PkgGetVersion(pkg));
     }
