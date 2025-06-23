@@ -3,6 +3,9 @@
 #ifndef PACMANPP_SRC_APP_H_
 #define PACMANPP_SRC_APP_H_
 
+#include <alpm_list.h>
+
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -24,6 +27,14 @@ class App {
   void HandleQuery(const std::vector<std::string> &targets);
   void PrintHelp() const;
   void PrintPkgChangelog(alpm_pkg_t *pkg);
+  void PrintPkgInfo(alpm_pkg_t *pkg);
+
+  void PrintPkgList(
+      std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
+      std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter);
+  void PrintPkgLicenses(std::stringstream &ss, alpm_pkg_t *pkg);
+  void PrintPkgGroups(std::stringstream &ss, alpm_pkg_t *pkg);
+  void PrintDepends(std::stringstream &ss, alpm_pkg_t *pkg);
 
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;

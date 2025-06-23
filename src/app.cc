@@ -7,11 +7,27 @@
 
 #include <print>
 #include <span>
+#include <sstream>
 #include <string_view>
 #include <vector>
 
 #include "argument_parser.h"
 #include "operation.h"
+
+namespace {
+constexpr std::string GetPkgInstallReasonString(alpm_pkgreason_t reason) {
+  switch (reason) {
+    case ALPM_PKG_REASON_EXPLICIT:
+      return "Install Reason  : Explicitly installed";
+
+    case ALPM_PKG_REASON_DEPEND:
+      return "Install Reason  : Installed as a dependency for another package";
+
+    default:
+      return "Unknown";
+  }
+}
+}  // namespace
 
 namespace pacmanpp {
 
@@ -120,6 +136,65 @@ void App::PrintPkgChangelog(alpm_pkg_t *pkg) {
 
   alpm_->PkgChangelogClose(pkg, fp);
   std::println("");  // Add newline at the end
+}
+
+void App::PrintPkgInfo(alpm_pkg_t *pkg) {
+  std::stringstream ss;
+
+  std::println(ss, "Name            : {}", alpm_->PkgGetName(pkg));
+  std::println(ss, "Version         : {}", alpm_->PkgGetVersion(pkg));
+  std::println(ss, "Description     : {}", alpm_->PkgGetDesc(pkg));
+  std::println(ss, "Architecture    : {}", alpm_->PkgGetArch(pkg));
+  // std::println(ss, "URL             : {}", alpm_->PkgGetURL(pkg));
+
+  // PrintPkgList(ss, pkg, "Licenses         : ", alpm_->PkgGetLicenses);
+  // PrintPkgList(ss, pkg, "Groups           : ", alpm_->PkgGetGroups);
+  // PrintPkgList(ss, pkg, "Depends On       : ", alpm_->PkgGetDepends);
+  // PrintPkgList(ss, pkg, "Optional Deps    : ", alpm_->PkgGetOptDepends);
+
+  // PrintPkgList(ss, pkg, "Conflicts With  : {}", alpm_->PkgGetConflicts);
+  // PrintPkgList(ss, pkg, "Replaces        : {}", alpm_->PkgGetReplaces);
+  // PrintPkgList(ss, pkg, "Provides        : {}", alpm_->PkgGetProvides);
+  // std::println(ss, "Packager        : {}", alpm_->PkgGetPackager(pkg));
+  // std::println(ss, "Build Date      : {}", alpm_->PkgGetBuildDate(pkg));
+  // std::println(ss, "Install Date    : {}", alpm_->PkgGetInstallDate(pkg));
+
+  // switch (alpm_->PkgGetReason(pkg)) {
+  //   case ALPM_PKG_REASON_EXPLICIT:
+  //     std::println(ss, "Install Reason  : Explicitly installed");
+
+  //   case ALPM_PKG_REASON_DEPEND:
+  //     std::println(
+  //         ss,
+  //         "Install Reason  : Installed as a dependency for another package");
+
+  //   default:
+  //     std::println(ss, "Install Reason  : Unknown");
+  // }
+
+  // std::println(ss, "Install Script  : {}", alpm_->PkgGetInstallScript(pkg));
+  // std::println(ss, "Validated By  : {}", alpm_->PkgGetValidatedBy(pkg));
+
+  std::println("{}", ss.str());
+}
+
+void App::PrintPkgList(
+    std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
+    std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter) {
+  alpm_list_t *list = attribute_getter(pkg);
+  if (list == nullptr) {
+    return;
+  }
+
+  std::print(ss, "{}  ", prefix);
+  for (alpm_list_t *item = list; item != nullptr; item = item->next) {
+    const char *item_str = static_cast<const char *>(item->data);
+    if (item->next != nullptr) {
+      std::print(ss, "{}  ", item_str);  // Not the last item, add space
+    } else {
+      std::print(ss, "{}", item_str);  // Last item, no trailing space
+    }
+  }
 }
 
 }  // namespace pacmanpp
