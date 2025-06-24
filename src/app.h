@@ -31,40 +31,6 @@ class App {
   void PrintPkgChangelog(const AlpmPackage &pkg);
   void PrintPkgInfo(const AlpmPackage &pkg);
 
-  void PrintAlpmList(
-      std::stringstream &ss, const AlpmPackage &pkg, std::string_view prefix,
-      std::function<alpm_list_t *(const AlpmPackage &)> attribute_getter,
-      bool free_list = false);
-
-  void PrintPkgList(
-      std::stringstream &ss, const AlpmPackage &pkg, std::string_view prefix,
-      std::function<alpm_list_t *(const AlpmPackage &)> attribute_getter);
-
-  void PrintDependsList(
-      std::stringstream &ss, const AlpmPackage &pkg, std::string_view prefix,
-      std::function<alpm_list_t *(const AlpmPackage &)> attribute_getter);
-
-  void PrintOptDependsList(std::stringstream &ss, const AlpmPackage &pkg,
-                           std::string_view prefix);
-
-  void PrintPkgLicenses(std::stringstream &ss, const AlpmPackage &pkg);
-  void PrintPkgGroups(std::stringstream &ss, const AlpmPackage &pkg);
-  void PrintDepends(std::stringstream &ss, const AlpmPackage &pkg);
-
-  void PrintHumanizedSize(
-      std::stringstream &ss, const AlpmPackage &pkg, std::string_view prefix,
-      std::function<off_t(const AlpmPackage &)> size_getter);
-
-  void PrintHumanizedDate(
-      std::stringstream &ss, const AlpmPackage &pkg, std::string_view prefix,
-      std::function<alpm_time_t(const AlpmPackage &)> date_getter);
-
-  void PrintInstallReason(std::stringstream &ss, alpm_pkgreason_t reason);
-
-  void PrintInstallScript(std::stringstream &ss, bool has_scriptlet);
-
-  void PrintPkgValidation(std::stringstream &ss, const AlpmPackage &pkg);
-
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
   Config config_;

@@ -45,6 +45,8 @@ class AlpmPackage {
   size_t ChangelogRead(void *fp, char *buf, size_t size) const;
   void ChangelogClose(void *fp) const;
 
+  std::string GetInfo() const;
+
  private:
   alpm_pkg_t *pkg_;
 };
