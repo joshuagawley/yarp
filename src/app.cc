@@ -272,7 +272,7 @@ void App::PrintHumanizedSize(std::stringstream &ss, alpm_pkg_t *pkg,
     ++i;
   }
 
-  std::print(ss, "{}", prefix);
+  std::print(ss, "{} ", prefix);
   if (i == 0) {
     std::println(ss, "{:.0f} {}", size_d, units[i]);
   } else {
