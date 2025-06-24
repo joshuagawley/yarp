@@ -149,7 +149,7 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   std::println(ss, "Architecture    : {}", alpm_->PkgGetArch(pkg));
   std::println(ss, "URL             : {}", alpm_->PkgGetURL(pkg));
 
-  PrintPkgList(ss, pkg, "Licenses         : ", alpm_->PkgGetLicenses);
+  PrintPkgList(ss, pkg, "Licenses        : ", alpm_->PkgGetLicenses);
   // PrintPkgList(ss, pkg, "Groups           : ", alpm_->PkgGetGroups);
   // PrintPkgList(ss, pkg, "Depends On       : ", alpm_->PkgGetDepends);
   // PrintPkgList(ss, pkg, "Optional Deps    : ", alpm_->PkgGetOptDepends);
@@ -185,16 +185,17 @@ void App::PrintPkgList(
     std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter) {
   alpm_list_t *list = attribute_getter(pkg);
   if (list == nullptr) {
+    std::println(ss, "{} None", prefix);
     return;
   }
 
-  std::print(ss, "{}  ", prefix);
+  std::print(ss, "{}", prefix);
   for (alpm_list_t *item = list; item != nullptr; item = item->next) {
     const char *item_str = static_cast<const char *>(item->data);
     if (item->next != nullptr) {
       std::print(ss, "{}  ", item_str);  // Not the last item, add space
     } else {
-      std::print(ss, "{}", item_str);  // Last item, no trailing space
+      std::println(ss, "{}", item_str);  // Last item, no trailing space
     }
   }
 }
