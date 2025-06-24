@@ -121,6 +121,8 @@ class Alpm {
 
   static alpm_pkgreason_t PkgGetReason(alpm_pkg_t *pkg);
 
+  static off_t PkgGetISize(alpm_pkg_t *pkg) { return alpm_pkg_get_isize(pkg); }
+
   static alpm_time_t PkgGetInstallDate(alpm_pkg_t *pkg);
 
   static void *PkgChangelogOpen(alpm_pkg_t *pkg);

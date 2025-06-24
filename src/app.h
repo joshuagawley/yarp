@@ -49,6 +49,10 @@ class App {
   void PrintPkgGroups(std::stringstream &ss, alpm_pkg_t *pkg);
   void PrintDepends(std::stringstream &ss, alpm_pkg_t *pkg);
 
+  void PrintHumanizedSize(std::stringstream &ss, alpm_pkg_t *pkg,
+                          std::string_view prefix,
+                          std::function<off_t(alpm_pkg_t *)> size_getter);
+
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
   Config config_;

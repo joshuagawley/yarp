@@ -4,6 +4,7 @@
 
 #include <alpm.h>
 #include <alpm_list.h>
+#include <sys/types.h>
 
 #include <print>
 #include <span>
@@ -13,7 +14,6 @@
 
 #include "argument_parser.h"
 #include "operation.h"
-#include "src/alpm.h"
 
 namespace pacmanpp {
 
@@ -143,6 +143,7 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
 
   PrintDependsList(ss, pkg, "Conflicts With  : ", alpm_->PkgGetConflicts);
   PrintDependsList(ss, pkg, "Replaces        : ", alpm_->PkgGetReplaces);
+  PrintHumanizedSize(ss, pkg, "Installed Size  :", alpm_->PkgGetISize);
   std::println(ss, "Packager        : {}", alpm_->PkgGetPackager(pkg));
   // std::println(ss, "Build Date      : {}", alpm_->PkgGetBuildDate(pkg));
   // std::println(ss, "Install Date    : {}", alpm_->PkgGetInstallDate(pkg));
@@ -249,6 +250,27 @@ void App::PrintOptDependsList(std::stringstream &ss, alpm_pkg_t *pkg,
       std::println(ss, "{}",
                    dep_string);  // Last item, no trailing space
     }
+  }
+}
+
+void App::PrintHumanizedSize(std::stringstream &ss, alpm_pkg_t *pkg,
+                             std::string_view prefix,
+                             std::function<off_t(alpm_pkg_t *)> size_getter) {
+  constexpr std::array<const char *, 6> units{"B",   "KiB", "MiB",
+                                              "GiB", "TiB", "PiB"};
+  double size_d = static_cast<double>(size_getter(pkg));
+  int i = 0;
+
+  while (size_d >= 1024.0 && i < 5) {
+    size_d /= 1024.0;
+    ++i;
+  }
+
+  std::print(ss, "{}", prefix);
+  if (i == 0) {
+    std::println(ss, "{:.0f} {}", size_d, units[i]);
+  } else {
+    std::println(ss, "{:.2f} {}", size_d, units[i]);
   }
 }
 
