@@ -141,9 +141,8 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   PrintDependsList(ss, pkg, "Depends On      : ", alpm_->PkgGetDepends);
   PrintOptDependsList(ss, pkg, "Optional Deps   : ");
 
-  // PrintPkgList(ss, pkg, "Conflicts With  : {}", alpm_->PkgGetConflicts);
-  // PrintPkgList(ss, pkg, "Replaces        : {}", alpm_->PkgGetReplaces);
-  // PrintPkgList(ss, pkg, "Provides        : {}", alpm_->PkgGetProvides);
+  PrintDependsList(ss, pkg, "Conflicts With  : ", alpm_->PkgGetConflicts);
+  PrintDependsList(ss, pkg, "Replaces        : ", alpm_->PkgGetReplaces);
   std::println(ss, "Packager        : {}", alpm_->PkgGetPackager(pkg));
   // std::println(ss, "Build Date      : {}", alpm_->PkgGetBuildDate(pkg));
   // std::println(ss, "Install Date    : {}", alpm_->PkgGetInstallDate(pkg));

@@ -23,5 +23,9 @@ with pptest.TestEnvironment() as env:
     test.assert_contains(result.stdout, "Provides        : None\n")
     test.assert_contains(result.stdout, "Depends On      : gcc-libs  libnl  ncurses  pciutils\n")
     test.assert_contains(result.stdout, "Optional Deps   : xorg-xset: for the --calibrate function\n")
+    # test.assert_contains(result.stdout, "Required By     : None\n")
+    # test.assert_contains(result.stdout, "Optional For    : None\n")
+    test.assert_contains(result.stdout, "Conflicts With  : None\n")
+    test.assert_contains(result.stdout, "Replaces        : None\n")
 
 test.exit_with_result()
