@@ -33,7 +33,8 @@ class App {
 
   void PrintAlpmList(
       std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
-      std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter);
+      std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter,
+      bool free_list = false);
 
   void PrintPkgList(
       std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,

@@ -3,6 +3,7 @@
 #include "alpm.h"
 
 #include <alpm.h>
+#include <alpm_list.h>
 
 #include <format>
 #include <stdexcept>
@@ -101,6 +102,14 @@ alpm_time_t Alpm::PkgGetInstallDate(alpm_pkg_t *pkg) {
 
 bool Alpm::PkgHasScriptlet(alpm_pkg_t *pkg) {
   return alpm_pkg_has_scriptlet(pkg);
+}
+
+alpm_list_t *Alpm::PkgComputeRequiredBy(alpm_pkg_t *pkg) {
+  return alpm_pkg_compute_requiredby(pkg);
+}
+
+alpm_list_t *Alpm::PkgComputeOptionalFor(alpm_pkg_t *pkg) {
+  return alpm_pkg_compute_optionalfor(pkg);
 }
 
 void *Alpm::PkgChangelogOpen(alpm_pkg_t *pkg) {

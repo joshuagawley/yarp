@@ -144,6 +144,11 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   PrintDependsList(ss, pkg, "Provides        : ", alpm_->PkgGetProvides);
   PrintDependsList(ss, pkg, "Depends On      : ", alpm_->PkgGetDepends);
   PrintOptDependsList(ss, pkg, "Optional Deps   : ");
+  // alpm_pkg_compute_* don't free the list, so we set free_list to true
+  PrintAlpmList(ss, pkg, "Required By     : ", alpm_->PkgComputeRequiredBy,
+                true);
+  PrintAlpmList(ss, pkg, "Optional For    : ", alpm_->PkgComputeOptionalFor,
+                true);
 
   PrintDependsList(ss, pkg, "Conflicts With  : ", alpm_->PkgGetConflicts);
   PrintDependsList(ss, pkg, "Replaces        : ", alpm_->PkgGetReplaces);
@@ -159,7 +164,8 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
 
 void App::PrintAlpmList(
     std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
-    std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter) {
+    std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter,
+    bool free_list) {
   alpm_list_t *list = attribute_getter(pkg);
   if (list == nullptr) {
     std::println(ss, "{}None", prefix);
@@ -174,6 +180,14 @@ void App::PrintAlpmList(
     } else {
       std::println(ss, "{}", item_str);  // Last item, no trailing space
     }
+  }
+
+  if (free_list) {
+    alpm_list_free_inner(list, [](void *data) {
+      // Free the string data, but not the list itself
+      free(data);
+    });
+    alpm_list_free(list);
   }
 }
 

@@ -127,6 +127,10 @@ class Alpm {
 
   static bool PkgHasScriptlet(alpm_pkg_t *pkg);
 
+  static alpm_list_t *PkgComputeRequiredBy(alpm_pkg_t *pkg);
+
+  static alpm_list_t *PkgComputeOptionalFor(alpm_pkg_t *pkg);
+
   static void *PkgChangelogOpen(alpm_pkg_t *pkg);
 
   static std::size_t PkgChangelogRead(void *ptr, std::size_t size,
