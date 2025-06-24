@@ -1,6 +1,13 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.23)
+
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 23)
+endif()
+
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
 
 include(CTest)
@@ -53,9 +60,6 @@ target_sources(
 )
 
 target_compile_options(pacmanpp PRIVATE ${COMPILE_FLAGS})
-target_compile_features(pacmanpp PRIVATE cxx_std_23)
-set_target_properties(pacmanpp PROPERTIES CXX_EXTENSIONS OFF)
-
 target_link_libraries(pacmanpp PRIVATE Alpm::Alpm)
 
 if(BUILD_TESTING)
