@@ -147,9 +147,9 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   std::println(ss, "Version         : {}", alpm_->PkgGetVersion(pkg));
   std::println(ss, "Description     : {}", alpm_->PkgGetDesc(pkg));
   std::println(ss, "Architecture    : {}", alpm_->PkgGetArch(pkg));
-  // std::println(ss, "URL             : {}", alpm_->PkgGetURL(pkg));
+  std::println(ss, "URL             : {}", alpm_->PkgGetURL(pkg));
 
-  // PrintPkgList(ss, pkg, "Licenses         : ", alpm_->PkgGetLicenses);
+  PrintPkgList(ss, pkg, "Licenses         : ", alpm_->PkgGetLicenses);
   // PrintPkgList(ss, pkg, "Groups           : ", alpm_->PkgGetGroups);
   // PrintPkgList(ss, pkg, "Depends On       : ", alpm_->PkgGetDepends);
   // PrintPkgList(ss, pkg, "Optional Deps    : ", alpm_->PkgGetOptDepends);
@@ -157,7 +157,7 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   // PrintPkgList(ss, pkg, "Conflicts With  : {}", alpm_->PkgGetConflicts);
   // PrintPkgList(ss, pkg, "Replaces        : {}", alpm_->PkgGetReplaces);
   // PrintPkgList(ss, pkg, "Provides        : {}", alpm_->PkgGetProvides);
-  // std::println(ss, "Packager        : {}", alpm_->PkgGetPackager(pkg));
+  std::println(ss, "Packager        : {}", alpm_->PkgGetPackager(pkg));
   // std::println(ss, "Build Date      : {}", alpm_->PkgGetBuildDate(pkg));
   // std::println(ss, "Install Date    : {}", alpm_->PkgGetInstallDate(pkg));
 
