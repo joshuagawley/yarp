@@ -122,7 +122,10 @@ void App::PrintPkgChangelog(const AlpmPackage &pkg) const {
     std::print("{}", std::string_view(buffer.data(), bytes_read));
   }
 
-  pkg.ChangelogClose(fp);
+  const int result = pkg.ChangelogClose(fp);
+  if (!result) {
+    std::println("Error: could not close changelog.");
+  }
   std::println("");  // Add newline at the end
 }
 
