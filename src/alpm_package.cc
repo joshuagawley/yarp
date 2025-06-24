@@ -13,8 +13,8 @@
 
 namespace {
 
-void PrintAlpmList(std::stringstream &ss, std::string_view prefix,
-                   alpm_list_t *list, bool free_list = false) {
+void PrintAlpmList(std::stringstream &ss, const std::string_view prefix,
+                   alpm_list_t *list, const bool free_list = false) {
   if (list == nullptr) {
     std::println(ss, "{}None", prefix);
     return;
@@ -36,16 +36,16 @@ void PrintAlpmList(std::stringstream &ss, std::string_view prefix,
   }
 }
 
-void PrintDependsList(std::stringstream &ss, std::string_view prefix,
-                      alpm_list_t *depends) {
+void PrintDependsList(std::stringstream &ss, const std::string_view prefix,
+                      const alpm_list_t *depends) {
   if (depends == nullptr) {
     std::println(ss, "{}None", prefix);
     return;
   }
 
   std::print(ss, "{}", prefix);
-  for (alpm_list_t *item = depends; item != nullptr; item = item->next) {
-    alpm_depend_t *pkg = static_cast<alpm_depend_t *>(item->data);
+  for (const alpm_list_t *item = depends; item != nullptr; item = item->next) {
+    const alpm_depend_t *pkg = static_cast<alpm_depend_t *>(item->data);
     if (item->next != nullptr) {
       std::print(ss, "{}  ",
                  pkg->name);  // Not the last item, add space
@@ -56,7 +56,7 @@ void PrintDependsList(std::stringstream &ss, std::string_view prefix,
   }
 }
 
-void PrintOptDependsList(std::stringstream &ss, alpm_list_t *optdepends) {
+void PrintOptDependsList(std::stringstream &ss, const alpm_list_t *optdepends) {
   constexpr std::string_view kPrefix{"Optional Deps   : "};
 
   if (optdepends == nullptr) {
@@ -65,8 +65,9 @@ void PrintOptDependsList(std::stringstream &ss, alpm_list_t *optdepends) {
   }
 
   std::print(ss, "{}", kPrefix);
-  for (alpm_list_t *item = optdepends; item != nullptr; item = item->next) {
-    alpm_depend_t *opt_dep = static_cast<alpm_depend_t *>(item->data);
+  for (const alpm_list_t *item = optdepends; item != nullptr;
+       item = item->next) {
+    const alpm_depend_t *opt_dep = static_cast<alpm_depend_t *>(item->data);
     const char *dep_string = alpm_dep_compute_string(opt_dep);
     if (item->next != nullptr) {
       std::print(ss, "{}  ",
@@ -78,7 +79,7 @@ void PrintOptDependsList(std::stringstream &ss, alpm_list_t *optdepends) {
   }
 }
 
-void PrintInstallReason(std::stringstream &ss, alpm_pkgreason_t reason) {
+void PrintInstallReason(std::stringstream &ss, const alpm_pkgreason_t reason) {
   switch (reason) {
     case ALPM_PKG_REASON_EXPLICIT:
       std::println(ss, "Install Reason  : Explicitly installed");
@@ -94,8 +95,8 @@ void PrintInstallReason(std::stringstream &ss, alpm_pkgreason_t reason) {
   }
 }
 
-void PrintHumanizedSize(std::stringstream &ss, std::string_view prefix,
-                        off_t size) {
+void PrintHumanizedSize(std::stringstream &ss, const std::string_view prefix,
+                        const off_t size) {
   constexpr std::array<const char *, 6> units{"B",   "KiB", "MiB",
                                               "GiB", "TiB", "PiB"};
   double size_d = static_cast<double>(size);
@@ -114,8 +115,8 @@ void PrintHumanizedSize(std::stringstream &ss, std::string_view prefix,
   }
 }
 
-void PrintHumanizedDate(std::stringstream &ss, std::string_view prefix,
-                        alpm_time_t alpm_time) {
+void PrintHumanizedDate(std::stringstream &ss, const std::string_view prefix,
+                        const alpm_time_t alpm_time) {
   // We use C-style time API instead of std::chrono
   const std::time_t time = static_cast<std::time_t>(alpm_time);
   const tm *local_time = std::localtime(&time);
@@ -124,12 +125,12 @@ void PrintHumanizedDate(std::stringstream &ss, std::string_view prefix,
   ss << prefix << std::put_time(local_time, "%a %d %b %Y %H:%M:%S %Z") << '\n';
 }
 
-void PrintInstallScript(std::stringstream &ss, bool has_scriptlet) {
+void PrintInstallScript(std::stringstream &ss, const bool has_scriptlet) {
   const std::string_view scriptlet_str = has_scriptlet ? "Yes" : "No";
   std::println(ss, "Install Script  : {}", scriptlet_str);
 }
 
-void PrintValidation(std::stringstream &ss, int validation) {
+void PrintValidation(std::stringstream &ss, const int validation) {
   std::print(ss, "Validated By    : ");
   if (validation) {
     std::vector<std::string> validation_methods;
