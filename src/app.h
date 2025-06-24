@@ -57,6 +57,8 @@ class App {
                           std::string_view prefix,
                           std::function<alpm_time_t(alpm_pkg_t *)> date_getter);
 
+  void PrintInstallReason(std::stringstream &ss, alpm_pkgreason_t reason);
+
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
   Config config_;

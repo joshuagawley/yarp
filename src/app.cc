@@ -151,8 +151,7 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   std::println(ss, "Packager        : {}", alpm_->PkgGetPackager(pkg));
   PrintHumanizedDate(ss, pkg, "Build Date      : ", alpm_->PkgGetBuildDate);
   PrintHumanizedDate(ss, pkg, "Install Date    : ", alpm_->PkgGetInstallDate);
-  // std::println(ss, "Build Date      : {}", alpm_->PkgGetBuildDate(pkg));
-  // std::println(ss, "Install Date    : {}", alpm_->PkgGetInstallDate(pkg));
+  PrintInstallReason(ss, alpm_->PkgGetReason(pkg));
 
   // switch (alpm_->PkgGetReason(pkg)) {
   //   case ALPM_PKG_REASON_EXPLICIT:
@@ -289,6 +288,22 @@ void App::PrintHumanizedDate(
 
   // std::put_time doesn't work with std::format
   ss << prefix << std::put_time(local_time, "%a %d %b %Y %H:%M:%S %Z") << '\n';
+}
+
+void App::PrintInstallReason(std::stringstream &ss, alpm_pkgreason_t reason) {
+  switch (reason) {
+    case ALPM_PKG_REASON_EXPLICIT:
+      std::println(ss, "Install Reason  : Explicitly installed");
+      break;
+    case ALPM_PKG_REASON_DEPEND:
+      std::println(ss,
+                   "Install Reason  : Installed as a dependency for another "
+                   "package");
+      break;
+    default:
+      std::println(ss, "Install Reason  : Unknown");
+      break;
+  }
 }
 
 }  // namespace pacmanpp
