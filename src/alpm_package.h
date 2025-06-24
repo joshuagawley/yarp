@@ -42,7 +42,7 @@ class AlpmPackage {
   bool HasScriptlet() const;
 
   void *ChangelogOpen() const;
-  size_t ChangelogRead(void *fp, char *buf, size_t size) const;
+  std::size_t ChangelogRead(void *fp, char *buf, std::size_t size) const;
   void ChangelogClose(void *fp) const;
 
   std::string GetInfo() const;
