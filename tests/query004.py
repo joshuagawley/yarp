@@ -33,5 +33,6 @@ with pptest.TestEnvironment() as env:
     # test.assert_contains(result.stdout, "Install Date    : Sun 22 Jun 2025 17:46:41 BST\n")
     test.assert_contains(result.stdout, "Install Reason  : Explicitly installed\n")
     test.assert_contains(result.stdout, "Install Script  : No\n")
+    test.assert_contains(result.stdout, "Validated By    : Signature\n")
 
 test.exit_with_result()

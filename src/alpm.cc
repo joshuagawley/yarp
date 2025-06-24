@@ -100,6 +100,10 @@ alpm_time_t Alpm::PkgGetInstallDate(alpm_pkg_t *pkg) {
   return alpm_pkg_get_installdate(pkg);
 }
 
+int Alpm::PkgGetValidation(alpm_pkg_t *pkg) {
+  return alpm_pkg_get_validation(pkg);
+}
+
 bool Alpm::PkgHasScriptlet(alpm_pkg_t *pkg) {
   return alpm_pkg_has_scriptlet(pkg);
 }

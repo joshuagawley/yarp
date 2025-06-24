@@ -158,6 +158,7 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   PrintHumanizedDate(ss, pkg, "Install Date    : ", alpm_->PkgGetInstallDate);
   PrintInstallReason(ss, alpm_->PkgGetReason(pkg));
   PrintInstallScript(ss, alpm_->PkgHasScriptlet(pkg));
+  PrintPkgValidation(ss, pkg);
 
   std::println("{}", ss.str());
 }
@@ -308,6 +309,39 @@ void App::PrintInstallReason(std::stringstream &ss, alpm_pkgreason_t reason) {
 void App::PrintInstallScript(std::stringstream &ss, bool has_scriptlet) {
   const char *scriptlet_str = has_scriptlet ? "Yes" : "No";
   std::println(ss, "Install Script  : {}", scriptlet_str);
+}
+
+void App::PrintPkgValidation(std::stringstream &ss, alpm_pkg_t *pkg) {
+  const int validation = alpm_->PkgGetValidation(pkg);
+  std::print(ss, "Validated By    : ");
+  if (validation) {
+    std::vector<std::string> validation_methods;
+
+    if (validation & ALPM_PKG_VALIDATION_NONE) {
+      std::println(ss, "None");
+    } else {
+      std::vector<std::string> validation_methods;
+
+      if (validation & ALPM_PKG_VALIDATION_MD5SUM) {
+        validation_methods.push_back("MD5 Sum");
+      }
+      if (validation & ALPM_PKG_VALIDATION_SHA256SUM) {
+        validation_methods.push_back("SHA-256 Sum");
+      }
+      if (validation & ALPM_PKG_VALIDATION_SIGNATURE) {
+        validation_methods.push_back("Signature");
+      }
+
+      for (const std::string_view method : validation_methods) {
+        if (method != validation_methods.back()) {
+          std::print(ss, "{}  ", method);
+        }
+        std::print(ss, "{}", method);
+      }
+    }
+  } else {
+    std::println(ss, "Unknown");
+  }
 }
 
 }  // namespace pacmanpp

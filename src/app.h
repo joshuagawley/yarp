@@ -63,6 +63,8 @@ class App {
 
   void PrintInstallScript(std::stringstream &ss, bool has_scriptlet);
 
+  void PrintPkgValidation(std::stringstream &ss, alpm_pkg_t *pkg);
+
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
   Config config_;

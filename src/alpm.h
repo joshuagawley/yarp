@@ -125,6 +125,8 @@ class Alpm {
 
   static alpm_time_t PkgGetInstallDate(alpm_pkg_t *pkg);
 
+  static int PkgGetValidation(alpm_pkg_t *pkg);
+
   static bool PkgHasScriptlet(alpm_pkg_t *pkg);
 
   static alpm_list_t *PkgComputeRequiredBy(alpm_pkg_t *pkg);
