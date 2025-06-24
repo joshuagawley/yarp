@@ -22,6 +22,7 @@ find_package(Alpm REQUIRED)
 set(
     PACMANPP_SOURCES 
     src/alpm.cc
+    src/alpm_package.cc
     src/app.cc 
     src/main.cc
 )
@@ -29,6 +30,7 @@ set(
 set(
     PACMANPP_HEADERS
     src/alpm.h
+    src/alpm_package.h
     src/app.h
     src/argument_parser.h
     src/bitwise_enum.h
