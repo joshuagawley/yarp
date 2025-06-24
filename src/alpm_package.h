@@ -14,32 +14,32 @@ class AlpmPackage {
  public:
   explicit AlpmPackage(alpm_pkg_t *pkg) : pkg_(pkg) {}
 
-  std::string_view GetName() const;
-  std::string_view GetVersion() const;
-  std::string_view GetDesc() const;
-  std::string_view GetArch() const;
-  std::string_view GetURL() const;
-  std::string_view GetPackager() const;
+  std::string_view GetName() const noexcept;
+  std::string_view GetVersion() const noexcept;
+  std::string_view GetDesc() const noexcept;
+  std::string_view GetArch() const noexcept;
+  std::string_view GetURL() const noexcept;
+  std::string_view GetPackager() const noexcept;
 
-  alpm_list_t *GetOptDepends() const;
-  alpm_list_t *GetDepends() const;
-  alpm_list_t *GetProvides() const;
-  alpm_list_t *GetGroups() const;
-  alpm_list_t *GetLicenses() const;
-  alpm_list_t *GetConflicts() const;
-  alpm_list_t *GetReplaces() const;
+  alpm_list_t *GetOptDepends() const noexcept;
+  alpm_list_t *GetDepends() const noexcept;
+  alpm_list_t *GetProvides() const noexcept;
+  alpm_list_t *GetGroups() const noexcept;
+  alpm_list_t *GetLicenses() const noexcept;
+  alpm_list_t *GetConflicts() const noexcept;
+  alpm_list_t *GetReplaces() const noexcept;
 
-  alpm_list_t *ComputeOptionalFor() const;
-  alpm_list_t *ComputeRequiredBy() const;
+  alpm_list_t *ComputeOptionalFor() const noexcept;
+  alpm_list_t *ComputeRequiredBy() const noexcept;
 
-  alpm_time_t GetBuildDate() const;
-  alpm_time_t GetInstallDate() const;
+  alpm_time_t GetBuildDate() const noexcept;
+  alpm_time_t GetInstallDate() const noexcept;
 
-  off_t GetISize() const;
-  alpm_pkgreason_t GetReason() const;
-  int GetValidation() const;
+  off_t GetISize() const noexcept;
+  alpm_pkgreason_t GetReason() const noexcept;
+  int GetValidation() const noexcept;
 
-  bool HasScriptlet() const;
+  bool HasScriptlet() const noexcept;
 
   void *ChangelogOpen() const;
   std::size_t ChangelogRead(void *fp, char *buf, std::size_t size) const;

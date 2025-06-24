@@ -198,81 +198,89 @@ std::string AlpmPackage::GetInfo() const {
   return ss.str();
 }
 
-std::string_view AlpmPackage::GetName() const {
+std::string_view AlpmPackage::GetName() const noexcept {
   return alpm_pkg_get_name(pkg_);
 }
 
-std::string_view AlpmPackage::GetVersion() const {
+std::string_view AlpmPackage::GetVersion() const noexcept {
   return alpm_pkg_get_version(pkg_);
 }
 
-std::string_view AlpmPackage::GetDesc() const {
+std::string_view AlpmPackage::GetDesc() const noexcept {
   return alpm_pkg_get_desc(pkg_);
 }
 
-std::string_view AlpmPackage::GetArch() const {
+std::string_view AlpmPackage::GetArch() const noexcept {
   return alpm_pkg_get_arch(pkg_);
 }
 
-std::string_view AlpmPackage::GetURL() const { return alpm_pkg_get_url(pkg_); }
+std::string_view AlpmPackage::GetURL() const noexcept {
+  return alpm_pkg_get_url(pkg_);
+}
 
-std::string_view AlpmPackage::GetPackager() const {
+std::string_view AlpmPackage::GetPackager() const noexcept {
   return alpm_pkg_get_packager(pkg_);
 }
 
-alpm_list_t *AlpmPackage::GetOptDepends() const {
+alpm_list_t *AlpmPackage::GetOptDepends() const noexcept {
   return alpm_pkg_get_optdepends(pkg_);
 }
 
-alpm_list_t *AlpmPackage::GetDepends() const {
+alpm_list_t *AlpmPackage::GetDepends() const noexcept {
   return alpm_pkg_get_depends(pkg_);
 }
 
-alpm_list_t *AlpmPackage::GetProvides() const {
+alpm_list_t *AlpmPackage::GetProvides() const noexcept {
   return alpm_pkg_get_provides(pkg_);
 }
 
-alpm_list_t *AlpmPackage::GetGroups() const {
+alpm_list_t *AlpmPackage::GetGroups() const noexcept {
   return alpm_pkg_get_groups(pkg_);
 }
 
-alpm_list_t *AlpmPackage::GetLicenses() const {
+alpm_list_t *AlpmPackage::GetLicenses() const noexcept {
   return alpm_pkg_get_licenses(pkg_);
 }
 
-alpm_list_t *AlpmPackage::GetConflicts() const {
+alpm_list_t *AlpmPackage::GetConflicts() const noexcept {
   return alpm_pkg_get_conflicts(pkg_);
 }
 
-alpm_list_t *AlpmPackage::GetReplaces() const {
+alpm_list_t *AlpmPackage::GetReplaces() const noexcept {
   return alpm_pkg_get_replaces(pkg_);
 }
 
-alpm_list_t *AlpmPackage::ComputeOptionalFor() const {
+alpm_list_t *AlpmPackage::ComputeOptionalFor() const noexcept {
   return alpm_pkg_compute_optionalfor(pkg_);
 }
 
-alpm_list_t *AlpmPackage::ComputeRequiredBy() const {
+alpm_list_t *AlpmPackage::ComputeRequiredBy() const noexcept {
   return alpm_pkg_compute_requiredby(pkg_);
 }
 
-alpm_time_t AlpmPackage::GetBuildDate() const {
+alpm_time_t AlpmPackage::GetBuildDate() const noexcept {
   return alpm_pkg_get_builddate(pkg_);
 }
 
-alpm_time_t AlpmPackage::GetInstallDate() const {
+alpm_time_t AlpmPackage::GetInstallDate() const noexcept {
   return alpm_pkg_get_installdate(pkg_);
 }
 
-off_t AlpmPackage::GetISize() const { return alpm_pkg_get_isize(pkg_); }
+off_t AlpmPackage::GetISize() const noexcept {
+  return alpm_pkg_get_isize(pkg_);
+}
 
-alpm_pkgreason_t AlpmPackage::GetReason() const {
+alpm_pkgreason_t AlpmPackage::GetReason() const noexcept {
   return alpm_pkg_get_reason(pkg_);
 }
 
-bool AlpmPackage::HasScriptlet() const { return alpm_pkg_has_scriptlet(pkg_); }
+bool AlpmPackage::HasScriptlet() const noexcept {
+  return alpm_pkg_has_scriptlet(pkg_);
+}
 
-int AlpmPackage::GetValidation() const { return alpm_pkg_get_validation(pkg_); }
+int AlpmPackage::GetValidation() const noexcept {
+  return alpm_pkg_get_validation(pkg_);
+}
 
 void *AlpmPackage::ChangelogOpen() const {
   return alpm_pkg_changelog_open(pkg_);
