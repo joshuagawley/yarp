@@ -3,6 +3,7 @@
 #ifndef PACMANPP_SRC_APP_H_
 #define PACMANPP_SRC_APP_H_
 
+#include <alpm.h>
 #include <alpm_list.h>
 
 #include <functional>
@@ -29,9 +30,21 @@ class App {
   void PrintPkgChangelog(alpm_pkg_t *pkg);
   void PrintPkgInfo(alpm_pkg_t *pkg);
 
+  void PrintAlpmList(
+      std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
+      std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter);
+
   void PrintPkgList(
       std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
       std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter);
+
+  void PrintDependsList(
+      std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
+      std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter);
+
+  void PrintOptDependsList(std::stringstream &ss, alpm_pkg_t *pkg,
+                           std::string_view prefix);
+
   void PrintPkgLicenses(std::stringstream &ss, alpm_pkg_t *pkg);
   void PrintPkgGroups(std::stringstream &ss, alpm_pkg_t *pkg);
   void PrintDepends(std::stringstream &ss, alpm_pkg_t *pkg);

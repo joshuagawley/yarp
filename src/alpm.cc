@@ -112,4 +112,8 @@ int Alpm::PkgChangelogClose(const alpm_pkg_t *pkg, void *fp) {
   return alpm_pkg_changelog_close(pkg, fp);
 }
 
+const char *Alpm::DepComputeString(const alpm_depend_t *dep) {
+  return alpm_dep_compute_string(dep);
+}
+
 }  // namespace pacmanpp

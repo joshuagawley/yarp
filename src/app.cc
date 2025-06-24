@@ -13,6 +13,7 @@
 
 #include "argument_parser.h"
 #include "operation.h"
+#include "src/alpm.h"
 
 namespace pacmanpp {
 
@@ -134,10 +135,11 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   std::println(ss, "Architecture    : {}", alpm_->PkgGetArch(pkg));
   std::println(ss, "URL             : {}", alpm_->PkgGetURL(pkg));
 
-  PrintPkgList(ss, pkg, "Licenses        : ", alpm_->PkgGetLicenses);
-  // PrintPkgList(ss, pkg, "Groups           : ", alpm_->PkgGetGroups);
-  // PrintPkgList(ss, pkg, "Depends On       : ", alpm_->PkgGetDepends);
-  // PrintPkgList(ss, pkg, "Optional Deps    : ", alpm_->PkgGetOptDepends);
+  PrintAlpmList(ss, pkg, "Licenses        : ", alpm_->PkgGetLicenses);
+  PrintPkgList(ss, pkg, "Groups          : ", alpm_->PkgGetGroups);
+  PrintDependsList(ss, pkg, "Provides        : ", alpm_->PkgGetProvides);
+  PrintDependsList(ss, pkg, "Depends On      : ", alpm_->PkgGetDepends);
+  PrintOptDependsList(ss, pkg, "Optional Deps   : ");
 
   // PrintPkgList(ss, pkg, "Conflicts With  : {}", alpm_->PkgGetConflicts);
   // PrintPkgList(ss, pkg, "Replaces        : {}", alpm_->PkgGetReplaces);
@@ -165,12 +167,12 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   std::println("{}", ss.str());
 }
 
-void App::PrintPkgList(
+void App::PrintAlpmList(
     std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
     std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter) {
   alpm_list_t *list = attribute_getter(pkg);
   if (list == nullptr) {
-    std::println(ss, "{} None", prefix);
+    std::println(ss, "{}None", prefix);
     return;
   }
 
@@ -181,6 +183,72 @@ void App::PrintPkgList(
       std::print(ss, "{}  ", item_str);  // Not the last item, add space
     } else {
       std::println(ss, "{}", item_str);  // Last item, no trailing space
+    }
+  }
+}
+
+void App::PrintPkgList(
+    std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
+    std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter) {
+  alpm_list_t *list = attribute_getter(pkg);
+  if (list == nullptr) {
+    std::println(ss, "{}None", prefix);
+    return;
+  }
+
+  std::print(ss, "{}", prefix);
+  for (alpm_list_t *item = list; item != nullptr; item = item->next) {
+    alpm_pkg_t *pkg = static_cast<alpm_pkg_t *>(item->data);
+    if (item->next != nullptr) {
+      std::print(ss, "{}  ",
+                 alpm_->PkgGetName(pkg));  // Not the last item, add space
+    } else {
+      std::println(ss, "{}",
+                   alpm_->PkgGetName(pkg));  // Last item, no trailing space
+    }
+  }
+}
+
+void App::PrintDependsList(
+    std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
+    std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter) {
+  alpm_list_t *list = attribute_getter(pkg);
+  if (list == nullptr) {
+    std::println(ss, "{}None", prefix);
+    return;
+  }
+
+  std::print(ss, "{}", prefix);
+  for (alpm_list_t *item = list; item != nullptr; item = item->next) {
+    alpm_depend_t *pkg = static_cast<alpm_depend_t *>(item->data);
+    if (item->next != nullptr) {
+      std::print(ss, "{}  ",
+                 pkg->name);  // Not the last item, add space
+    } else {
+      std::println(ss, "{}",
+                   pkg->name);  // Last item, no trailing space
+    }
+  }
+}
+
+void App::PrintOptDependsList(std::stringstream &ss, alpm_pkg_t *pkg,
+                              std::string_view prefix) {
+  alpm_list_t *list = alpm_->PkgGetOptDepends(pkg);
+  if (list == nullptr) {
+    std::println(ss, "{}None", prefix);
+    return;
+  }
+
+  std::print(ss, "{}", prefix);
+  for (alpm_list_t *item = list; item != nullptr; item = item->next) {
+    alpm_depend_t *opt_dep = static_cast<alpm_depend_t *>(item->data);
+    const char *dep_string = alpm_->DepComputeString(opt_dep);
+    if (item->next != nullptr) {
+      std::print(ss, "{}  ",
+                 dep_string);  // Not the last item, add space
+    } else {
+      std::println(ss, "{}",
+                   dep_string);  // Last item, no trailing space
     }
   }
 }

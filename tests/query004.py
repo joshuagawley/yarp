@@ -19,5 +19,9 @@ with pptest.TestEnvironment() as env:
     test.assert_contains(result.stdout, "URL             : https://github.com/fenrus75/powertop/\n")
     test.assert_contains(result.stdout, "Licenses        : GPL2\n")
     test.assert_contains(result.stdout, "Packager        : T.J. Townsend <blakkheim@archlinux.org>\n")
+    test.assert_contains(result.stdout, "Groups          : None\n")
+    test.assert_contains(result.stdout, "Provides        : None\n")
+    test.assert_contains(result.stdout, "Depends On      : gcc-libs  libnl  ncurses  pciutils\n")
+    test.assert_contains(result.stdout, "Optional Deps   : xorg-xset: for the --calibrate function\n")
 
 test.exit_with_result()

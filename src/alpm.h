@@ -130,6 +130,8 @@ class Alpm {
 
   static int PkgChangelogClose(const alpm_pkg_t *pkg, void *fp);
 
+  static const char *DepComputeString(const alpm_depend_t *dep);
+
  private:
   alpm_handle_t *handle_;
   alpm_errno_t err = ALPM_ERR_OK;
