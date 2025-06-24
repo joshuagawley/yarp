@@ -6,7 +6,6 @@
 #include <alpm.h>
 #include <alpm_list.h>
 
-#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
