@@ -283,8 +283,8 @@ std::size_t AlpmPackage::ChangelogRead(void *fp, char *buf,
   return alpm_pkg_changelog_read(buf, size, pkg_, fp);
 }
 
-void AlpmPackage::ChangelogClose(void *fp) const {
-  alpm_pkg_changelog_close(pkg_, fp);
+int AlpmPackage::ChangelogClose(void *fp) const noexcept {
+  return alpm_pkg_changelog_close(pkg_, fp);
 }
 
 }  // namespace pacmanpp

@@ -43,7 +43,7 @@ class AlpmPackage {
 
   void *ChangelogOpen() const;
   std::size_t ChangelogRead(void *fp, char *buf, std::size_t size) const;
-  void ChangelogClose(void *fp) const;
+  int ChangelogClose(void *fp) const noexcept;
 
   std::string GetInfo() const;
 
