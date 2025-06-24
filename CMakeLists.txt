@@ -12,8 +12,8 @@ project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-include(PreventInSourceBuilds.cmake)
-include(StandardProjectOptions.cmake)
+include(cmake/PreventInSourceBuilds.cmake)
+include(cmake/StandardProjectOptions.cmake)
 
 include(CTest)
 
