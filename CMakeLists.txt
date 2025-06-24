@@ -10,6 +10,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
 
+include(cmake/PreventInSourceBuilds.cmake)
+
 include(CTest)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
