@@ -125,6 +125,8 @@ class Alpm {
 
   static alpm_time_t PkgGetInstallDate(alpm_pkg_t *pkg);
 
+  static bool PkgHasScriptlet(alpm_pkg_t *pkg);
+
   static void *PkgChangelogOpen(alpm_pkg_t *pkg);
 
   static std::size_t PkgChangelogRead(void *ptr, std::size_t size,

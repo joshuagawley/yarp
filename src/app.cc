@@ -152,22 +152,7 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   PrintHumanizedDate(ss, pkg, "Build Date      : ", alpm_->PkgGetBuildDate);
   PrintHumanizedDate(ss, pkg, "Install Date    : ", alpm_->PkgGetInstallDate);
   PrintInstallReason(ss, alpm_->PkgGetReason(pkg));
-
-  // switch (alpm_->PkgGetReason(pkg)) {
-  //   case ALPM_PKG_REASON_EXPLICIT:
-  //     std::println(ss, "Install Reason  : Explicitly installed");
-
-  //   case ALPM_PKG_REASON_DEPEND:
-  //     std::println(
-  //         ss,
-  //         "Install Reason  : Installed as a dependency for another package");
-
-  //   default:
-  //     std::println(ss, "Install Reason  : Unknown");
-  // }
-
-  // std::println(ss, "Install Script  : {}", alpm_->PkgGetInstallScript(pkg));
-  // std::println(ss, "Validated By  : {}", alpm_->PkgGetValidatedBy(pkg));
+  PrintInstallScript(ss, alpm_->PkgHasScriptlet(pkg));
 
   std::println("{}", ss.str());
 }
@@ -304,6 +289,11 @@ void App::PrintInstallReason(std::stringstream &ss, alpm_pkgreason_t reason) {
       std::println(ss, "Install Reason  : Unknown");
       break;
   }
+}
+
+void App::PrintInstallScript(std::stringstream &ss, bool has_scriptlet) {
+  const char *scriptlet_str = has_scriptlet ? "Yes" : "No";
+  std::println(ss, "Install Script  : {}", scriptlet_str);
 }
 
 }  // namespace pacmanpp

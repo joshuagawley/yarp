@@ -6,6 +6,7 @@
 #include <alpm.h>
 #include <alpm_list.h>
 
+#include <climits>
 #include <functional>
 #include <memory>
 #include <string>
@@ -58,6 +59,8 @@ class App {
                           std::function<alpm_time_t(alpm_pkg_t *)> date_getter);
 
   void PrintInstallReason(std::stringstream &ss, alpm_pkgreason_t reason);
+
+  void PrintInstallScript(std::stringstream &ss, bool has_scriptlet);
 
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
