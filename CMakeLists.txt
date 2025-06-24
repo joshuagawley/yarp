@@ -13,17 +13,17 @@ project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(cmake/PreventInSourceBuilds.cmake)
-include(cmake/StandardProjectSettings.cmake)
-
+include(ProjectOptions.cmake)
 include(CTest)
 
-set(COMPILE_FLAGS -Wall -Wextra -Wpedantic)
+pacmanpp_setup_options()
+pacmanpp_global_options()
+pacmanpp_local_options()
 
-option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
+target_compile_features(pacmanpp_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
 
-if(WARNINGS_AS_ERRORS)
-    list(APPEND COMPILE_FLAGS -Werror)
-endif()
+add_library(pacmanpp::pacmanpp_options ALIAS pacmanpp_options)
+add_library(pacmanpp::pacmanpp_warnings ALIAS pacmanpp_warnings)
 
 find_package(Alpm REQUIRED)
 
@@ -60,8 +60,7 @@ target_sources(
         ${PACMANPP_HEADERS}
 )
 
-target_compile_options(pacmanpp PRIVATE ${COMPILE_FLAGS})
-target_link_libraries(pacmanpp PRIVATE Alpm::Alpm)
+target_link_libraries(pacmanpp PRIVATE pacmanpp::pacmanpp_options pacmanpp::pacmanpp_warnings Alpm::Alpm)
 
 if(BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
