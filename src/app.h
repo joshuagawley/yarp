@@ -6,7 +6,6 @@
 #include <alpm.h>
 #include <alpm_list.h>
 
-#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -28,8 +27,8 @@ class App {
   void PrintVerbose() const;
   void HandleQuery(const std::vector<std::string> &targets);
   void PrintHelp() const;
-  void PrintPkgChangelog(const AlpmPackage &pkg);
-  void PrintPkgInfo(const AlpmPackage &pkg);
+  void PrintPkgChangelog(const AlpmPackage &pkg) const;
+  void PrintPkgInfo(const AlpmPackage &pkg) const;
 
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;

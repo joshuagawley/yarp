@@ -70,11 +70,12 @@ void App::HandleQuery(const std::vector<std::string> &targets) {
 
     // NB: This list is owned by the alpm library and should not be freed
     // manually
-    alpm_list_t *tmp_results = alpm_->DbGetPkgCache(local_db);
+    const alpm_list_t *tmp_results = alpm_->DbGetPkgCache(local_db);
     if (tmp_results == nullptr) {
       throw std::runtime_error("Error: no packages found in local database");
     }
-    for (alpm_list_t *item = tmp_results; item != nullptr; item = item->next) {
+    for (const alpm_list_t *item = tmp_results; item != nullptr;
+         item = item->next) {
       AlpmPackage pkg = AlpmPackage{static_cast<alpm_pkg_t *>(item->data)};
       results.push_back(pkg);
     }
@@ -101,9 +102,9 @@ void App::HandleQuery(const std::vector<std::string> &targets) {
   }
 }
 
-void App::PrintPkgChangelog(const AlpmPackage &pkg) {
+void App::PrintPkgChangelog(const AlpmPackage &pkg) const {
   void *fp = pkg.ChangelogOpen();
-  std::string_view pkg_name = pkg.GetName();
+  const std::string_view pkg_name = pkg.GetName();
 
   if (fp == nullptr) {
     std::println(stderr, "No changelog available for {}", pkg_name);
@@ -121,11 +122,14 @@ void App::PrintPkgChangelog(const AlpmPackage &pkg) {
     std::print("{}", std::string_view(buffer.data(), bytes_read));
   }
 
-  pkg.ChangelogClose(fp);
+  const int result = pkg.ChangelogClose(fp);
+  if (!result) {
+    std::println("Error: could not close changelog.");
+  }
   std::println("");  // Add newline at the end
 }
 
-void App::PrintPkgInfo(const AlpmPackage &pkg) {
+void App::PrintPkgInfo(const AlpmPackage &pkg) const {
   std::println("{}", pkg.GetInfo());
 }
 
