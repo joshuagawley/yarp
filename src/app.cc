@@ -14,21 +14,6 @@
 #include "argument_parser.h"
 #include "operation.h"
 
-namespace {
-constexpr std::string GetPkgInstallReasonString(alpm_pkgreason_t reason) {
-  switch (reason) {
-    case ALPM_PKG_REASON_EXPLICIT:
-      return "Install Reason  : Explicitly installed";
-
-    case ALPM_PKG_REASON_DEPEND:
-      return "Install Reason  : Installed as a dependency for another package";
-
-    default:
-      return "Unknown";
-  }
-}
-}  // namespace
-
 namespace pacmanpp {
 
 App::App(std::span<char *> args) : program_name_(*args.cbegin()) {
