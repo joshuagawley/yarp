@@ -53,6 +53,10 @@ class App {
                           std::string_view prefix,
                           std::function<off_t(alpm_pkg_t *)> size_getter);
 
+  void PrintHumanizedDate(std::stringstream &ss, alpm_pkg_t *pkg,
+                          std::string_view prefix,
+                          std::function<alpm_time_t(alpm_pkg_t *)> date_getter);
+
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
   Config config_;

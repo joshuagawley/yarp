@@ -95,7 +95,7 @@ alpm_pkgreason_t Alpm::PkgGetReason(alpm_pkg_t *pkg) {
   return alpm_pkg_get_reason(pkg);
 }
 
-alpm_time_t PkgGetInstallDate(alpm_pkg_t *pkg) {
+alpm_time_t Alpm::PkgGetInstallDate(alpm_pkg_t *pkg) {
   return alpm_pkg_get_installdate(pkg);
 }
 

@@ -27,5 +27,7 @@ with pptest.TestEnvironment() as env:
     # test.assert_contains(result.stdout, "Optional For    : None\n")
     test.assert_contains(result.stdout, "Conflicts With  : None\n")
     test.assert_contains(result.stdout, "Replaces        : None\n")
+    test.assert_contains(result.stdout, "Build Date      : Sat 13 Jul 2024 17:31:39 BST\n")
+    test.assert_contains(result.stdout, "Install Date    : Sun 22 Jun 2025 17:46:41 BST\n")
 
 test.exit_with_result()

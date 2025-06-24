@@ -6,6 +6,10 @@
 #include <alpm_list.h>
 #include <sys/types.h>
 
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <locale>
 #include <print>
 #include <span>
 #include <sstream>
@@ -145,6 +149,8 @@ void App::PrintPkgInfo(alpm_pkg_t *pkg) {
   PrintDependsList(ss, pkg, "Replaces        : ", alpm_->PkgGetReplaces);
   PrintHumanizedSize(ss, pkg, "Installed Size  :", alpm_->PkgGetISize);
   std::println(ss, "Packager        : {}", alpm_->PkgGetPackager(pkg));
+  PrintHumanizedDate(ss, pkg, "Build Date      : ", alpm_->PkgGetBuildDate);
+  PrintHumanizedDate(ss, pkg, "Install Date    : ", alpm_->PkgGetInstallDate);
   // std::println(ss, "Build Date      : {}", alpm_->PkgGetBuildDate(pkg));
   // std::println(ss, "Install Date    : {}", alpm_->PkgGetInstallDate(pkg));
 
@@ -272,6 +278,17 @@ void App::PrintHumanizedSize(std::stringstream &ss, alpm_pkg_t *pkg,
   } else {
     std::println(ss, "{:.2f} {}", size_d, units[i]);
   }
+}
+
+void App::PrintHumanizedDate(
+    std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
+    std::function<alpm_time_t(alpm_pkg_t *)> date_getter) {
+  // We use C-style time API instead of std::chrono
+  const std::time_t time = static_cast<std::time_t>(date_getter(pkg));
+  const tm *local_time = std::localtime(&time);
+
+  // std::put_time doesn't work with std::format
+  ss << prefix << std::put_time(local_time, "%a %d %b %Y %H:%M:%S %Z") << '\n';
 }
 
 }  // namespace pacmanpp
