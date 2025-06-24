@@ -18,6 +18,8 @@
 
 #include "argument_parser.h"
 #include "operation.h"
+#include "src/alpm.h"
+#include "src/alpm_package.h"
 
 namespace pacmanpp {
 
@@ -65,50 +67,46 @@ void App::PrintHelp() const {
 
 void App::HandleQuery(const std::vector<std::string> &targets) {
   alpm_db_t *local_db = alpm_->GetLocalDb();
-  alpm_list_t *results = nullptr;
+  std::vector<AlpmPackage> results;
 
   if (targets.empty()) {
     // Get the entire package cache if no specific targets are given
 
     // NB: This list is owned by the alpm library and should not be freed
     // manually
-    results = alpm_->DbGetPkgCache(local_db);
-    if (results == nullptr) {
+    alpm_list_t *tmp_results = alpm_->DbGetPkgCache(local_db);
+    if (tmp_results == nullptr) {
       throw std::runtime_error("Error: no packages found in local database");
+    }
+    for (alpm_list_t *item = tmp_results; item != nullptr; item = item->next) {
+      AlpmPackage pkg = AlpmPackage{static_cast<alpm_pkg_t *>(item->data)};
+      results.push_back(pkg);
     }
   } else {
     for (std::string_view target : targets) {
-      alpm_pkg_t *pkg = alpm_->DbGetPkg(local_db, target);
-      if (pkg == nullptr) {
+      std::optional<AlpmPackage> pkg = alpm_->DbGetPkg(local_db, target);
+      if (!pkg) {
         std::println("Error: package {} not found", target);
         continue;
       }
-      results = alpm_list_add(results, pkg);
     }
   }
 
-  for (alpm_list_t *item = results; item != nullptr; item = item->next) {
-    alpm_pkg_t *pkg = static_cast<alpm_pkg_t *>(item->data);
-
+  for (const AlpmPackage &pkg : results) {
     if ((query_options_ & QueryOptions::kChangelog) ==
         QueryOptions::kChangelog) {
       PrintPkgChangelog(pkg);
     } else if ((query_options_ & QueryOptions::kInfo) == QueryOptions::kInfo) {
       PrintPkgInfo(pkg);
     } else {
-      std::println("{} {}", alpm_->PkgGetName(pkg), alpm_->PkgGetVersion(pkg));
+      std::println("{} {}", pkg.GetName(), pkg.GetVersion());
     }
-  }
-
-  // Only free the list if we created it ourselves (when targets is not empty)
-  if (!targets.empty()) {
-    alpm_list_free(results);
   }
 }
 
-void App::PrintPkgChangelog(alpm_pkg_t *pkg) {
-  void *fp = alpm_->PkgChangelogOpen(pkg);
-  const char *pkg_name = alpm_->PkgGetName(pkg);
+void App::PrintPkgChangelog(const AlpmPackage &pkg) {
+  void *fp = pkg.ChangelogOpen();
+  std::string_view pkg_name = pkg.GetName();
 
   if (fp == nullptr) {
     std::println(stderr, "No changelog available for {}", pkg_name);
@@ -120,52 +118,61 @@ void App::PrintPkgChangelog(alpm_pkg_t *pkg) {
   std::array<char, 1024> buffer;
   std::size_t bytes_read = 0;
 
-  while ((bytes_read = alpm_->PkgChangelogRead(buffer.data(), buffer.size(),
-                                               pkg, fp)) > 0) {
+  while ((bytes_read = pkg.ChangelogRead(fp, buffer.data(), buffer.size())) >
+         0) {
     // Use std::print to output the data
     std::print("{}", std::string_view(buffer.data(), bytes_read));
   }
 
-  alpm_->PkgChangelogClose(pkg, fp);
+  pkg.ChangelogClose(fp);
   std::println("");  // Add newline at the end
 }
 
-void App::PrintPkgInfo(alpm_pkg_t *pkg) {
+void App::PrintPkgInfo(const AlpmPackage &pkg) {
   std::stringstream ss;
 
-  std::println(ss, "Name            : {}", alpm_->PkgGetName(pkg));
-  std::println(ss, "Version         : {}", alpm_->PkgGetVersion(pkg));
-  std::println(ss, "Description     : {}", alpm_->PkgGetDesc(pkg));
-  std::println(ss, "Architecture    : {}", alpm_->PkgGetArch(pkg));
-  std::println(ss, "URL             : {}", alpm_->PkgGetURL(pkg));
+  std::println(ss, "Name            : {}", pkg.GetName());
+  std::println(ss, "Version         : {}", pkg.GetVersion());
+  std::println(ss, "Description     : {}", pkg.GetDesc());
+  std::println(ss, "Architecture    : {}", pkg.GetArch());
+  std::println(ss, "URL             : {}", pkg.GetURL());
 
-  PrintAlpmList(ss, pkg, "Licenses        : ", alpm_->PkgGetLicenses);
-  PrintPkgList(ss, pkg, "Groups          : ", alpm_->PkgGetGroups);
-  PrintDependsList(ss, pkg, "Provides        : ", alpm_->PkgGetProvides);
-  PrintDependsList(ss, pkg, "Depends On      : ", alpm_->PkgGetDepends);
+  PrintAlpmList(
+      ss, pkg, "Licenses        : ", std::bind(&AlpmPackage::GetLicenses, pkg));
+  PrintPkgList(ss, pkg,
+               "Groups          : ", std::bind(&AlpmPackage::GetGroups, pkg));
+  PrintDependsList(
+      ss, pkg, "Provides        : ", std::bind(&AlpmPackage::GetProvides, pkg));
+  PrintDependsList(
+      ss, pkg, "Depends On      : ", std::bind(&AlpmPackage::GetDepends, pkg));
   PrintOptDependsList(ss, pkg, "Optional Deps   : ");
   // alpm_pkg_compute_* don't free the list, so we set free_list to true
-  PrintAlpmList(ss, pkg, "Required By     : ", alpm_->PkgComputeRequiredBy,
-                true);
-  PrintAlpmList(ss, pkg, "Optional For    : ", alpm_->PkgComputeOptionalFor,
-                true);
+  PrintAlpmList(ss, pkg, "Required By     : ",
+                std::bind(&AlpmPackage::ComputeRequiredBy, pkg), true);
+  PrintAlpmList(ss, pkg, "Optional For    : ",
+                std::bind(&AlpmPackage::ComputeOptionalFor, pkg), true);
 
-  PrintDependsList(ss, pkg, "Conflicts With  : ", alpm_->PkgGetConflicts);
-  PrintDependsList(ss, pkg, "Replaces        : ", alpm_->PkgGetReplaces);
-  PrintHumanizedSize(ss, pkg, "Installed Size  :", alpm_->PkgGetISize);
-  std::println(ss, "Packager        : {}", alpm_->PkgGetPackager(pkg));
-  PrintHumanizedDate(ss, pkg, "Build Date      : ", alpm_->PkgGetBuildDate);
-  PrintHumanizedDate(ss, pkg, "Install Date    : ", alpm_->PkgGetInstallDate);
-  PrintInstallReason(ss, alpm_->PkgGetReason(pkg));
-  PrintInstallScript(ss, alpm_->PkgHasScriptlet(pkg));
+  PrintDependsList(ss, pkg, "Conflicts With  : ",
+                   std::bind(&AlpmPackage::GetConflicts, pkg));
+  PrintDependsList(
+      ss, pkg, "Replaces        : ", std::bind(&AlpmPackage::GetReplaces, pkg));
+  PrintHumanizedSize(
+      ss, pkg, "Installed Size  :", std::bind(&AlpmPackage::GetISize, pkg));
+  std::println(ss, "Packager        : {}", pkg.GetPackager());
+  PrintHumanizedDate(ss, pkg, "Build Date      : ",
+                     std::bind(&AlpmPackage::GetBuildDate, pkg));
+  PrintHumanizedDate(ss, pkg, "Install Date    : ",
+                     std::bind(&AlpmPackage::GetInstallDate, pkg));
+  PrintInstallReason(ss, pkg.GetReason());
+  PrintInstallScript(ss, pkg.HasScriptlet());
   PrintPkgValidation(ss, pkg);
 
   std::println("{}", ss.str());
 }
 
 void App::PrintAlpmList(
-    std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
-    std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter,
+    std::stringstream &ss, const AlpmPackage &pkg, std::string_view prefix,
+    std::function<alpm_list_t *(const AlpmPackage &)> attribute_getter,
     bool free_list) {
   alpm_list_t *list = attribute_getter(pkg);
   if (list == nullptr) {
@@ -193,8 +200,8 @@ void App::PrintAlpmList(
 }
 
 void App::PrintPkgList(
-    std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
-    std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter) {
+    std::stringstream &ss, const AlpmPackage &pkg, std::string_view prefix,
+    std::function<alpm_list_t *(const AlpmPackage &)> attribute_getter) {
   alpm_list_t *list = attribute_getter(pkg);
   if (list == nullptr) {
     std::println(ss, "{}None", prefix);
@@ -203,20 +210,20 @@ void App::PrintPkgList(
 
   std::print(ss, "{}", prefix);
   for (alpm_list_t *item = list; item != nullptr; item = item->next) {
-    alpm_pkg_t *pkg = static_cast<alpm_pkg_t *>(item->data);
+    AlpmPackage pkg = AlpmPackage{static_cast<alpm_pkg_t *>(item->data)};
     if (item->next != nullptr) {
       std::print(ss, "{}  ",
-                 alpm_->PkgGetName(pkg));  // Not the last item, add space
+                 pkg.GetName());  // Not the last item, add space
     } else {
       std::println(ss, "{}",
-                   alpm_->PkgGetName(pkg));  // Last item, no trailing space
+                   pkg.GetName());  // Last item, no trailing space
     }
   }
 }
 
 void App::PrintDependsList(
-    std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
-    std::function<alpm_list_t *(alpm_pkg_t *)> attribute_getter) {
+    std::stringstream &ss, const AlpmPackage &pkg, std::string_view prefix,
+    std::function<alpm_list_t *(const AlpmPackage &)> attribute_getter) {
   alpm_list_t *list = attribute_getter(pkg);
   if (list == nullptr) {
     std::println(ss, "{}None", prefix);
@@ -236,9 +243,9 @@ void App::PrintDependsList(
   }
 }
 
-void App::PrintOptDependsList(std::stringstream &ss, alpm_pkg_t *pkg,
+void App::PrintOptDependsList(std::stringstream &ss, const AlpmPackage &pkg,
                               std::string_view prefix) {
-  alpm_list_t *list = alpm_->PkgGetOptDepends(pkg);
+  alpm_list_t *list = pkg.GetOptDepends();
   if (list == nullptr) {
     std::println(ss, "{}None", prefix);
     return;
@@ -258,9 +265,9 @@ void App::PrintOptDependsList(std::stringstream &ss, alpm_pkg_t *pkg,
   }
 }
 
-void App::PrintHumanizedSize(std::stringstream &ss, alpm_pkg_t *pkg,
-                             std::string_view prefix,
-                             std::function<off_t(alpm_pkg_t *)> size_getter) {
+void App::PrintHumanizedSize(
+    std::stringstream &ss, const AlpmPackage &pkg, std::string_view prefix,
+    std::function<off_t(const AlpmPackage &)> size_getter) {
   constexpr std::array<const char *, 6> units{"B",   "KiB", "MiB",
                                               "GiB", "TiB", "PiB"};
   double size_d = static_cast<double>(size_getter(pkg));
@@ -280,8 +287,8 @@ void App::PrintHumanizedSize(std::stringstream &ss, alpm_pkg_t *pkg,
 }
 
 void App::PrintHumanizedDate(
-    std::stringstream &ss, alpm_pkg_t *pkg, std::string_view prefix,
-    std::function<alpm_time_t(alpm_pkg_t *)> date_getter) {
+    std::stringstream &ss, const AlpmPackage &pkg, std::string_view prefix,
+    std::function<alpm_time_t(const AlpmPackage &)> date_getter) {
   // We use C-style time API instead of std::chrono
   const std::time_t time = static_cast<std::time_t>(date_getter(pkg));
   const tm *local_time = std::localtime(&time);
@@ -311,8 +318,8 @@ void App::PrintInstallScript(std::stringstream &ss, bool has_scriptlet) {
   std::println(ss, "Install Script  : {}", scriptlet_str);
 }
 
-void App::PrintPkgValidation(std::stringstream &ss, alpm_pkg_t *pkg) {
-  const int validation = alpm_->PkgGetValidation(pkg);
+void App::PrintPkgValidation(std::stringstream &ss, const AlpmPackage &pkg) {
+  const int validation = pkg.GetValidation();
   std::print(ss, "Validated By    : ");
   if (validation) {
     std::vector<std::string> validation_methods;
