@@ -30,6 +30,12 @@ class TestPackage:
         self.name = name
         self.version = version
         self.description = description
+        self.files: List[str] = []
+        self.groups: List[str] = []
+        self.url: str = ""
+        self.license: str = ""
+        self.architecture: str = ""
+        self.packager: str = ""
         self.changelog_entries: List[TestChangelogEntry] = []
 
     def add_changelog_entry(self, version: str, changes: List[str]) -> None:
