@@ -20,10 +20,10 @@ endif()
 find_package(Alpm REQUIRED)
 
 set(
-    PACMANPP_SOURCES 
+    PACMANPP_SOURCES
     src/alpm.cc
     src/alpm_package.cc
-    src/app.cc 
+    src/app.cc
     src/main.cc
 )
 
@@ -44,7 +44,7 @@ target_sources(
     pacmanpp
     PRIVATE
         ${PACMANPP_SOURCES}
-    
+
     PUBLIC
     FILE_SET HEADERS
     TYPE HEADERS
