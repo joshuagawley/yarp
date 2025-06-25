@@ -100,7 +100,7 @@ void PrintHumanizedSize(std::stringstream &ss, const std::string_view prefix,
   constexpr std::array<const char *, 6> units{"B",   "KiB", "MiB",
                                               "GiB", "TiB", "PiB"};
   double size_d = static_cast<double>(size);
-  int i = 0;
+  std::size_t i{};
 
   while (size_d >= 1024.0 && i < 5) {
     size_d /= 1024.0;
@@ -133,8 +133,6 @@ void PrintInstallScript(std::stringstream &ss, const bool has_scriptlet) {
 void PrintValidation(std::stringstream &ss, const int validation) {
   std::print(ss, "Validated By    : ");
   if (validation) {
-    std::vector<std::string> validation_methods;
-
     if (validation & ALPM_PKG_VALIDATION_NONE) {
       std::println(ss, "None");
     } else {
