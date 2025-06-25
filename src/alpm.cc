@@ -8,7 +8,7 @@
 #include <format>
 #include <stdexcept>
 
-#include "src/alpm_package.h"
+#include "alpm_package.h"
 
 namespace pacmanpp {
 

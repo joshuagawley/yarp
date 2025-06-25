@@ -12,10 +12,10 @@
 #include <string_view>
 #include <vector>
 
+#include "alpm.h"
+#include "alpm_package.h"
 #include "argument_parser.h"
 #include "operation.h"
-#include "src/alpm.h"
-#include "src/alpm_package.h"
 
 namespace pacmanpp {
 

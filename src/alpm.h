@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include "src/alpm_package.h"
+#include "alpm_package.h"
 
 namespace pacmanpp {
 
