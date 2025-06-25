@@ -11,9 +11,9 @@
 #include <vector>
 
 #include "alpm.h"
+#include "alpm_package.h"
 #include "config.h"
-#include "src/alpm_package.h"
-#include "src/operation.h"
+#include "operation.h"
 
 namespace pacmanpp {
 

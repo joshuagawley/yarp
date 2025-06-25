@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include "src/alpm_package.h"
+#include "alpm_package.h"
 
 namespace pacmanpp {
 
@@ -23,7 +23,7 @@ constexpr std::vector<T> AlpmListToVector(alpm_list_t *list) {
   std::vector<T> result;
 
   alpm_list_t *item;
-  int count = 0;
+  std::size_t count{};
   for (item = list; item != nullptr; item = item->next) {
     ++count;
   }
@@ -40,7 +40,7 @@ constexpr std::vector<std::string> AlpmListToStringVector(alpm_list_t *list) {
   std::vector<std::string> result;
 
   alpm_list_t *item;
-  int count = 0;
+  std::size_t count{};
   for (item = list; item != nullptr; item = item->next) {
     ++count;
   }
