@@ -5,6 +5,7 @@
 #include <alpm.h>
 
 #include <cstdlib>
+#include <filesystem>
 #include <print>
 
 #include "alpm_package.h"
@@ -62,6 +63,8 @@ int QueryHandler::Execute() {
       PrintPkgFileList(pkg);
     } else if ((options_ & QueryOptions::kInfo) == QueryOptions::kInfo) {
       PrintPkgInfo(pkg);
+    } else if ((options_ & QueryOptions::kCheck) == QueryOptions::kCheck) {
+      CheckPkgFiles(pkg);
     } else {
       std::println("{} {}", pkg.GetName(), pkg.GetVersion());
     }
@@ -143,6 +146,32 @@ int QueryHandler::HandleGroups() const {
     }
   }
   return EXIT_SUCCESS;
+}
+
+void QueryHandler::CheckPkgFiles(const AlpmPackage &pkg) const {
+  int errors{};
+  const alpm_filelist_t *files = pkg.GetFiles();
+  const std::string_view root = alpm_.OptionGetRoot();
+
+  for (std::size_t i = 0; i < files->count; ++i) {
+    const alpm_file_t file = files->files[i];
+    // TODO: see if we can avoid creating a new string here
+    const std::string absolute_file_name = std::format("{}{}", root, file.name);
+    if (std::filesystem::exists(absolute_file_name)) {
+      const bool expect_dir = *(std::end(absolute_file_name) - 1) == '/';
+      const bool is_dir = std::filesystem::is_directory(absolute_file_name);
+      if (expect_dir != is_dir) {
+        std::println("{}: {} (File type mismatch)", pkg.GetName(),
+                     absolute_file_name);
+        ++errors;
+      }
+    } else {
+      ++errors;
+    }
+  }
+
+  std::println("{}: {} total files, {} missing files", pkg.GetName(),
+               files->count, errors);
 }
 
 void QueryHandler::PrintPkgFileList(const AlpmPackage &pkg) const {
