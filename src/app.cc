@@ -68,8 +68,4 @@ void App::PrintHelp() const {
                kPacmanppName);
 }
 
-void App::PrintVersion() const {
-  std::println("{} version {}", kPacmanppName, kPacmanppVersion);
-}
-
 }  // namespace pacmanpp

@@ -32,7 +32,6 @@ class App {
 
   void PrintVerbose() const;
   void PrintHelp() const;
-  void PrintVersion() const;
 
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
