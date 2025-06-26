@@ -27,6 +27,7 @@ pacmanpp_add_test(NAME query001 DESCRIPTION "Outputs package name and descriptio
 pacmanpp_add_test(NAME query002 DESCRIPTION "Outputs group when query flag is given and installed group is passed in")
 pacmanpp_add_test(NAME query003 DESCRIPTION "Outputs correct error message when querying for not installed packages")
 pacmanpp_add_test(NAME query004 DESCRIPTION "Outputs correct package information when querying for package information")
+pacmanpp_add_test(NAME query005 DESCRIPTION "Outputs package file list when querying for package file list")
 pacmanpp_add_test(NAME changelog001 DESCRIPTION "Outputs changelog when short changelog flag is given")
 pacmanpp_add_test(NAME changelog002 DESCRIPTION "Outputs changelog when long changelog flag is given")
 pacmanpp_add_test(NAME version001 DESCRIPTION "Outputs version information when short version flag is given")
