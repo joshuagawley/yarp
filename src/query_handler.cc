@@ -75,6 +75,8 @@ std::vector<AlpmPackage> QueryHandler::GetPkgList() const {
 
   const bool kOnlyDeps =
       (options_ & QueryOptions::kDeps) == QueryOptions::kDeps;
+  const bool kOnlyExplicit =
+      (options_ & QueryOptions::kExplicit) == QueryOptions::kExplicit;
 
   if (targets_.empty()) {
     // Get the entire package cache if no specific targets are given
@@ -88,9 +90,11 @@ std::vector<AlpmPackage> QueryHandler::GetPkgList() const {
     for (const alpm_list_t *item = tmp_results; item != nullptr;
          item = item->next) {
       AlpmPackage pkg{static_cast<alpm_pkg_t *>(item->data)};
-      if (kOnlyDeps && pkg.GetReason() != ALPM_PKG_REASON_DEPEND) {
+      if ((kOnlyDeps && pkg.GetReason() != ALPM_PKG_REASON_DEPEND) ||
+          (kOnlyExplicit && pkg.GetReason() != ALPM_PKG_REASON_EXPLICIT)) {
         continue;
       }
+
       pkg_list.push_back(pkg);
     }
   } else {
@@ -100,7 +104,8 @@ std::vector<AlpmPackage> QueryHandler::GetPkgList() const {
         std::println("Error: package {} not found", target);
         continue;
       }
-      if (kOnlyDeps && (*pkg).GetReason() != ALPM_PKG_REASON_DEPEND) {
+      if ((kOnlyDeps && (*pkg).GetReason() != ALPM_PKG_REASON_DEPEND) ||
+          (kOnlyExplicit && (*pkg).GetReason() != ALPM_PKG_REASON_EXPLICIT)) {
         continue;
       }
       pkg_list.push_back(std::move(*pkg));
