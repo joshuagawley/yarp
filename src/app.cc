@@ -43,6 +43,9 @@ int App::Run() {
     case Operation::kQuery:
       HandleQuery(targets_);
       return EXIT_SUCCESS;
+    case Operation::kVersion:
+      PrintVersion();
+      return EXIT_SUCCESS;
   }
   return EXIT_SUCCESS;
 }
@@ -132,5 +135,7 @@ void App::PrintPkgChangelog(const AlpmPackage &pkg) const {
 void App::PrintPkgInfo(const AlpmPackage &pkg) const {
   std::println("{}", pkg.GetInfo());
 }
+
+void App::PrintVersion() const { std::println("{}", program_name_); }
 
 }  // namespace pacmanpp

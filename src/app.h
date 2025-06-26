@@ -29,6 +29,7 @@ class App {
   void PrintHelp() const;
   void PrintPkgChangelog(const AlpmPackage &pkg) const;
   void PrintPkgInfo(const AlpmPackage &pkg) const;
+  void PrintVersion() const;
 
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
