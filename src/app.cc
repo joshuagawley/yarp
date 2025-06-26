@@ -139,7 +139,7 @@ void App::PrintPkgInfo(const AlpmPackage &pkg) const {
 }
 
 void App::PrintVersion() const {
-  std::println("{} {}", kPacmanppName, kPacmanppVersion);
+  std::println("{} version {}", kPacmanppName, kPacmanppVersion);
 }
 
 }  // namespace pacmanpp

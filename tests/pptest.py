@@ -214,4 +214,4 @@ class Test:
     def test_version_output(self, version_flag: str) -> None:
         result = self.run([version_flag])
         self.assert_returncode(result, 0)
-        self.assert_equals(result.stdout, "pacmanpp 0.0.0\n")
+        self.assert_equals(result.stdout, "pacmanpp version 0.0.0\n")
