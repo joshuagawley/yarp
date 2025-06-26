@@ -53,6 +53,7 @@ int QueryHandler::Execute() {
   }
 
   std::vector<AlpmPackage> pkg_list = GetPkgList();
+  if (pkg_list.empty()) return EXIT_FAILURE;
 
   for (const AlpmPackage &pkg : pkg_list) {
     if ((options_ & QueryOptions::kChangelog) == QueryOptions::kChangelog) {
@@ -65,12 +66,15 @@ int QueryHandler::Execute() {
       std::println("{} {}", pkg.GetName(), pkg.GetVersion());
     }
   }
-  
+
   return EXIT_SUCCESS;
 }
 
 std::vector<AlpmPackage> QueryHandler::GetPkgList() const {
   std::vector<AlpmPackage> pkg_list;
+
+  const bool kOnlyDeps =
+      (options_ & QueryOptions::kDeps) == QueryOptions::kDeps;
 
   if (targets_.empty()) {
     // Get the entire package cache if no specific targets are given
@@ -83,13 +87,20 @@ std::vector<AlpmPackage> QueryHandler::GetPkgList() const {
     }
     for (const alpm_list_t *item = tmp_results; item != nullptr;
          item = item->next) {
-      pkg_list.emplace_back(static_cast<alpm_pkg_t *>(item->data));
+      AlpmPackage pkg{static_cast<alpm_pkg_t *>(item->data)};
+      if (kOnlyDeps && pkg.GetReason() != ALPM_PKG_REASON_DEPEND) {
+        continue;
+      }
+      pkg_list.push_back(pkg);
     }
   } else {
     for (std::string_view target : targets_) {
       std::optional<AlpmPackage> pkg = alpm_.DbGetPkg(local_db_, target);
       if (!pkg.has_value()) {
         std::println("Error: package {} not found", target);
+        continue;
+      }
+      if (kOnlyDeps && (*pkg).GetReason() != ALPM_PKG_REASON_DEPEND) {
         continue;
       }
       pkg_list.push_back(std::move(*pkg));
