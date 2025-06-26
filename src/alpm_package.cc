@@ -165,6 +165,18 @@ void PrintValidation(std::stringstream &ss, const int validation) {
 
 namespace pacmanpp {
 
+std::string AlpmPackage::GetFileList(std::string_view root_path) const {
+  std::stringstream ss;
+
+  const alpm_filelist_t *file_list = GetFiles();
+
+  for (std::size_t i = 0; i < file_list->count; ++i) {
+    std::println(ss, "{} {}{}", GetName(), root_path, file_list->files[i].name);
+  }
+
+  return ss.str();
+}
+
 std::string AlpmPackage::GetInfo() const {
   std::stringstream ss;
 
@@ -246,6 +258,10 @@ alpm_list_t *AlpmPackage::GetConflicts() const noexcept {
 
 alpm_list_t *AlpmPackage::GetReplaces() const noexcept {
   return alpm_pkg_get_replaces(pkg_);
+}
+
+alpm_filelist_t *AlpmPackage::GetFiles() const noexcept {
+  return alpm_pkg_get_files(pkg_);
 }
 
 alpm_list_t *AlpmPackage::ComputeOptionalFor() const noexcept {
