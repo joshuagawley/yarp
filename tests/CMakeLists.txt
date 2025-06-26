@@ -34,6 +34,7 @@ pacmanpp_add_test(NAME query008 DESCRIPTION "Correct output when querying for ex
 pacmanpp_add_test(NAME query009 DESCRIPTION "Correct output when querying for package installed as dependency with deps filter")
 pacmanpp_add_test(NAME query010 DESCRIPTION "Correct output when querying for explicitly installed package with explicit filter")
 pacmanpp_add_test(NAME query011 DESCRIPTION "Correct output when querying for package installed as dependency with explicit filter")
+pacmanpp_add_test(NAME query012 DESCRIPTION "Correct output when checking package files")
 pacmanpp_add_test(NAME changelog001 DESCRIPTION "Outputs changelog when short changelog flag is given")
 pacmanpp_add_test(NAME changelog002 DESCRIPTION "Outputs changelog when long changelog flag is given")
 pacmanpp_add_test(NAME version001 DESCRIPTION "Outputs version information when short version flag is given")
