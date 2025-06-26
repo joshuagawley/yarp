@@ -12,7 +12,7 @@ with pptest.TestEnvironment() as env:
         ["--root", str(env.root), "--dbpath", str(env.db_path), "-Q", "bar"]
     )
 
-    test.assert_returncode(result, 0)
+    test.assert_returncode(result, 1)
     test.assert_equals(result.stdout, "Error: package bar not found\n")
 
 test.exit_with_result()

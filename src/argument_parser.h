@@ -14,14 +14,15 @@
 
 namespace {
 
-constexpr const char *kOptString = "hQVcgilv";
+constexpr const char *kOptString = "dhQVcgilv";
 
-static constexpr std::array<struct option, 11> kOpts = {{
+static constexpr std::array<struct option, 12> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
     {"version", no_argument, nullptr, 'V'},
     {"changelog", no_argument, nullptr, 'c'},
     {"groups", no_argument, nullptr, 'g'},
+    {"deps", no_argument, nullptr, 'd'},
     {"info", no_argument, nullptr, 'i'},
     {"list", no_argument, nullptr, 'l'},
     {"root", required_argument, nullptr, 'r'},
@@ -62,6 +63,9 @@ class ArgumentParser {
           break;
         case 'g':
           query_options |= QueryOptions::kGroups;
+          break;
+        case 'd':
+          query_options |= QueryOptions::kDeps;
           break;
         case 'i':
           query_options |= QueryOptions::kInfo;
