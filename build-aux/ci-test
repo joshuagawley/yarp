@@ -43,7 +43,7 @@ endgroup
 
 # test, excluding changelog tests
 group 'test'
-cd "$builddir" && ctest
+cd "$builddir" && ctest --output-on-failure
 endgroup
 
 # install
