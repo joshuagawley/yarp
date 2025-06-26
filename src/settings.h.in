@@ -1,0 +1,13 @@
+#ifndef PACMANPP_SETTINGS_H_
+#define PACMANPP_SETTINGS_H_
+
+#include <string_view>
+
+namespace pacmanpp {
+
+constexpr std::string_view kPacmanppName = "@CMAKE_PROJECT_NAME@";
+constexpr std::string_view kPacmanppVersion = "@PACMANPP_VERSION@";
+
+}  // namespace pacmanpp
+
+#endif  // PACMANPP_SETTINGS_H_

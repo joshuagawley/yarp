@@ -1,7 +1,46 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.23)
-project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
+project(pacmanpp LANGUAGES CXX)
+
+# Extract version information from version.txt. The first line that looks like
+# a version string is used, so the file supports comments
+file(STRINGS version.txt version_txt REGEX "^[0-9]+\\.[0-9]+\\.[0-9]+.*$" LIMIT_COUNT 1)
+
+find_package(Git REQUIRED)
+execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --show-toplevel
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  RESULT_VARIABLE git_top_dir_result
+  OUTPUT_VARIABLE git_top_dir
+  OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+
+# Set fallback first, override if more information (from git) is found
+set(PACMANPP_VERSION "${version_txt}")
+
+# Prevent formatting errors & resolve symlinks (REALPATH)
+get_filename_component(resolved_project_source_dir ${PROJECT_SOURCE_DIR} REALPATH)
+if(NOT ("${git_top_dir}" STREQUAL ""))
+  get_filename_component(git_top_dir ${git_top_dir} REALPATH)
+endif()
+
+if(git_top_dir_result EQUAL 0 AND git_top_dir STREQUAL resolved_project_source_dir)
+  # If we are in a git repo we can get the version information from git describe
+  execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --dirty=-dev
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    RESULT_VARIABLE git_describe_result
+    OUTPUT_VARIABLE git_describe
+    OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+
+  if(git_describe_result EQUAL 0)
+    set(PACMANPP_VERSION "${git_describe}")
+  else()
+    message(STATUS "Could not detect version with git, falling back to built-in version information.")
+  endif()
+
+else()
+  message(STATUS "CMake and git directory mismatch, falling back to built-in version information.") # Assuming that if git rev-parse doesn't return 0, git describe won't either
+endif()
+
 
 include(CTest)
 
@@ -73,6 +112,12 @@ endif()
 
 find_package(Alpm REQUIRED)
 
+configure_file(
+  ${CMAKE_CURRENT_LIST_DIR}/src/settings.h.in
+  ${CMAKE_BINARY_DIR}/src/settings.h
+  ESCAPE_QUOTES
+)
+
 set(
     PACMANPP_SOURCES
     src/alpm.cc
@@ -90,6 +135,7 @@ set(
     src/bitwise_enum.h
     src/config.h
     src/operation.h
+    ${CMAKE_BINARY_DIR}/src/settings.h
 )
 
 add_executable(pacmanpp)
@@ -105,6 +151,8 @@ target_sources(
     FILES
         ${PACMANPP_HEADERS}
 )
+
+target_include_directories(pacmanpp PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src")
 
 target_compile_options(pacmanpp PRIVATE ${COMPILE_FLAGS})
 target_compile_features(pacmanpp PRIVATE cxx_std_23)

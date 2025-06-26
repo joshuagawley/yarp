@@ -14,6 +14,7 @@
 #include "alpm_package.h"
 #include "config.h"
 #include "operation.h"
+#include "settings.h"
 
 namespace pacmanpp {
 
@@ -37,7 +38,6 @@ class App {
   Operation operation_ = Operation::kNone;
   QueryOptions query_options_ = QueryOptions::kNone;
   std::vector<std::string> targets_;
-  const char *program_name_;
 };
 
 }  // namespace pacmanpp
