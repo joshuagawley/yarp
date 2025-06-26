@@ -99,6 +99,8 @@ void App::HandleQuery(const std::vector<std::string> &targets) {
     if ((query_options_ & QueryOptions::kChangelog) ==
         QueryOptions::kChangelog) {
       PrintPkgChangelog(pkg);
+    } else if ((query_options_ & QueryOptions::kList) == QueryOptions::kList) {
+      PrintPkgFileList(pkg);
     } else if ((query_options_ & QueryOptions::kInfo) == QueryOptions::kInfo) {
       PrintPkgInfo(pkg);
     } else {
@@ -132,6 +134,10 @@ void App::PrintPkgChangelog(const AlpmPackage &pkg) const {
     std::println("Error: could not close changelog.");
   }
   std::println("");  // Add newline at the end
+}
+
+void App::PrintPkgFileList(const AlpmPackage &pkg) const {
+  std::println("{}", pkg.GetFileList(alpm_->OptionGetRoot()));
 }
 
 void App::PrintPkgInfo(const AlpmPackage &pkg) const {

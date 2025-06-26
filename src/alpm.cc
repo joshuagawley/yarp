@@ -44,4 +44,6 @@ const char *Alpm::DepComputeString(const alpm_depend_t *dep) {
   return alpm_dep_compute_string(dep);
 }
 
+const char *Alpm::OptionGetRoot() { return alpm_option_get_root(handle_); }
+
 }  // namespace pacmanpp

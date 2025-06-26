@@ -28,6 +28,7 @@ class AlpmPackage {
   alpm_list_t *GetLicenses() const noexcept;
   alpm_list_t *GetConflicts() const noexcept;
   alpm_list_t *GetReplaces() const noexcept;
+  alpm_filelist_t *GetFiles() const noexcept;
 
   alpm_list_t *ComputeOptionalFor() const noexcept;
   alpm_list_t *ComputeRequiredBy() const noexcept;
@@ -45,6 +46,7 @@ class AlpmPackage {
   std::size_t ChangelogRead(void *fp, char *buf, std::size_t size) const;
   int ChangelogClose(void *fp) const noexcept;
 
+  std::string GetFileList(std::string_view root_path) const;
   std::string GetInfo() const;
 
  private:

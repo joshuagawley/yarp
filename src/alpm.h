@@ -100,6 +100,8 @@ class Alpm {
 
   static const char *DepComputeString(const alpm_depend_t *dep);
 
+  const char *OptionGetRoot();
+
  private:
   alpm_handle_t *handle_;
   alpm_errno_t err = ALPM_ERR_OK;

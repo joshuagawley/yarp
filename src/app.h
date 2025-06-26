@@ -29,6 +29,7 @@ class App {
   void HandleQuery(const std::vector<std::string> &targets);
   void PrintHelp() const;
   void PrintPkgChangelog(const AlpmPackage &pkg) const;
+  void PrintPkgFileList(const AlpmPackage &pkg) const;
   void PrintPkgInfo(const AlpmPackage &pkg) const;
   void PrintVersion() const;
 
