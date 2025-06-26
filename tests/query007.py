@@ -8,7 +8,7 @@ test = pptest.Test(sys.argv[1])
 with pptest.TestEnvironment() as env:
 
     result = test.run(
-        ["-Qg", "ttf-nerd-fonts-symbols"]
+        ["-Qg", "nerd-fonts"]
     )
 
     test.assert_returncode(result, 0)
