@@ -6,6 +6,7 @@
 #include <alpm_list.h>
 #include <sys/types.h>
 
+#include <cstdlib>
 #include <ctime>
 #include <print>
 #include <span>
@@ -69,6 +70,37 @@ void App::PrintHelp() const {
 void App::HandleQuery(const std::vector<std::string> &targets) {
   alpm_db_t *local_db = alpm_->GetLocalDb();
   std::vector<AlpmPackage> results;
+
+  // TODO: refactor this mess
+  if ((query_options_ & QueryOptions::kGroups) == QueryOptions::kGroups) {
+    if (targets.empty()) {
+      alpm_list_t *all_groups = alpm_db_get_groupcache(local_db);
+      for (alpm_list_t *elem = all_groups; elem != nullptr; elem = elem->next) {
+        alpm_group_t *group = static_cast<alpm_group_t *>(elem->data);
+
+        for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
+             pkgs = pkgs->next) {
+          AlpmPackage pkg = AlpmPackage{static_cast<alpm_pkg_t *>(pkgs->data)};
+          std::println("{} {}", group->name, pkg.GetName());
+        }
+      }
+    } else {
+      for (std::string_view target : targets) {
+        alpm_group_t *group = alpm_db_get_group(local_db, target.data());
+        if (group == nullptr) {
+          std::println(stderr, "Error: group '{}' was not found", target);
+          return;
+        }
+
+        for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
+             pkgs = pkgs->next) {
+          AlpmPackage pkg = AlpmPackage{static_cast<alpm_pkg_t *>(pkgs->data)};
+          std::println("{} {}", group->name, pkg.GetName());
+        }
+      }
+    }
+    return;
+  }
 
   if (targets.empty()) {
     // Get the entire package cache if no specific targets are given
