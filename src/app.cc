@@ -19,6 +19,7 @@
 #include "operation.h"
 #include "query_handler.h"
 #include "settings.h"
+#include "src/help_handler.h"
 #include "src/operation_handler.h"
 #include "src/settings.h.in"
 #include "src/version_handler.h"
@@ -44,7 +45,7 @@ int App::Run() {
       std::println("Error: no operation specified (use -h for help)");
       return EXIT_FAILURE;
     case Operation::kHelp:
-      PrintHelp();
+      ExecuteOperation<HelpHandler>();
       return EXIT_SUCCESS;
     case Operation::kQuery: {
       return ExecuteOperation<QueryHandler>(query_options_, targets_);

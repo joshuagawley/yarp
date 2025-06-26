@@ -123,6 +123,7 @@ set(
     src/alpm.cc
     src/alpm_package.cc
     src/app.cc
+    src/help_handler.cc
     src/main.cc
     src/query_handler.cc
     src/version_handler.cc
@@ -136,6 +137,7 @@ set(
     src/argument_parser.h
     src/bitwise_enum.h
     src/config.h
+    src/help_handler.h
     src/operation.h
     src/operation_handler.h
     src/query_handler.h
