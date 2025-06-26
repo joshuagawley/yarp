@@ -124,6 +124,7 @@ set(
     src/alpm_package.cc
     src/app.cc
     src/main.cc
+    src/query_handler.cc
 )
 
 set(
@@ -135,6 +136,8 @@ set(
     src/bitwise_enum.h
     src/config.h
     src/operation.h
+    src/operation_handler.h
+    src/query_handler.h
     ${CMAKE_BINARY_DIR}/src/settings.h
 )
 

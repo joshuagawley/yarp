@@ -17,6 +17,7 @@
 #include "alpm_package.h"
 #include "argument_parser.h"
 #include "operation.h"
+#include "query_handler.h"
 #include "settings.h"
 #include "src/settings.h.in"
 
@@ -43,9 +44,10 @@ int App::Run() {
     case Operation::kHelp:
       PrintHelp();
       return EXIT_SUCCESS;
-    case Operation::kQuery:
-      HandleQuery(targets_);
-      return EXIT_SUCCESS;
+    case Operation::kQuery: {
+      QueryHandler query_handler{config_, *alpm_, query_options_, targets_};
+      return query_handler.Execute();
+    }
     case Operation::kVersion:
       PrintVersion();
       return EXIT_SUCCESS;
