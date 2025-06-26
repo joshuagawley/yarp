@@ -8,13 +8,12 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "alpm.h"
-#include "alpm_package.h"
 #include "config.h"
 #include "operation.h"
-#include "settings.h"
 
 namespace pacmanpp {
 
@@ -25,13 +24,13 @@ class App {
   int Run();
 
  private:
+  template <typename Handler, typename... Args>
+  int ExecuteOperation(Args &&...args) {
+    Handler handler{config_, *alpm_, std::forward<Args>(args)...};
+    return handler.Execute();
+  }
+
   void PrintVerbose() const;
-  void HandleQuery(const std::vector<std::string> &targets);
-  void PrintHelp() const;
-  void PrintPkgChangelog(const AlpmPackage &pkg) const;
-  void PrintPkgFileList(const AlpmPackage &pkg) const;
-  void PrintPkgInfo(const AlpmPackage &pkg) const;
-  void PrintVersion() const;
 
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
