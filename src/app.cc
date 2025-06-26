@@ -19,7 +19,9 @@
 #include "operation.h"
 #include "query_handler.h"
 #include "settings.h"
+#include "src/operation_handler.h"
 #include "src/settings.h.in"
+#include "src/version_handler.h"
 
 namespace pacmanpp {
 
@@ -45,14 +47,11 @@ int App::Run() {
       PrintHelp();
       return EXIT_SUCCESS;
     case Operation::kQuery: {
-      QueryHandler query_handler{config_, *alpm_, query_options_, targets_};
-      return query_handler.Execute();
+      return ExecuteOperation<QueryHandler>(query_options_, targets_);
     }
     case Operation::kVersion:
-      PrintVersion();
-      return EXIT_SUCCESS;
+      return ExecuteOperation<VersionHandler>();
   }
-  return EXIT_SUCCESS;
 }
 
 void App::PrintVerbose() const {

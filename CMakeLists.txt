@@ -125,6 +125,7 @@ set(
     src/app.cc
     src/main.cc
     src/query_handler.cc
+    src/version_handler.cc
 )
 
 set(
@@ -138,6 +139,7 @@ set(
     src/operation.h
     src/operation_handler.h
     src/query_handler.h
+    src/version_handler.h
     ${CMAKE_BINARY_DIR}/src/settings.h
 )
 

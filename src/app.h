@@ -8,13 +8,12 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "alpm.h"
-#include "alpm_package.h"
 #include "config.h"
 #include "operation.h"
-#include "settings.h"
 
 namespace pacmanpp {
 
@@ -25,6 +24,12 @@ class App {
   int Run();
 
  private:
+  template <typename Handler, typename... Args>
+  int ExecuteOperation(Args &&...args) {
+    Handler handler{config_, *alpm_, std::forward<Args>(args)...};
+    return handler.Execute();
+  }
+
   void PrintVerbose() const;
   void PrintHelp() const;
   void PrintVersion() const;
