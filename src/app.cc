@@ -15,8 +15,6 @@
 #include "help_handler.h"
 #include "operation.h"
 #include "query_handler.h"
-#include "settings.h"
-#include "settings.h.in"
 #include "version_handler.h"
 
 namespace pacmanpp {
@@ -40,11 +38,9 @@ int App::Run() {
       std::println("Error: no operation specified (use -h for help)");
       return EXIT_FAILURE;
     case Operation::kHelp:
-      ExecuteOperation<HelpHandler>();
-      return EXIT_SUCCESS;
-    case Operation::kQuery: {
+      return ExecuteOperation<HelpHandler>();
+    case Operation::kQuery:
       return ExecuteOperation<QueryHandler>(query_options_, targets_);
-    }
     case Operation::kVersion:
       return ExecuteOperation<VersionHandler>();
   }
