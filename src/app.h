@@ -26,11 +26,7 @@ class App {
 
  private:
   void PrintVerbose() const;
-  void HandleQuery(const std::vector<std::string> &targets);
   void PrintHelp() const;
-  void PrintPkgChangelog(const AlpmPackage &pkg) const;
-  void PrintPkgFileList(const AlpmPackage &pkg) const;
-  void PrintPkgInfo(const AlpmPackage &pkg) const;
   void PrintVersion() const;
 
   // use unique_ptr for lazy initialization
