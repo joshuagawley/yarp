@@ -200,7 +200,7 @@ class Test:
     def test_help_output(self, help_flag: str) -> None:
         result = self.run([help_flag])
         self.assert_returncode(result, 0)
-        self.assert_contains(result.stdout, f"Usage: {self.pacmanpp} <operation>")
+        self.assert_contains(result.stdout, f"Usage: pacmanpp <operation>")
         self.assert_contains(result.stdout, "operations:")
         self.assert_contains(result.stdout, "{-h, --help}")
         self.assert_contains(result.stdout, "{-Q, --query}")
