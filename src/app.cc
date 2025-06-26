@@ -7,22 +7,17 @@
 #include <sys/types.h>
 
 #include <cstdlib>
-#include <ctime>
 #include <print>
 #include <span>
-#include <string_view>
-#include <vector>
 
 #include "alpm.h"
-#include "alpm_package.h"
 #include "argument_parser.h"
+#include "help_handler.h"
 #include "operation.h"
 #include "query_handler.h"
 #include "settings.h"
-#include "src/help_handler.h"
-#include "src/operation_handler.h"
-#include "src/settings.h.in"
-#include "src/version_handler.h"
+#include "settings.h.in"
+#include "version_handler.h"
 
 namespace pacmanpp {
 
@@ -58,15 +53,6 @@ int App::Run() {
 void App::PrintVerbose() const {
   std::println("Root      : {}", config_.get_root());
   std::println("DB Path   : {}", config_.get_db_path());
-}
-
-void App::PrintHelp() const {
-  std::println("Usage: {} <operation>", kPacmanppName);
-  std::println("operations:");
-  std::println("  {} {{-h, --help}}                  Show this help message",
-               kPacmanppName);
-  std::println("  {} {{-Q, --query}} [package(s)]    Query installed packages",
-               kPacmanppName);
 }
 
 }  // namespace pacmanpp
