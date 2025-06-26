@@ -29,3 +29,5 @@ pacmanpp_add_test(NAME query003 DESCRIPTION "Outputs correct error message when 
 pacmanpp_add_test(NAME query004 DESCRIPTION "Outputs correct package information when querying for package information")
 pacmanpp_add_test(NAME changelog001 DESCRIPTION "Outputs changelog when short changelog flag is given")
 pacmanpp_add_test(NAME changelog002 DESCRIPTION "Outputs changelog when long changelog flag is given")
+pacmanpp_add_test(NAME version001 DESCRIPTION "Outputs version information when short version flag is given")
+pacmanpp_add_test(NAME version002 DESCRIPTION "Outputs version information when long version flag is given")

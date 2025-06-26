@@ -14,6 +14,7 @@
 #include "alpm_package.h"
 #include "config.h"
 #include "operation.h"
+#include "settings.h"
 
 namespace pacmanpp {
 
@@ -29,6 +30,7 @@ class App {
   void PrintHelp() const;
   void PrintPkgChangelog(const AlpmPackage &pkg) const;
   void PrintPkgInfo(const AlpmPackage &pkg) const;
+  void PrintVersion() const;
 
   // use unique_ptr for lazy initialization
   std::unique_ptr<Alpm> alpm_;
@@ -36,7 +38,6 @@ class App {
   Operation operation_ = Operation::kNone;
   QueryOptions query_options_ = QueryOptions::kNone;
   std::vector<std::string> targets_;
-  const char *program_name_;
 };
 
 }  // namespace pacmanpp

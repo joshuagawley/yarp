@@ -16,10 +16,12 @@
 #include "alpm_package.h"
 #include "argument_parser.h"
 #include "operation.h"
+#include "settings.h"
+#include "src/settings.h.in"
 
 namespace pacmanpp {
 
-App::App(std::span<char *> args) : program_name_(*args.cbegin()) {
+App::App(std::span<char *> args) {
   auto arg_parser = ArgumentParser{static_cast<int>(args.size()), args.data()};
   arg_parser.ParseArgs(operation_, query_options_, targets_, config_);
 
@@ -43,6 +45,9 @@ int App::Run() {
     case Operation::kQuery:
       HandleQuery(targets_);
       return EXIT_SUCCESS;
+    case Operation::kVersion:
+      PrintVersion();
+      return EXIT_SUCCESS;
   }
   return EXIT_SUCCESS;
 }
@@ -53,12 +58,12 @@ void App::PrintVerbose() const {
 }
 
 void App::PrintHelp() const {
-  std::println("Usage: {} <operation>", program_name_);
+  std::println("Usage: {} <operation>", kPacmanppName);
   std::println("operations:");
-  std::println(
-      "  pacmanpp {{-h, --help}}                  Show this help message");
-  std::println(
-      "  pacmanpp {{-Q, --query}} [package(s)]    Query installed packages");
+  std::println("  {} {{-h, --help}}                  Show this help message",
+               kPacmanppName);
+  std::println("  {} {{-Q, --query}} [package(s)]    Query installed packages",
+               kPacmanppName);
 }
 
 void App::HandleQuery(const std::vector<std::string> &targets) {
@@ -131,6 +136,10 @@ void App::PrintPkgChangelog(const AlpmPackage &pkg) const {
 
 void App::PrintPkgInfo(const AlpmPackage &pkg) const {
   std::println("{}", pkg.GetInfo());
+}
+
+void App::PrintVersion() const {
+  std::println("{} version {}", kPacmanppName, kPacmanppVersion);
 }
 
 }  // namespace pacmanpp

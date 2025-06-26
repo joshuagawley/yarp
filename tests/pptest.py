@@ -200,7 +200,7 @@ class Test:
     def test_help_output(self, help_flag: str) -> None:
         result = self.run([help_flag])
         self.assert_returncode(result, 0)
-        self.assert_contains(result.stdout, f"Usage: {self.pacmanpp} <operation>")
+        self.assert_contains(result.stdout, f"Usage: pacmanpp <operation>")
         self.assert_contains(result.stdout, "operations:")
         self.assert_contains(result.stdout, "{-h, --help}")
         self.assert_contains(result.stdout, "{-Q, --query}")
@@ -210,3 +210,8 @@ class Test:
         self.assert_returncode(result, 1)
         self.assert_contains(result.stdout, "Root      : /")
         self.assert_contains(result.stdout, "DB Path   : /var/lib/pacman")
+    
+    def test_version_output(self, version_flag: str) -> None:
+        result = self.run([version_flag])
+        self.assert_returncode(result, 0)
+        self.assert_equals(result.stdout, "pacmanpp version 0.0.0\n")
