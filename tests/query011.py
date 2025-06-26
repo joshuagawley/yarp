@@ -12,6 +12,6 @@ with pptest.TestEnvironment() as env:
     )
 
     test.assert_returncode(result, 0)
-    test.assert_contains(result.stdout, "jsoncpp 1.9.6-3")
+    test.assert_contains(result.stdout, "powertop 2.15-2")
 
 test.exit_with_result()
