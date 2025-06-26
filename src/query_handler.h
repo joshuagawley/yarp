@@ -28,6 +28,7 @@ class QueryHandler : public OperationHandler {
   int HandleGroups() const;
   std::vector<AlpmPackage> GetPkgList() const;
   void PrintPkgFileList(const AlpmPackage &pkg) const;
+  void CheckPkgFiles(const AlpmPackage &pkg) const;
 
   QueryOptions options_;
   std::vector<std::string> targets_;
