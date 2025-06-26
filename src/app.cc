@@ -43,6 +43,8 @@ int App::Run() {
       return ExecuteOperation<QueryHandler>(query_options_, targets_);
     case Operation::kVersion:
       return ExecuteOperation<VersionHandler>();
+    default:
+      return EXIT_SUCCESS;
   }
 }
 
