@@ -10,7 +10,7 @@ namespace pacmanpp {
 
 class OperationHandler {
  public:
-  constexpr OperationHandler(Config &config, Alpm &alpm)
+  constexpr OperationHandler(Config &config, alpmpp::Alpm &alpm)
       : config_(config), alpm_(alpm) {}
 
   virtual ~OperationHandler() = default;
@@ -19,7 +19,7 @@ class OperationHandler {
   virtual int Execute() = 0;
 
   Config &config_;
-  Alpm &alpm_;
+  alpmpp::Alpm &alpm_;
 };
 
 }  // namespace pacmanpp

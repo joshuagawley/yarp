@@ -163,7 +163,7 @@ void PrintValidation(std::stringstream &ss, const int validation) {
 
 }  // namespace
 
-namespace pacmanpp {
+namespace alpmpp {
 
 std::string AlpmPackage::GetFileList(std::string_view root_path) const {
   std::stringstream ss;
@@ -309,4 +309,4 @@ int AlpmPackage::ChangelogClose(void *fp) const noexcept {
   return alpm_pkg_changelog_close(pkg_, fp);
 }
 
-}  // namespace pacmanpp
+}  // namespace alpmpp

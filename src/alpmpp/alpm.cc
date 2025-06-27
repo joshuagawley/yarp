@@ -10,7 +10,7 @@
 
 #include "alpm_package.h"
 
-namespace pacmanpp {
+namespace alpmpp {
 
 Alpm::Alpm(std::string_view root, std::string_view dbpath) {
   handle_ = alpm_initialize(root.data(), dbpath.data(), &err);
@@ -46,4 +46,4 @@ const char *Alpm::DepComputeString(const alpm_depend_t *dep) {
 
 const char *Alpm::OptionGetRoot() { return alpm_option_get_root(handle_); }
 
-}  // namespace pacmanpp
+}  // namespace alpmpp

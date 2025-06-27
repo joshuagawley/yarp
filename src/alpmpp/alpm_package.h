@@ -8,7 +8,7 @@
 
 #include <string_view>
 
-namespace pacmanpp {
+namespace alpmpp {
 
 class AlpmPackage {
  public:
@@ -53,6 +53,6 @@ class AlpmPackage {
   alpm_pkg_t *pkg_;
 };
 
-}  // namespace pacmanpp
+}  // namespace alpmpp
 
 #endif  // PACMANPP_SRC_ALPM_PACKAGE_H_

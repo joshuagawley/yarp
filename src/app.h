@@ -30,7 +30,7 @@ class App {
   void PrintVerbose() const;
 
   // use unique_ptr for lazy initialization
-  std::unique_ptr<Alpm> alpm_;
+  std::unique_ptr<alpmpp::Alpm> alpm_;
   Config config_;
   Operation operation_ = Operation::kNone;
   QueryOptions query_options_ = QueryOptions::kNone;

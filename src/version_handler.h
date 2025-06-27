@@ -11,7 +11,7 @@ namespace pacmanpp {
 
 class VersionHandler : public OperationHandler {
  public:
-  constexpr VersionHandler(Config &config, Alpm &alpm)
+  constexpr VersionHandler(Config &config, alpmpp::Alpm &alpm)
       : OperationHandler(config, alpm) {}
 
   virtual ~VersionHandler() = default;

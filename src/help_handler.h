@@ -11,7 +11,7 @@ namespace pacmanpp {
 
 class HelpHandler : public OperationHandler {
  public:
-  constexpr HelpHandler(Config &config, Alpm &alpm)
+  constexpr HelpHandler(Config &config, alpmpp::Alpm &alpm)
       : OperationHandler(config, alpm) {}
 
   virtual ~HelpHandler() = default;
