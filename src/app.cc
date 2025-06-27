@@ -2,15 +2,13 @@
 
 #include "app.h"
 
-#include <alpm.h>
-#include <alpm_list.h>
 #include <sys/types.h>
 
 #include <cstdlib>
 #include <print>
 #include <span>
 
-#include "alpm.h"
+#include "alpmpp/alpm.h"
 #include "argument_parser.h"
 #include "help_handler.h"
 #include "operation.h"

@@ -4,10 +4,10 @@
 #define PACMANPP_QUERY_HANDLER_H_
 
 #include "alpm.h"
+#include "alpmpp/alpm_package.h"
 #include "config.h"
 #include "operation.h"
 #include "operation_handler.h"
-#include "src/alpm_package.h"
 
 namespace pacmanpp {
 

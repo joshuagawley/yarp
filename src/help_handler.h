@@ -3,7 +3,7 @@
 #ifndef PACMANPP_HELP_HANDLER_H_
 #define PACMANPP_HELP_HANDLER_H_
 
-#include "alpm.h"
+#include "alpmpp/alpm.h"
 #include "config.h"
 #include "operation_handler.h"
 

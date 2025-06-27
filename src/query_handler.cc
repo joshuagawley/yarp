@@ -2,13 +2,11 @@
 
 #include "query_handler.h"
 
-#include <alpm.h>
-
 #include <cstdlib>
 #include <filesystem>
 #include <print>
 
-#include "alpm_package.h"
+#include "alpmpp/alpm_package.h"
 #include "operation.h"
 
 namespace {
