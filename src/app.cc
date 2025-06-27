@@ -21,9 +21,7 @@ App::App(std::span<char *> args) {
   auto arg_parser = ArgumentParser{static_cast<int>(args.size()), args.data()};
   arg_parser.ParseArgs(operation_, query_options_, targets_, config_);
 
-  if (operation_ == Operation::kQuery) {
-    alpm_ = std::make_unique<Alpm>(config_.get_root(), config_.get_db_path());
-  }
+  alpm_ = std::make_unique<Alpm>(config_.get_root(), config_.get_db_path());
 }
 
 int App::Run() {
