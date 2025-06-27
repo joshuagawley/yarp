@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-#include "alpm_package.h"
+#include "package.h"
 
 #include <alpm.h>
 #include <alpm_list.h>

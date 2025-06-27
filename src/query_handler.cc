@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <print>
 
-#include "alpmpp/alpm_package.h"
+#include "alpmpp/package.h"
 #include "operation.h"
 
 namespace {

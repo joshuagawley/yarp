@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include "alpm_package.h"
+#include "package.h"
 
 namespace alpmpp {
 

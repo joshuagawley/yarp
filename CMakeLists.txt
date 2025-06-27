@@ -120,12 +120,12 @@ configure_file(
 
 set(ALPMPP_SOURCES
     src/alpmpp/alpm.cc
-    src/alpmpp/alpm_package.cc
+    src/alpmpp/package.cc
 )
 
 set(ALPMPP_HEADERS
     src/alpmpp/alpm.h
-    src/alpmpp/alpm_package.h
+    src/alpmpp/package.h
 )
 
 add_library(alpmpp)
