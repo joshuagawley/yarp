@@ -14,7 +14,7 @@
 
 #include "alpm_package.h"
 
-namespace pacmanpp {
+namespace alpmpp {
 
 namespace util {
 
@@ -107,6 +107,6 @@ class Alpm {
   alpm_errno_t err = ALPM_ERR_OK;
 };
 
-}  // namespace pacmanpp
+}  // namespace alpmpp
 
 #endif  // PACMANPP_ALPM_H_

@@ -3,15 +3,12 @@
 #ifndef PACMANPP_SRC_APP_H_
 #define PACMANPP_SRC_APP_H_
 
-#include <alpm.h>
-#include <alpm_list.h>
-
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "alpm.h"
+#include "alpmpp/alpm.h"
 #include "config.h"
 #include "operation.h"
 
@@ -33,7 +30,7 @@ class App {
   void PrintVerbose() const;
 
   // use unique_ptr for lazy initialization
-  std::unique_ptr<Alpm> alpm_;
+  std::unique_ptr<alpmpp::Alpm> alpm_;
   Config config_;
   Operation operation_ = Operation::kNone;
   QueryOptions query_options_ = QueryOptions::kNone;

@@ -4,16 +4,17 @@
 #define PACMANPP_QUERY_HANDLER_H_
 
 #include "alpm.h"
+#include "alpmpp/alpm_package.h"
 #include "config.h"
 #include "operation.h"
 #include "operation_handler.h"
-#include "src/alpm_package.h"
 
 namespace pacmanpp {
 
 class QueryHandler : public OperationHandler {
  public:
-  constexpr QueryHandler(Config &config, Alpm &alpm, QueryOptions query_options,
+  constexpr QueryHandler(Config &config, alpmpp::Alpm &alpm,
+                         QueryOptions query_options,
                          std::vector<std::string> targets)
       : OperationHandler(config, alpm),
         options_(query_options),
@@ -26,9 +27,9 @@ class QueryHandler : public OperationHandler {
 
  private:
   int HandleGroups() const;
-  std::vector<AlpmPackage> GetPkgList() const;
-  void PrintPkgFileList(const AlpmPackage &pkg) const;
-  void CheckPkgFiles(const AlpmPackage &pkg) const;
+  std::vector<alpmpp::AlpmPackage> GetPkgList() const;
+  void PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const;
+  void CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const;
 
   QueryOptions options_;
   std::vector<std::string> targets_;

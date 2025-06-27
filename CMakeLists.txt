@@ -118,10 +118,38 @@ configure_file(
   ESCAPE_QUOTES
 )
 
+set(ALPMPP_SOURCES
+    src/alpmpp/alpm.cc
+    src/alpmpp/alpm_package.cc
+)
+
+set(ALPMPP_HEADERS
+    src/alpmpp/alpm.h
+    src/alpmpp/alpm_package.h
+)
+
+add_library(alpmpp)
+
+target_sources(
+    alpmpp
+    PRIVATE
+        ${ALPMPP_SOURCES}
+
+    PUBLIC
+    FILE_SET HEADERS
+    TYPE HEADERS
+    FILES
+        ${ALPMPP_HEADERS}
+)
+
+target_compile_options(alpmpp PRIVATE ${COMPILE_FLAGS})
+target_compile_features(alpmpp PRIVATE cxx_std_23)
+set_target_properties(alpmpp PROPERTIES CXX_EXTENSIONS OFF)
+target_include_directories(alpmpp PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src")
+target_link_libraries(alpmpp PRIVATE Alpm::Alpm)
+
 set(
     PACMANPP_SOURCES
-    src/alpm.cc
-    src/alpm_package.cc
     src/app.cc
     src/help_handler.cc
     src/main.cc
@@ -131,8 +159,6 @@ set(
 
 set(
     PACMANPP_HEADERS
-    src/alpm.h
-    src/alpm_package.h
     src/app.h
     src/argument_parser.h
     src/bitwise_enum.h
@@ -165,7 +191,7 @@ target_compile_options(pacmanpp PRIVATE ${COMPILE_FLAGS})
 target_compile_features(pacmanpp PRIVATE cxx_std_23)
 set_target_properties(pacmanpp PROPERTIES CXX_EXTENSIONS OFF)
 
-target_link_libraries(pacmanpp PRIVATE Alpm::Alpm)
+target_link_libraries(pacmanpp PRIVATE alpmpp)
 
 if(BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)

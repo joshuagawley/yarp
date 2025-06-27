@@ -2,15 +2,13 @@
 
 #include "app.h"
 
-#include <alpm.h>
-#include <alpm_list.h>
 #include <sys/types.h>
 
 #include <cstdlib>
 #include <print>
 #include <span>
 
-#include "alpm.h"
+#include "alpmpp/alpm.h"
 #include "argument_parser.h"
 #include "help_handler.h"
 #include "operation.h"
@@ -23,9 +21,8 @@ App::App(std::span<char *> args) {
   auto arg_parser = ArgumentParser{static_cast<int>(args.size()), args.data()};
   arg_parser.ParseArgs(operation_, query_options_, targets_, config_);
 
-  if (operation_ == Operation::kQuery) {
-    alpm_ = std::make_unique<Alpm>(config_.get_root(), config_.get_db_path());
-  }
+  alpm_ =
+      std::make_unique<alpmpp::Alpm>(config_.get_root(), config_.get_db_path());
 }
 
 int App::Run() {

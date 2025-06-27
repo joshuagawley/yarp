@@ -2,18 +2,16 @@
 
 #include "query_handler.h"
 
-#include <alpm.h>
-
 #include <cstdlib>
 #include <filesystem>
 #include <print>
 
-#include "alpm_package.h"
+#include "alpmpp/alpm_package.h"
 #include "operation.h"
 
 namespace {
 
-void PrintPkgChangelog(const pacmanpp::AlpmPackage &pkg) {
+void PrintPkgChangelog(const alpmpp::AlpmPackage &pkg) {
   void *fp = pkg.ChangelogOpen();
   const std::string_view pkg_name = pkg.GetName();
 
@@ -40,7 +38,7 @@ void PrintPkgChangelog(const pacmanpp::AlpmPackage &pkg) {
   std::println("");  // Add newline at the end
 }
 
-void PrintPkgInfo(const pacmanpp::AlpmPackage &pkg) {
+void PrintPkgInfo(const alpmpp::AlpmPackage &pkg) {
   std::println("{}", pkg.GetInfo());
 }
 
@@ -53,10 +51,10 @@ int QueryHandler::Execute() {
     return HandleGroups();
   }
 
-  std::vector<AlpmPackage> pkg_list = GetPkgList();
+  std::vector<alpmpp::AlpmPackage> pkg_list = GetPkgList();
   if (pkg_list.empty()) return EXIT_FAILURE;
 
-  for (const AlpmPackage &pkg : pkg_list) {
+  for (const alpmpp::AlpmPackage &pkg : pkg_list) {
     if ((options_ & QueryOptions::kChangelog) == QueryOptions::kChangelog) {
       PrintPkgChangelog(pkg);
     } else if ((options_ & QueryOptions::kList) == QueryOptions::kList) {
@@ -73,8 +71,8 @@ int QueryHandler::Execute() {
   return EXIT_SUCCESS;
 }
 
-std::vector<AlpmPackage> QueryHandler::GetPkgList() const {
-  std::vector<AlpmPackage> pkg_list;
+std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
+  std::vector<alpmpp::AlpmPackage> pkg_list;
 
   const bool kOnlyDeps =
       (options_ & QueryOptions::kDeps) == QueryOptions::kDeps;
@@ -92,7 +90,7 @@ std::vector<AlpmPackage> QueryHandler::GetPkgList() const {
     }
     for (const alpm_list_t *item = tmp_results; item != nullptr;
          item = item->next) {
-      AlpmPackage pkg{static_cast<alpm_pkg_t *>(item->data)};
+      alpmpp::AlpmPackage pkg{static_cast<alpm_pkg_t *>(item->data)};
       if ((kOnlyDeps && pkg.GetReason() != ALPM_PKG_REASON_DEPEND) ||
           (kOnlyExplicit && pkg.GetReason() != ALPM_PKG_REASON_EXPLICIT)) {
         continue;
@@ -102,7 +100,8 @@ std::vector<AlpmPackage> QueryHandler::GetPkgList() const {
     }
   } else {
     for (std::string_view target : targets_) {
-      std::optional<AlpmPackage> pkg = alpm_.DbGetPkg(local_db_, target);
+      std::optional<alpmpp::AlpmPackage> pkg =
+          alpm_.DbGetPkg(local_db_, target);
       if (!pkg.has_value()) {
         std::println("Error: package {} not found", target);
         continue;
@@ -126,7 +125,8 @@ int QueryHandler::HandleGroups() const {
 
       for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
            pkgs = pkgs->next) {
-        AlpmPackage pkg = AlpmPackage{static_cast<alpm_pkg_t *>(pkgs->data)};
+        alpmpp::AlpmPackage pkg =
+            alpmpp::AlpmPackage{static_cast<alpm_pkg_t *>(pkgs->data)};
         std::println("{} {}", group->name, pkg.GetName());
       }
     }
@@ -140,7 +140,8 @@ int QueryHandler::HandleGroups() const {
 
       for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
            pkgs = pkgs->next) {
-        AlpmPackage pkg = AlpmPackage{static_cast<alpm_pkg_t *>(pkgs->data)};
+        alpmpp::AlpmPackage pkg =
+            alpmpp::AlpmPackage{static_cast<alpm_pkg_t *>(pkgs->data)};
         std::println("{} {}", group->name, pkg.GetName());
       }
     }
@@ -148,7 +149,7 @@ int QueryHandler::HandleGroups() const {
   return EXIT_SUCCESS;
 }
 
-void QueryHandler::CheckPkgFiles(const AlpmPackage &pkg) const {
+void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
   int errors{};
   const alpm_filelist_t *files = pkg.GetFiles();
   const std::string_view root = alpm_.OptionGetRoot();
@@ -174,7 +175,7 @@ void QueryHandler::CheckPkgFiles(const AlpmPackage &pkg) const {
                files->count, errors);
 }
 
-void QueryHandler::PrintPkgFileList(const AlpmPackage &pkg) const {
+void QueryHandler::PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const {
   std::println("{}", pkg.GetFileList(alpm_.OptionGetRoot()));
 }
 
