@@ -8,6 +8,8 @@
 
 #include <string_view>
 
+#include "src/alpmpp/types.h"
+
 namespace alpmpp {
 
 class AlpmPackage {
@@ -37,7 +39,7 @@ class AlpmPackage {
   alpm_time_t GetInstallDate() const noexcept;
 
   off_t GetISize() const noexcept;
-  alpm_pkgreason_t GetReason() const noexcept;
+  AlpmPkgReason GetReason() const noexcept;
   int GetValidation() const noexcept;
 
   bool HasScriptlet() const noexcept;

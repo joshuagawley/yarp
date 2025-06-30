@@ -8,6 +8,7 @@
 
 #include "alpmpp/package.h"
 #include "operation.h"
+#include "src/alpmpp/alpm.h"
 
 namespace {
 
@@ -84,20 +85,7 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
 
     // NB: This list is owned by the alpm library and should not be freed
     // manually
-    const alpm_list_t *tmp_results = alpm_.DbGetPkgCache(local_db_);
-    if (tmp_results == nullptr) {
-      throw std::runtime_error("Error: no packages found in local database");
-    }
-    for (const alpm_list_t *item = tmp_results; item != nullptr;
-         item = item->next) {
-      alpmpp::AlpmPackage pkg{static_cast<alpm_pkg_t *>(item->data)};
-      if ((kOnlyDeps && pkg.GetReason() != ALPM_PKG_REASON_DEPEND) ||
-          (kOnlyExplicit && pkg.GetReason() != ALPM_PKG_REASON_EXPLICIT)) {
-        continue;
-      }
-
-      pkg_list.push_back(pkg);
-    }
+    pkg_list = alpm_.DbGetPkgCache(local_db_);
   } else {
     for (std::string_view target : targets_) {
       std::optional<alpmpp::AlpmPackage> pkg =
@@ -106,13 +94,16 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
         std::println("Error: package {} not found", target);
         continue;
       }
-      if ((kOnlyDeps && (*pkg).GetReason() != ALPM_PKG_REASON_DEPEND) ||
-          (kOnlyExplicit && (*pkg).GetReason() != ALPM_PKG_REASON_EXPLICIT)) {
-        continue;
-      }
       pkg_list.push_back(std::move(*pkg));
     }
   }
+
+  std::erase_if(pkg_list, [kOnlyDeps,
+                           kOnlyExplicit](const alpmpp::AlpmPackage &pkg) {
+    return (kOnlyDeps && pkg.GetReason() != alpmpp::AlpmPkgReason::kDepend) ||
+           (kOnlyExplicit &&
+            pkg.GetReason() != alpmpp::AlpmPkgReason::kExplicit);
+  });
 
   return pkg_list;
 }

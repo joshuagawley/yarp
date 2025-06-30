@@ -30,8 +30,13 @@ alpm_db_t *Alpm::GetLocalDb() const {
   return db;
 }
 
-alpm_list_t *Alpm::DbGetPkgCache(alpm_db_t *db) {
-  return alpm_db_get_pkgcache(db);
+std::vector<AlpmPackage> Alpm::DbGetPkgCache(alpm_db_t *db) {
+  alpm_list_t *list = alpm_db_get_pkgcache(db);
+  std::vector<AlpmPackage> result;
+  for (alpm_list_t *elem = list; elem != nullptr; elem = alpm_list_next(elem)) {
+    result.emplace_back(static_cast<alpm_pkg_t *>(elem->data));
+  }
+  return result;
 }
 
 std::optional<AlpmPackage> Alpm::DbGetPkg(alpm_db_t *db,

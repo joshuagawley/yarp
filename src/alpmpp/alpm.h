@@ -86,7 +86,7 @@ class Alpm {
 
   alpm_db_t *GetLocalDb() const;
 
-  static alpm_list_t *DbGetPkgCache(alpm_db_t *db);
+  static std::vector<AlpmPackage> DbGetPkgCache(alpm_db_t *db);
 
   static std::optional<AlpmPackage> DbGetPkg(alpm_db_t *db,
                                              std::string_view name);
