@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 
+#include "src/alpmpp/depend.h"
+
 namespace {
 
 void PrintAlpmList(std::stringstream &ss, const std::string_view prefix,
@@ -67,8 +69,9 @@ void PrintOptDependsList(std::stringstream &ss, const alpm_list_t *optdepends) {
   std::print(ss, "{}", kPrefix);
   for (const alpm_list_t *item = optdepends; item != nullptr;
        item = item->next) {
-    const alpm_depend_t *opt_dep = static_cast<alpm_depend_t *>(item->data);
-    const char *dep_string = alpm_dep_compute_string(opt_dep);
+    alpmpp::AlpmDepend opt_dep =
+        alpmpp::AlpmDepend{static_cast<alpm_depend_t *>(item->data)};
+    std::string dep_string = opt_dep.ComputeString();
     if (item->next != nullptr) {
       std::print(ss, "{}  ",
                  dep_string);  // Not the last item, add space
