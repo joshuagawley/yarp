@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "src/alpmpp/depend.h"
+#include "src/alpmpp/types.h"
 #include "src/alpmpp/util.h"
 
 namespace {
@@ -77,17 +78,17 @@ void PrintOptDependsList(std::stringstream &ss,
   }
 }
 
-void PrintInstallReason(std::stringstream &ss, const alpm_pkgreason_t reason) {
+void PrintInstallReason(std::stringstream &ss, const alpmpp::PkgReason reason) {
   switch (reason) {
-    case ALPM_PKG_REASON_EXPLICIT:
+    case alpmpp::PkgReason::kExplicit:
       std::println(ss, "Install Reason  : Explicitly installed");
       break;
-    case ALPM_PKG_REASON_DEPEND:
+    case alpmpp::PkgReason::kDepend:
       std::println(ss,
                    "Install Reason  : Installed as a dependency for another "
                    "package");
       break;
-    default:
+    case alpmpp::PkgReason::kUnknown:
       std::println(ss, "Install Reason  : Unknown");
       break;
   }
@@ -291,8 +292,8 @@ off_t AlpmPackage::GetISize() const noexcept {
   return alpm_pkg_get_isize(pkg_);
 }
 
-alpm_pkgreason_t AlpmPackage::GetReason() const noexcept {
-  return alpm_pkg_get_reason(pkg_);
+PkgReason AlpmPackage::GetReason() const noexcept {
+  return static_cast<PkgReason>(alpm_pkg_get_reason(pkg_));
 }
 
 bool AlpmPackage::HasScriptlet() const noexcept {

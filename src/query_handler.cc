@@ -7,6 +7,7 @@
 #include <print>
 
 #include "operation.h"
+#include "src/alpmpp/types.h"
 
 namespace {
 
@@ -92,8 +93,9 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
         std::println("Error: package {} not found", target);
         continue;
       }
-      if ((kOnlyDeps && (*pkg).GetReason() != ALPM_PKG_REASON_DEPEND) ||
-          (kOnlyExplicit && (*pkg).GetReason() != ALPM_PKG_REASON_EXPLICIT)) {
+      if ((kOnlyDeps && (*pkg).GetReason() != alpmpp::PkgReason::kDepend) ||
+          (kOnlyExplicit &&
+           (*pkg).GetReason() != alpmpp::PkgReason::kExplicit)) {
         continue;
       }
       pkg_list.push_back(std::move(*pkg));
