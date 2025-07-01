@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "src/alpmpp/depend.h"
+#include "src/alpmpp/util.h"
 
 namespace {
 
@@ -39,40 +40,37 @@ void PrintAlpmList(std::stringstream &ss, const std::string_view prefix,
 }
 
 void PrintDependsList(std::stringstream &ss, const std::string_view prefix,
-                      const alpm_list_t *depends) {
-  if (depends == nullptr) {
+                      std::vector<alpmpp::AlpmDepend> depends) {
+  if (depends.empty()) {
     std::println(ss, "{}None", prefix);
     return;
   }
 
   std::print(ss, "{}", prefix);
-  for (const alpm_list_t *item = depends; item != nullptr; item = item->next) {
-    const alpm_depend_t *pkg = static_cast<alpm_depend_t *>(item->data);
-    if (item->next != nullptr) {
+  for (alpmpp::AlpmDepend &depend : depends) {
+    if (&depend != &depends.back()) {
       std::print(ss, "{}  ",
-                 pkg->name);  // Not the last item, add space
+                 depend.GetName());  // Not the last item, add space
     } else {
       std::println(ss, "{}",
-                   pkg->name);  // Last item, no trailing space
+                   depend.GetName());  // Last item, no trailing space
     }
   }
 }
 
-void PrintOptDependsList(std::stringstream &ss, const alpm_list_t *optdepends) {
+void PrintOptDependsList(std::stringstream &ss,
+                         std::vector<alpmpp::AlpmDepend> opt_depends) {
   constexpr std::string_view kPrefix{"Optional Deps   : "};
 
-  if (optdepends == nullptr) {
+  if (opt_depends.empty()) {
     std::println(ss, "{}None", kPrefix);
     return;
   }
 
   std::print(ss, "{}", kPrefix);
-  for (const alpm_list_t *item = optdepends; item != nullptr;
-       item = item->next) {
-    alpmpp::AlpmDepend opt_dep =
-        alpmpp::AlpmDepend{static_cast<alpm_depend_t *>(item->data)};
-    std::string dep_string = opt_dep.ComputeString();
-    if (item->next != nullptr) {
+  for (alpmpp::AlpmDepend &depend : opt_depends) {
+    std::string dep_string = depend.ComputeString();
+    if (&depend != &opt_depends.back()) {
       std::print(ss, "{}  ",
                  dep_string);  // Not the last item, add space
     } else {
@@ -235,16 +233,19 @@ std::string_view AlpmPackage::GetPackager() const noexcept {
   return alpm_pkg_get_packager(pkg_);
 }
 
-alpm_list_t *AlpmPackage::GetOptDepends() const noexcept {
-  return alpm_pkg_get_optdepends(pkg_);
+std::vector<AlpmDepend> AlpmPackage::GetOptDepends() const noexcept {
+  return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
+      alpm_pkg_get_optdepends(pkg_));
 }
 
-alpm_list_t *AlpmPackage::GetDepends() const noexcept {
-  return alpm_pkg_get_depends(pkg_);
+std::vector<AlpmDepend> AlpmPackage::GetDepends() const noexcept {
+  return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
+      alpm_pkg_get_depends(pkg_));
 }
 
-alpm_list_t *AlpmPackage::GetProvides() const noexcept {
-  return alpm_pkg_get_provides(pkg_);
+std::vector<AlpmDepend> AlpmPackage::GetProvides() const noexcept {
+  return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
+      alpm_pkg_get_provides(pkg_));
 }
 
 alpm_list_t *AlpmPackage::GetGroups() const noexcept {
@@ -255,12 +256,14 @@ alpm_list_t *AlpmPackage::GetLicenses() const noexcept {
   return alpm_pkg_get_licenses(pkg_);
 }
 
-alpm_list_t *AlpmPackage::GetConflicts() const noexcept {
-  return alpm_pkg_get_conflicts(pkg_);
+std::vector<AlpmDepend> AlpmPackage::GetConflicts() const noexcept {
+  return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
+      alpm_pkg_get_conflicts(pkg_));
 }
 
-alpm_list_t *AlpmPackage::GetReplaces() const noexcept {
-  return alpm_pkg_get_replaces(pkg_);
+std::vector<AlpmDepend> AlpmPackage::GetReplaces() const noexcept {
+  return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
+      alpm_pkg_get_replaces(pkg_));
 }
 
 alpm_filelist_t *AlpmPackage::GetFiles() const noexcept {
