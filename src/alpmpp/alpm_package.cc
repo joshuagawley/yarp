@@ -16,6 +16,23 @@
 
 namespace {
 
+void PrintStringVector(std::stringstream &ss, const std::string_view prefix,
+                       const std::vector<std::string_view> &vector) {
+  if (vector.empty()) {
+    std::println(ss, "{}None", prefix);
+    return;
+  }
+
+  std::print(ss, "{}", prefix);
+  for (const std::string_view elem : vector) {
+    if (elem != *(std::end(vector) - 1)) {
+      std::print(ss, "{}  ", elem);  // Not the last item, add space
+    } else {
+      std::println(ss, "{}", elem);  // Last item, no trailing space
+    }
+  }
+}
+
 void PrintAlpmList(std::stringstream &ss, const std::string_view prefix,
                    alpm_list_t *list, const bool free_list = false) {
   if (list == nullptr) {
@@ -187,7 +204,7 @@ std::string AlpmPackage::GetInfo() const {
   std::println(ss, "Architecture    : {}", GetArch());
   std::println(ss, "URL             : {}", GetURL());
 
-  PrintAlpmList(ss, "Licenses        : ", GetLicenses());
+  PrintStringVector(ss, "Licenses        : ", GetLicenses());
   PrintAlpmList(ss, "Groups          : ", GetGroups());
   PrintDependsList(ss, "Provides        : ", GetProvides());
   PrintDependsList(ss, "Depends On      : ", GetDepends());
@@ -252,8 +269,9 @@ alpm_list_t *AlpmPackage::GetGroups() const noexcept {
   return alpm_pkg_get_groups(pkg_);
 }
 
-alpm_list_t *AlpmPackage::GetLicenses() const noexcept {
-  return alpm_pkg_get_licenses(pkg_);
+std::vector<std::string_view> AlpmPackage::GetLicenses() const noexcept {
+  return util::AlpmListToVector<const char *, std::string_view>(
+      alpm_pkg_get_licenses(pkg_));
 }
 
 std::vector<AlpmDepend> AlpmPackage::GetConflicts() const noexcept {

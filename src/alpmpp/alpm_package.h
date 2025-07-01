@@ -28,7 +28,7 @@ class AlpmPackage {
   std::vector<AlpmDepend> GetDepends() const noexcept;
   std::vector<AlpmDepend> GetProvides() const noexcept;
   alpm_list_t *GetGroups() const noexcept;
-  alpm_list_t *GetLicenses() const noexcept;
+  std::vector<std::string_view> GetLicenses() const noexcept;
   std::vector<AlpmDepend> GetConflicts() const noexcept;
   std::vector<AlpmDepend> GetReplaces() const noexcept;
   alpm_filelist_t *GetFiles() const noexcept;
