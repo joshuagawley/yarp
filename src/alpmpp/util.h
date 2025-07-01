@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-#ifndef PACMANPP_ALPMPP_UTIL_H_
-#define PACMANPP_ALPMPP_UTIL_H_
+#ifndef ALPMPP_UTIL_H_
+#define ALPMPP_UTIL_H_
 
 #include <alpm.h>
 #include <alpm_list.h>
@@ -28,4 +28,4 @@ constexpr std::vector<Output> AlpmListToVector(const alpm_list_t *list) {
 }  // namespace util
 }  // namespace alpmpp
 
-#endif  // PACMANPP_ALPMPP_UTIL_H_
+#endif  // ALPMPP_UTIL_H_

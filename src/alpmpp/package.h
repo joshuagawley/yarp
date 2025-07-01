@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-#ifndef PACMANPP_SRC_ALPM_PACKAGE_H_
-#define PACMANPP_SRC_ALPM_PACKAGE_H_
+#ifndef ALPMPP_PACKAGE_H_
+#define ALPMPP_PACKAGE_H_
 
 #include <alpm.h>
 #include <alpm_list.h>
@@ -32,7 +32,7 @@ class AlpmPackage {
   std::vector<std::string_view> GetLicenses() const noexcept;
   std::vector<AlpmDepend> GetConflicts() const noexcept;
   std::vector<AlpmDepend> GetReplaces() const noexcept;
-  alpm_filelist_t *GetFiles() const noexcept;
+  std::vector<AlpmFile> GetFiles() const noexcept;
 
   std::vector<std::string> ComputeOptionalFor() const noexcept;
   std::vector<std::string> ComputeRequiredBy() const noexcept;
@@ -59,4 +59,4 @@ class AlpmPackage {
 
 }  // namespace alpmpp
 
-#endif  // PACMANPP_SRC_ALPM_PACKAGE_H_
+#endif  // ALPMPP_PACKAGE_H_

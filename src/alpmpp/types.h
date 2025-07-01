@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-#ifndef PACMANPP_ALPMPP_TYPES_H_
-#define PACMANPP_ALPMPP_TYPES_H_
+#ifndef ALPMPP_TYPES_H_
+#define ALPMPP_TYPES_H_
 
 #include <alpm.h>
 
@@ -15,4 +15,4 @@ enum class PkgReason {
 
 }  // namespace alpmpp
 
-#endif  // PACMANPP_ALPMPP_TYPES_H_
+#endif  // ALPMPP_TYPES_H_
