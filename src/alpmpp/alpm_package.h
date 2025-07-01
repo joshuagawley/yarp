@@ -33,8 +33,8 @@ class AlpmPackage {
   std::vector<AlpmDepend> GetReplaces() const noexcept;
   alpm_filelist_t *GetFiles() const noexcept;
 
-  alpm_list_t *ComputeOptionalFor() const noexcept;
-  alpm_list_t *ComputeRequiredBy() const noexcept;
+  std::vector<std::string> ComputeOptionalFor() const noexcept;
+  std::vector<std::string> ComputeRequiredBy() const noexcept;
 
   alpm_time_t GetBuildDate() const noexcept;
   alpm_time_t GetInstallDate() const noexcept;
