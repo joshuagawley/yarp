@@ -36,29 +36,6 @@ void PrintStringVector(std::stringstream &ss, const std::string_view prefix,
   }
 }
 
-void PrintAlpmList(std::stringstream &ss, const std::string_view prefix,
-                   alpm_list_t *list, const bool free_list = false) {
-  if (list == nullptr) {
-    std::println(ss, "{}None", prefix);
-    return;
-  }
-
-  std::print(ss, "{}", prefix);
-  for (alpm_list_t *item = list; item != nullptr; item = item->next) {
-    const char *item_str = static_cast<const char *>(item->data);
-    if (item->next != nullptr) {
-      std::print(ss, "{}  ", item_str);  // Not the last item, add space
-    } else {
-      std::println(ss, "{}", item_str);  // Last item, no trailing space
-    }
-  }
-
-  if (free_list) {
-    alpm_list_free_inner(list, free);
-    alpm_list_free(list);
-  }
-}
-
 void PrintDependsList(std::stringstream &ss, const std::string_view prefix,
                       std::vector<alpmpp::AlpmDepend> depends) {
   if (depends.empty()) {

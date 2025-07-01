@@ -9,70 +9,10 @@
 #include <cstddef>
 #include <cstring>
 #include <optional>
-#include <string>
-#include <vector>
 
 #include "alpm_package.h"
 
 namespace alpmpp {
-
-namespace util {
-
-template <typename Input, typename Output>
-constexpr std::vector<Output> AlpmListToVector(const alpm_list_t *list) {
-  std::vector<Output> result;
-  result.reserve(alpm_list_count(list));
-
-  for (const alpm_list_t *elem = list; elem != nullptr;
-       elem = alpm_list_next(elem)) {
-    result.emplace_back(static_cast<Input>(elem->data));
-  }
-
-  return result;
-}
-
-constexpr std::vector<std::string> AlpmListToStringVector(alpm_list_t *list) {
-  std::vector<std::string> result;
-
-  alpm_list_t *item;
-  std::size_t count{};
-  for (item = list; item != nullptr; item = item->next) {
-    ++count;
-  }
-  result.reserve(count);
-
-  for (item = list; item != nullptr; item = item->next) {
-    result.emplace_back(static_cast<const char *>(item->data));
-  }
-
-  return result;
-}
-
-template <typename T>
-constexpr alpm_list_t *VectorToAlpmList(const std::vector<T> &vec) {
-  alpm_list_t *list = nullptr;
-
-  for (const auto &item : vec) {
-    T *new_item = new T(item);
-    list = alpm_list_add(list, new_item);
-  }
-
-  return list;
-}
-
-constexpr alpm_list_t *StringVectorToAlpmList(
-    const std::vector<std::string> &vec) {
-  alpm_list_t *list = nullptr;
-
-  for (const auto &str : vec) {
-    char *new_str = strndup(str.c_str(), str.size());
-    list = alpm_list_add(list, new_str);
-  }
-
-  return list;
-}
-
-}  // namespace util
 
 class Alpm {
  public:
