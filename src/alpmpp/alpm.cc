@@ -8,7 +8,7 @@
 #include <format>
 #include <stdexcept>
 
-#include "alpm_package.h"
+#include "package.h"
 
 namespace alpmpp {
 

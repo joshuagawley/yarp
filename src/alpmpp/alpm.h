@@ -10,7 +10,7 @@
 #include <cstring>
 #include <optional>
 
-#include "alpm_package.h"
+#include "package.h"
 
 namespace alpmpp {
 
