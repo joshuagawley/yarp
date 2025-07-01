@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-#ifndef PACMANPP_SRC_ALPM_PACKAGE_H_
-#define PACMANPP_SRC_ALPM_PACKAGE_H_
+#ifndef ALPMPP_PACKAGE_H_
+#define ALPMPP_PACKAGE_H_
 
 #include <alpm.h>
 #include <alpm_list.h>
@@ -9,7 +9,9 @@
 #include <string_view>
 #include <vector>
 
-#include "src/alpmpp/depend.h"
+#include "depend.h"
+#include "file.h"
+#include "types.h"
 
 namespace alpmpp {
 
@@ -31,7 +33,7 @@ class AlpmPackage {
   std::vector<std::string_view> GetLicenses() const noexcept;
   std::vector<AlpmDepend> GetConflicts() const noexcept;
   std::vector<AlpmDepend> GetReplaces() const noexcept;
-  alpm_filelist_t *GetFiles() const noexcept;
+  std::vector<AlpmFile> GetFiles() const noexcept;
 
   std::vector<std::string> ComputeOptionalFor() const noexcept;
   std::vector<std::string> ComputeRequiredBy() const noexcept;
@@ -40,7 +42,7 @@ class AlpmPackage {
   alpm_time_t GetInstallDate() const noexcept;
 
   off_t GetISize() const noexcept;
-  alpm_pkgreason_t GetReason() const noexcept;
+  PkgReason GetReason() const noexcept;
   int GetValidation() const noexcept;
 
   bool HasScriptlet() const noexcept;
@@ -58,4 +60,4 @@ class AlpmPackage {
 
 }  // namespace alpmpp
 
-#endif  // PACMANPP_SRC_ALPM_PACKAGE_H_
+#endif  // ALPMPP_PACKAGE_H_

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-#include "alpm_package.h"
+#include "package.h"
 
 #include <alpm.h>
 #include <alpm_list.h>
@@ -12,8 +12,10 @@
 #include <string>
 #include <vector>
 
-#include "src/alpmpp/depend.h"
-#include "src/alpmpp/util.h"
+#include "depend.h"
+#include "src/alpmpp/file.h"
+#include "types.h"
+#include "util.h"
 
 namespace {
 
@@ -33,29 +35,6 @@ void PrintStringVector(std::stringstream &ss, const std::string_view prefix,
     } else {
       std::println(ss, "{}", elem);  // Last item, no trailing space
     }
-  }
-}
-
-void PrintAlpmList(std::stringstream &ss, const std::string_view prefix,
-                   alpm_list_t *list, const bool free_list = false) {
-  if (list == nullptr) {
-    std::println(ss, "{}None", prefix);
-    return;
-  }
-
-  std::print(ss, "{}", prefix);
-  for (alpm_list_t *item = list; item != nullptr; item = item->next) {
-    const char *item_str = static_cast<const char *>(item->data);
-    if (item->next != nullptr) {
-      std::print(ss, "{}  ", item_str);  // Not the last item, add space
-    } else {
-      std::println(ss, "{}", item_str);  // Last item, no trailing space
-    }
-  }
-
-  if (free_list) {
-    alpm_list_free_inner(list, free);
-    alpm_list_free(list);
   }
 }
 
@@ -100,17 +79,17 @@ void PrintOptDependsList(std::stringstream &ss,
   }
 }
 
-void PrintInstallReason(std::stringstream &ss, const alpm_pkgreason_t reason) {
+void PrintInstallReason(std::stringstream &ss, const alpmpp::PkgReason reason) {
   switch (reason) {
-    case ALPM_PKG_REASON_EXPLICIT:
+    case alpmpp::PkgReason::kExplicit:
       std::println(ss, "Install Reason  : Explicitly installed");
       break;
-    case ALPM_PKG_REASON_DEPEND:
+    case alpmpp::PkgReason::kDepend:
       std::println(ss,
                    "Install Reason  : Installed as a dependency for another "
                    "package");
       break;
-    default:
+    case alpmpp::PkgReason::kUnknown:
       std::println(ss, "Install Reason  : Unknown");
       break;
   }
@@ -189,10 +168,10 @@ namespace alpmpp {
 std::string AlpmPackage::GetFileList(std::string_view root_path) const {
   std::stringstream ss;
 
-  const alpm_filelist_t *file_list = GetFiles();
+  const std::vector<AlpmFile> files = GetFiles();
 
-  for (std::size_t i = 0; i < file_list->count; ++i) {
-    std::println(ss, "{} {}{}", GetName(), root_path, file_list->files[i].name);
+  for (const AlpmFile &file : files) {
+    std::println(ss, "{} {}{}", GetName(), root_path, file.GetName());
   }
 
   return ss.str();
@@ -288,8 +267,13 @@ std::vector<AlpmDepend> AlpmPackage::GetReplaces() const noexcept {
       alpm_pkg_get_replaces(pkg_));
 }
 
-alpm_filelist_t *AlpmPackage::GetFiles() const noexcept {
-  return alpm_pkg_get_files(pkg_);
+std::vector<AlpmFile> AlpmPackage::GetFiles() const noexcept {
+  std::vector<AlpmFile> result;
+  alpm_filelist_t *file_list = alpm_pkg_get_files(pkg_);
+  for (std::size_t i = 0; i < file_list->count; ++i) {
+    result.emplace_back(&file_list->files[i]);
+  }
+  return result;
 }
 
 std::vector<std::string> AlpmPackage::ComputeOptionalFor() const noexcept {
@@ -314,8 +298,8 @@ off_t AlpmPackage::GetISize() const noexcept {
   return alpm_pkg_get_isize(pkg_);
 }
 
-alpm_pkgreason_t AlpmPackage::GetReason() const noexcept {
-  return alpm_pkg_get_reason(pkg_);
+PkgReason AlpmPackage::GetReason() const noexcept {
+  return static_cast<PkgReason>(alpm_pkg_get_reason(pkg_));
 }
 
 bool AlpmPackage::HasScriptlet() const noexcept {

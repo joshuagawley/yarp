@@ -8,7 +8,8 @@
 #include <format>
 #include <stdexcept>
 
-#include "alpm_package.h"
+#include "package.h"
+#include "util.h"
 
 namespace alpmpp {
 
@@ -30,8 +31,9 @@ alpm_db_t *Alpm::GetLocalDb() const {
   return db;
 }
 
-alpm_list_t *Alpm::DbGetPkgCache(alpm_db_t *db) {
-  return alpm_db_get_pkgcache(db);
+std::vector<AlpmPackage> Alpm::DbGetPkgCache(alpm_db_t *db) {
+  return util::AlpmListToVector<alpm_pkg_t *, AlpmPackage>(
+      alpm_db_get_pkgcache(db));
 }
 
 std::optional<AlpmPackage> Alpm::DbGetPkg(alpm_db_t *db,

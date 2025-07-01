@@ -121,14 +121,16 @@ configure_file(
 set(ALPMPP_SOURCES
     src/alpmpp/alpm.cc
     src/alpmpp/depend.cc
-    src/alpmpp/alpm_package.cc
+    src/alpmpp/package.cc
     src/alpmpp/util.h
 )
 
 set(ALPMPP_HEADERS
     src/alpmpp/alpm.h
     src/alpmpp/depend.h
-    src/alpmpp/alpm_package.h
+    src/alpmpp/file.h
+    src/alpmpp/package.h
+    src/alpmpp/types.h
     src/alpmpp/util.h
 )
 

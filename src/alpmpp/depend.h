@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-#ifndef PACMANPP_ALPMPP_DEPEND_H_
-#define PACMANPP_ALPMPP_DEPEND_H_
+#ifndef ALPMPP_DEPEND_H_
+#define ALPMPP_DEPEND_H_
 
 #include <alpm.h>
 
@@ -32,4 +32,4 @@ class AlpmDepend {
 
 }  // namespace alpmpp
 
-#endif  // PACMANPP_ALPMPP_DEPEND_H_
+#endif  // ALPMPP_DEPEND_H_
