@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: MIT
+
+#ifndef ALPMPP_FILE_H_
+#define ALPMPP_FILE_H_
+
+#include <alpm.h>
+#include <alpm_list.h>
+#include <sys/types.h>
+
+#include <string_view>
+
+namespace alpmpp {
+
+class AlpmFile {
+ public:
+  constexpr AlpmFile(alpm_file_t *file) : file_(file) {}
+
+  constexpr std::string_view GetName() const noexcept { return file_->name; }
+  constexpr off_t GetSize() const noexcept { return file_->size; }
+  constexpr mode_t GetMode() const noexcept { return file_->mode; }
+
+ private:
+  alpm_file_t *file_;
+};
+
+}  // namespace alpmpp
+
+#endif  // ALPMPP_FILE_H_

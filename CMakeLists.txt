@@ -128,6 +128,7 @@ set(ALPMPP_SOURCES
 set(ALPMPP_HEADERS
     src/alpmpp/alpm.h
     src/alpmpp/depend.h
+    src/alpmpp/file.h
     src/alpmpp/package.h
     src/alpmpp/types.h
     src/alpmpp/util.h

@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "depend.h"
+#include "src/alpmpp/file.h"
 #include "types.h"
 #include "util.h"
 
@@ -167,10 +168,10 @@ namespace alpmpp {
 std::string AlpmPackage::GetFileList(std::string_view root_path) const {
   std::stringstream ss;
 
-  const alpm_filelist_t *file_list = GetFiles();
+  const std::vector<AlpmFile> files = GetFiles();
 
-  for (std::size_t i = 0; i < file_list->count; ++i) {
-    std::println(ss, "{} {}{}", GetName(), root_path, file_list->files[i].name);
+  for (const AlpmFile &file : files) {
+    std::println(ss, "{} {}{}", GetName(), root_path, file.GetName());
   }
 
   return ss.str();
@@ -266,8 +267,13 @@ std::vector<AlpmDepend> AlpmPackage::GetReplaces() const noexcept {
       alpm_pkg_get_replaces(pkg_));
 }
 
-alpm_filelist_t *AlpmPackage::GetFiles() const noexcept {
-  return alpm_pkg_get_files(pkg_);
+std::vector<AlpmFile> AlpmPackage::GetFiles() const noexcept {
+  std::vector<AlpmFile> result;
+  alpm_filelist_t *file_list = alpm_pkg_get_files(pkg_);
+  for (std::size_t i = 0; i < file_list->count; ++i) {
+    result.emplace_back(&file_list->files[i]);
+  }
+  return result;
 }
 
 std::vector<std::string> AlpmPackage::ComputeOptionalFor() const noexcept {

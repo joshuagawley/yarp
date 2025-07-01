@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "depend.h"
+#include "file.h"
 #include "types.h"
 
 namespace alpmpp {

@@ -6,8 +6,9 @@
 #include <filesystem>
 #include <print>
 
+#include "alpmpp/file.h"
+#include "alpmpp/types.h"
 #include "operation.h"
-#include "src/alpmpp/types.h"
 
 namespace {
 
@@ -139,13 +140,13 @@ int QueryHandler::HandleGroups() const {
 
 void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
   int errors{};
-  const alpm_filelist_t *files = pkg.GetFiles();
+  const std::vector<alpmpp::AlpmFile> files = pkg.GetFiles();
   const std::string_view root = alpm_.OptionGetRoot();
 
-  for (std::size_t i = 0; i < files->count; ++i) {
-    const alpm_file_t file = files->files[i];
+  for (const alpmpp::AlpmFile &file : files) {
     // TODO: see if we can avoid creating a new string here
-    const std::string absolute_file_name = std::format("{}{}", root, file.name);
+    const std::string absolute_file_name =
+        std::format("{}{}", root, file.GetName());
     if (std::filesystem::exists(absolute_file_name)) {
       const bool expect_dir = *(std::end(absolute_file_name) - 1) == '/';
       const bool is_dir = std::filesystem::is_directory(absolute_file_name);
@@ -160,7 +161,7 @@ void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
   }
 
   std::println("{}: {} total files, {} missing files", pkg.GetName(),
-               files->count, errors);
+               files.size(), errors);
 }
 
 void QueryHandler::PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const {
