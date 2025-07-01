@@ -18,19 +18,14 @@ namespace alpmpp {
 
 namespace util {
 
-template <typename T>
-constexpr std::vector<T> AlpmListToVector(alpm_list_t *list) {
-  std::vector<T> result;
+template <typename Input, typename Output>
+constexpr std::vector<Output> AlpmListToVector(const alpm_list_t *list) {
+  std::vector<Output> result;
+  result.reserve(alpm_list_count(list));
 
-  alpm_list_t *item;
-  std::size_t count{};
-  for (item = list; item != nullptr; item = item->next) {
-    ++count;
-  }
-  result.reserve(count);
-
-  for (item = list; item != nullptr; item = item->next) {
-    result.push_back(*static_cast<T *>(item->data));
+  for (const alpm_list_t *elem = list; elem != nullptr;
+       elem = alpm_list_next(elem)) {
+    result.emplace_back(static_cast<Input>(elem->data));
   }
 
   return result;
@@ -97,8 +92,6 @@ class Alpm {
                                       const alpm_pkg_t *pkg, void *fp);
 
   static int PkgChangelogClose(const alpm_pkg_t *pkg, void *fp);
-
-  static const char *DepComputeString(const alpm_depend_t *dep);
 
   const char *OptionGetRoot();
 

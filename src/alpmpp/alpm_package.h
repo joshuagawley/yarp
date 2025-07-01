@@ -7,6 +7,9 @@
 #include <alpm_list.h>
 
 #include <string_view>
+#include <vector>
+
+#include "src/alpmpp/depend.h"
 
 namespace alpmpp {
 
@@ -21,13 +24,13 @@ class AlpmPackage {
   std::string_view GetURL() const noexcept;
   std::string_view GetPackager() const noexcept;
 
-  alpm_list_t *GetOptDepends() const noexcept;
-  alpm_list_t *GetDepends() const noexcept;
-  alpm_list_t *GetProvides() const noexcept;
+  std::vector<AlpmDepend> GetOptDepends() const noexcept;
+  std::vector<AlpmDepend> GetDepends() const noexcept;
+  std::vector<AlpmDepend> GetProvides() const noexcept;
   alpm_list_t *GetGroups() const noexcept;
   alpm_list_t *GetLicenses() const noexcept;
-  alpm_list_t *GetConflicts() const noexcept;
-  alpm_list_t *GetReplaces() const noexcept;
+  std::vector<AlpmDepend> GetConflicts() const noexcept;
+  std::vector<AlpmDepend> GetReplaces() const noexcept;
   alpm_filelist_t *GetFiles() const noexcept;
 
   alpm_list_t *ComputeOptionalFor() const noexcept;
