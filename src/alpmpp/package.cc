@@ -12,9 +12,9 @@
 #include <string>
 #include <vector>
 
-#include "src/alpmpp/depend.h"
-#include "src/alpmpp/types.h"
-#include "src/alpmpp/util.h"
+#include "depend.h"
+#include "types.h"
+#include "util.h"
 
 namespace {
 

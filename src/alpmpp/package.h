@@ -9,8 +9,8 @@
 #include <string_view>
 #include <vector>
 
-#include "src/alpmpp/depend.h"
-#include "src/alpmpp/types.h"
+#include "depend.h"
+#include "types.h"
 
 namespace alpmpp {
 

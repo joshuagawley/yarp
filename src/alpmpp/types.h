@@ -4,6 +4,7 @@
 #define PACMANPP_ALPMPP_TYPES_H_
 
 #include <alpm.h>
+
 namespace alpmpp {
 
 enum class PkgReason {
