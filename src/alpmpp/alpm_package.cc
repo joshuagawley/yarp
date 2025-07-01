@@ -205,7 +205,7 @@ std::string AlpmPackage::GetInfo() const {
   std::println(ss, "URL             : {}", GetURL());
 
   PrintStringVector(ss, "Licenses        : ", GetLicenses());
-  PrintAlpmList(ss, "Groups          : ", GetGroups());
+  PrintStringVector(ss, "Groups          : ", GetGroups());
   PrintDependsList(ss, "Provides        : ", GetProvides());
   PrintDependsList(ss, "Depends On      : ", GetDepends());
   PrintOptDependsList(ss, GetOptDepends());
@@ -265,8 +265,9 @@ std::vector<AlpmDepend> AlpmPackage::GetProvides() const noexcept {
       alpm_pkg_get_provides(pkg_));
 }
 
-alpm_list_t *AlpmPackage::GetGroups() const noexcept {
-  return alpm_pkg_get_groups(pkg_);
+std::vector<std::string_view> AlpmPackage::GetGroups() const noexcept {
+  return util::AlpmListToVector<const char *, std::string_view>(
+      (alpm_pkg_get_groups(pkg_)));
 }
 
 std::vector<std::string_view> AlpmPackage::GetLicenses() const noexcept {
