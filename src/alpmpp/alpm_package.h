@@ -27,14 +27,14 @@ class AlpmPackage {
   std::vector<AlpmDepend> GetOptDepends() const noexcept;
   std::vector<AlpmDepend> GetDepends() const noexcept;
   std::vector<AlpmDepend> GetProvides() const noexcept;
-  alpm_list_t *GetGroups() const noexcept;
-  alpm_list_t *GetLicenses() const noexcept;
+  std::vector<std::string_view> GetGroups() const noexcept;
+  std::vector<std::string_view> GetLicenses() const noexcept;
   std::vector<AlpmDepend> GetConflicts() const noexcept;
   std::vector<AlpmDepend> GetReplaces() const noexcept;
   alpm_filelist_t *GetFiles() const noexcept;
 
-  alpm_list_t *ComputeOptionalFor() const noexcept;
-  alpm_list_t *ComputeRequiredBy() const noexcept;
+  std::vector<std::string> ComputeOptionalFor() const noexcept;
+  std::vector<std::string> ComputeRequiredBy() const noexcept;
 
   alpm_time_t GetBuildDate() const noexcept;
   alpm_time_t GetInstallDate() const noexcept;

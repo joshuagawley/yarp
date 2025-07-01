@@ -5,6 +5,7 @@
 #include <alpm.h>
 #include <alpm_list.h>
 
+#include <format>
 #include <iomanip>
 #include <print>
 #include <sstream>
@@ -15,6 +16,25 @@
 #include "src/alpmpp/util.h"
 
 namespace {
+
+template <typename T>
+  requires std::formattable<T, char>
+void PrintStringVector(std::stringstream &ss, const std::string_view prefix,
+                       const std::vector<T> &vector) {
+  if (vector.empty()) {
+    std::println(ss, "{}None", prefix);
+    return;
+  }
+
+  std::print(ss, "{}", prefix);
+  for (const T &elem : vector) {
+    if (elem != *(std::end(vector) - 1)) {
+      std::print(ss, "{}  ", elem);  // Not the last item, add space
+    } else {
+      std::println(ss, "{}", elem);  // Last item, no trailing space
+    }
+  }
+}
 
 void PrintAlpmList(std::stringstream &ss, const std::string_view prefix,
                    alpm_list_t *list, const bool free_list = false) {
@@ -187,14 +207,14 @@ std::string AlpmPackage::GetInfo() const {
   std::println(ss, "Architecture    : {}", GetArch());
   std::println(ss, "URL             : {}", GetURL());
 
-  PrintAlpmList(ss, "Licenses        : ", GetLicenses());
-  PrintAlpmList(ss, "Groups          : ", GetGroups());
+  PrintStringVector(ss, "Licenses        : ", GetLicenses());
+  PrintStringVector(ss, "Groups          : ", GetGroups());
   PrintDependsList(ss, "Provides        : ", GetProvides());
   PrintDependsList(ss, "Depends On      : ", GetDepends());
   PrintOptDependsList(ss, GetOptDepends());
   // alpm_pkg_compute_* don't free the list, so we set free_list to true
-  PrintAlpmList(ss, "Required By     : ", ComputeRequiredBy(), true);
-  PrintAlpmList(ss, "Optional For    : ", ComputeOptionalFor(), true);
+  PrintStringVector(ss, "Required By     : ", ComputeRequiredBy());
+  PrintStringVector(ss, "Optional For    : ", ComputeOptionalFor());
 
   PrintDependsList(ss, "Conflicts With  : ", GetConflicts());
   PrintDependsList(ss, "Replaces        : ", GetReplaces());
@@ -248,12 +268,14 @@ std::vector<AlpmDepend> AlpmPackage::GetProvides() const noexcept {
       alpm_pkg_get_provides(pkg_));
 }
 
-alpm_list_t *AlpmPackage::GetGroups() const noexcept {
-  return alpm_pkg_get_groups(pkg_);
+std::vector<std::string_view> AlpmPackage::GetGroups() const noexcept {
+  return util::AlpmListToVector<const char *, std::string_view>(
+      (alpm_pkg_get_groups(pkg_)));
 }
 
-alpm_list_t *AlpmPackage::GetLicenses() const noexcept {
-  return alpm_pkg_get_licenses(pkg_);
+std::vector<std::string_view> AlpmPackage::GetLicenses() const noexcept {
+  return util::AlpmListToVector<const char *, std::string_view>(
+      alpm_pkg_get_licenses(pkg_));
 }
 
 std::vector<AlpmDepend> AlpmPackage::GetConflicts() const noexcept {
@@ -270,12 +292,14 @@ alpm_filelist_t *AlpmPackage::GetFiles() const noexcept {
   return alpm_pkg_get_files(pkg_);
 }
 
-alpm_list_t *AlpmPackage::ComputeOptionalFor() const noexcept {
-  return alpm_pkg_compute_optionalfor(pkg_);
+std::vector<std::string> AlpmPackage::ComputeOptionalFor() const noexcept {
+  return util::AlpmListToVector<const char *, std::string>(
+      alpm_pkg_compute_optionalfor(pkg_));
 }
 
-alpm_list_t *AlpmPackage::ComputeRequiredBy() const noexcept {
-  return alpm_pkg_compute_requiredby(pkg_);
+std::vector<std::string> AlpmPackage::ComputeRequiredBy() const noexcept {
+  return util::AlpmListToVector<const char *, std::string>(
+      alpm_pkg_compute_requiredby(pkg_));
 }
 
 alpm_time_t AlpmPackage::GetBuildDate() const noexcept {
