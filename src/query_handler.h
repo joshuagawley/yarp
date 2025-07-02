@@ -8,8 +8,16 @@
 #include "config.h"
 #include "operation.h"
 #include "operation_handler.h"
+#include "src/bitwise_enum.h"
 
 namespace pacmanpp {
+
+enum class PkgLocality { kUnset = 1 << 0, kNative = 1 << 1, kForeign = 1 << 2 };
+
+template <>
+struct EnableEnumBitwiseOperators<PkgLocality> {
+  static constexpr bool enabled = true;
+};
 
 class QueryHandler : public OperationHandler {
  public:
@@ -30,6 +38,7 @@ class QueryHandler : public OperationHandler {
   std::vector<alpmpp::AlpmPackage> GetPkgList() const;
   void PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const;
   void CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const;
+  PkgLocality GetPkgLocality(const alpmpp::AlpmPackage &pkg) const;
 
   QueryOptions options_;
   std::vector<std::string> targets_;

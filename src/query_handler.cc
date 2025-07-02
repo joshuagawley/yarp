@@ -2,6 +2,8 @@
 
 #include "query_handler.h"
 
+#include <alpm.h>
+
 #include <cstdlib>
 #include <filesystem>
 #include <print>
@@ -80,6 +82,19 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
       (options_ & QueryOptions::kDeps) == QueryOptions::kDeps;
   const bool kOnlyExplicit =
       (options_ & QueryOptions::kExplicit) == QueryOptions::kExplicit;
+  const bool kOnlyNative =
+      (options_ & QueryOptions::kNative) == QueryOptions::kNative;
+  const bool kOnlyForeign =
+      (options_ & QueryOptions::kForeign) == QueryOptions::kForeign;
+
+  const auto pkg_conditions_func = [this, kOnlyDeps, kOnlyExplicit,
+                                    kOnlyForeign, kOnlyNative](
+                                       const alpmpp::AlpmPackage &pkg) {
+    return (kOnlyDeps && pkg.GetReason() != alpmpp::PkgReason::kDepend) ||
+           (kOnlyExplicit && pkg.GetReason() != alpmpp::PkgReason::kExplicit) ||
+           (kOnlyForeign && GetPkgLocality(pkg) != PkgLocality::kForeign) ||
+           (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative);
+  };
 
   if (targets_.empty()) {
     // Get the entire package cache if no specific targets are given
@@ -99,11 +114,7 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
     }
   }
 
-  std::erase_if(pkg_list, [kOnlyDeps,
-                           kOnlyExplicit](const alpmpp::AlpmPackage &pkg) {
-    return (kOnlyDeps && pkg.GetReason() != alpmpp::PkgReason::kDepend) ||
-           (kOnlyExplicit && pkg.GetReason() != alpmpp::PkgReason::kExplicit);
-  });
+  std::erase_if(pkg_list, pkg_conditions_func);
 
   return pkg_list;
 }
@@ -164,6 +175,19 @@ void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
 
   std::println("{}: {} total files, {} missing files", pkg.GetName(),
                files.size(), errors);
+}
+
+PkgLocality QueryHandler::GetPkgLocality(const alpmpp::AlpmPackage &pkg) const {
+  const std::vector<alpm_db_t *> sync_dbs = alpm_.GetSyncDbs();
+  const std::string_view pkg_name = pkg.GetName();
+
+  for (alpm_db_t *db : sync_dbs) {
+    if (alpm_.DbGetPkg(db, pkg_name).has_value()) {
+      return PkgLocality::kNative;
+    }
+  }
+
+  return PkgLocality::kForeign;
 }
 
 void QueryHandler::PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const {

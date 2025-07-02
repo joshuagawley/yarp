@@ -44,4 +44,15 @@ std::optional<AlpmPackage> Alpm::DbGetPkg(alpm_db_t *db,
 
 const char *Alpm::OptionGetRoot() { return alpm_option_get_root(handle_); }
 
+std::vector<alpm_db_t *> Alpm::GetSyncDbs() const {
+  alpm_list_t *list = alpm_get_syncdbs(handle_);
+  std::vector<alpm_db_t *> result;
+  result.reserve(alpm_list_count(list));
+
+  for (alpm_list_t *elem = list; elem != nullptr; elem = alpm_list_next(elem)) {
+    result.emplace_back(static_cast<alpm_db_t *>(elem->data));
+  }
+  return result;
+}
+
 }  // namespace alpmpp

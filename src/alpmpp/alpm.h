@@ -35,6 +35,8 @@ class Alpm {
 
   const char *OptionGetRoot();
 
+  std::vector<alpm_db_t *> GetSyncDbs() const;
+
  private:
   alpm_handle_t *handle_;
   alpm_errno_t err = ALPM_ERR_OK;
