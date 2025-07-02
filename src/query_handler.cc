@@ -9,6 +9,7 @@
 #include "alpmpp/file.h"
 #include "alpmpp/types.h"
 #include "operation.h"
+#include "src/alpmpp/package.h"
 
 namespace {
 
@@ -87,21 +88,22 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
     // manually
     pkg_list = alpm_.DbGetPkgCache(local_db_);
   } else {
-    for (std::string_view target : targets_) {
+    for (const std::string_view target : targets_) {
       std::optional<alpmpp::AlpmPackage> pkg =
           alpm_.DbGetPkg(local_db_, target);
-      if (!pkg.has_value()) {
+      if (pkg.has_value()) {
+        pkg_list.push_back(std::move(*pkg));
+      } else {
         std::println("Error: package {} not found", target);
-        continue;
       }
-      if ((kOnlyDeps && (*pkg).GetReason() != alpmpp::PkgReason::kDepend) ||
-          (kOnlyExplicit &&
-           (*pkg).GetReason() != alpmpp::PkgReason::kExplicit)) {
-        continue;
-      }
-      pkg_list.push_back(std::move(*pkg));
     }
   }
+
+  std::erase_if(pkg_list, [kOnlyDeps,
+                           kOnlyExplicit](const alpmpp::AlpmPackage &pkg) {
+    return (kOnlyDeps && pkg.GetReason() != alpmpp::PkgReason::kDepend) ||
+           (kOnlyExplicit && pkg.GetReason() != alpmpp::PkgReason::kExplicit);
+  });
 
   return pkg_list;
 }
