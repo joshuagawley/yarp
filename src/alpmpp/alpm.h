@@ -27,23 +27,16 @@ class Alpm {
   static std::optional<AlpmPackage> DbGetPkg(alpm_db_t *db,
                                              std::string_view name);
 
-  static void *PkgChangelogOpen(alpm_pkg_t *pkg);
-
-  static std::size_t PkgChangelogRead(void *ptr, std::size_t size,
-                                      const alpm_pkg_t *pkg, void *fp);
-
-  static int PkgChangelogClose(const alpm_pkg_t *pkg, void *fp);
-
   std::optional<AlpmPackage> LoadPkg(const std::filesystem::path &file_name,
-                                     bool full, PkgValidation level);
+                                     bool full, PkgValidation level) const;
 
-  const char *OptionGetRoot();
+  std::string_view OptionGetRoot() const;
 
   std::vector<alpm_db_t *> GetSyncDbs() const;
 
-  alpm_db_t *RegisterSyncDb(std::string_view name, int siglevel);
+  alpm_db_t *RegisterSyncDb(std::string_view name, int siglevel) const;
 
-  std::string_view StrError();
+  std::string_view StrError() const;
 
  private:
   alpm_handle_t *handle_;
