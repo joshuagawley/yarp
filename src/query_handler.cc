@@ -189,6 +189,11 @@ void QueryHandler::PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const {
   std::println("{}", pkg.GetFileList(alpm_.OptionGetRoot()));
 }
 
+bool QueryHandler::CheckPkgOutdated(const alpmpp::AlpmPackage &pkg) const {
+  // TODO: refactor this to not use raw handles
+  return alpm_sync_get_new_version(pkg.get(), alpm_get_syncdbs(alpm_.get()));
+}
+
 bool QueryHandler::FilterPkg(const alpmpp::AlpmPackage &pkg) const {
   const bool kOnlyDeps =
       (options_ & QueryOptions::kDeps) == QueryOptions::kDeps;
@@ -198,11 +203,14 @@ bool QueryHandler::FilterPkg(const alpmpp::AlpmPackage &pkg) const {
       (options_ & QueryOptions::kNative) == QueryOptions::kNative;
   const bool kOnlyForeign =
       (options_ & QueryOptions::kForeign) == QueryOptions::kForeign;
+  const bool kOnlyUpgrades =
+      (options_ & QueryOptions::kUpgrade) == QueryOptions::kUpgrade;
 
   return (kOnlyDeps && pkg.GetReason() != alpmpp::PkgReason::kDepend) ||
          (kOnlyExplicit && pkg.GetReason() != alpmpp::PkgReason::kExplicit) ||
          (kOnlyForeign && GetPkgLocality(pkg) != PkgLocality::kForeign) ||
-         (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative);
+         (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative) ||
+         (kOnlyUpgrades && !CheckPkgOutdated(pkg));
 }
 
 }  // namespace pacmanpp

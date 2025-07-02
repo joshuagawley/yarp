@@ -7,6 +7,7 @@
 #include "config.h"
 #include "operation.h"
 #include "operation_handler.h"
+#include "src/alpmpp/package.h"
 #include "src/bitwise_enum.h"
 
 namespace pacmanpp {
@@ -38,6 +39,7 @@ class QueryHandler : public OperationHandler {
   void PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const;
   void CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const;
   PkgLocality GetPkgLocality(const alpmpp::AlpmPackage &pkg) const;
+  bool CheckPkgOutdated(const alpmpp::AlpmPackage &pkg) const;
   bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
 
   QueryOptions options_;

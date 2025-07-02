@@ -25,20 +25,20 @@ class AlpmPackage {
   }
 
   // Copy constructor
-  AlpmPackage(const AlpmPackage&) = delete;
-  
+  AlpmPackage(const AlpmPackage &) = delete;
+
   // Copy assignment
-  AlpmPackage& operator=(const AlpmPackage&) = delete;
-  
+  AlpmPackage &operator=(const AlpmPackage &) = delete;
+
   // Move constructor
-  AlpmPackage(AlpmPackage&& other) noexcept 
+  AlpmPackage(AlpmPackage &&other) noexcept
       : pkg_(other.pkg_), owned_(other.owned_) {
     other.pkg_ = nullptr;
     other.owned_ = false;
   }
-  
+
   // Move assignment
-  AlpmPackage& operator=(AlpmPackage&& other) noexcept {
+  AlpmPackage &operator=(AlpmPackage &&other) noexcept {
     if (this != &other) {
       if (owned_) alpm_pkg_free(pkg_);
       pkg_ = other.pkg_;
@@ -48,6 +48,8 @@ class AlpmPackage {
     }
     return *this;
   }
+
+  constexpr alpm_pkg_t *get() const noexcept { return pkg_; }
 
   std::string_view GetName() const noexcept;
   std::string_view GetVersion() const noexcept;

@@ -22,6 +22,8 @@ class Alpm {
 
   alpm_db_t *GetLocalDb() const;
 
+  constexpr alpm_handle_t *get() noexcept { return handle_; }
+
   static std::vector<AlpmPackage> DbGetPkgCache(alpm_db_t *db);
 
   static std::optional<AlpmPackage> DbGetPkg(alpm_db_t *db,

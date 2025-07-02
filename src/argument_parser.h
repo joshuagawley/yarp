@@ -94,6 +94,9 @@ class ArgumentParser {
         case 'p':
           query_options |= QueryOptions::kIsFile;
           break;
+        case 'u':
+          query_options |= QueryOptions::kUpgrade;
+          break;
         case 'v':
           config.set_verbose(true);
           break;
