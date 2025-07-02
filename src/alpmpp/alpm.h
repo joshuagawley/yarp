@@ -8,6 +8,7 @@
 
 #include <cstddef>
 #include <cstring>
+#include <filesystem>
 #include <optional>
 
 #include "package.h"
@@ -33,11 +34,16 @@ class Alpm {
 
   static int PkgChangelogClose(const alpm_pkg_t *pkg, void *fp);
 
+  std::optional<AlpmPackage> LoadPkg(const std::filesystem::path &file_name,
+                                     bool full, PkgValidation level);
+
   const char *OptionGetRoot();
 
   std::vector<alpm_db_t *> GetSyncDbs() const;
 
   alpm_db_t *RegisterSyncDb(std::string_view name, int siglevel);
+
+  std::string_view StrError();
 
  private:
   alpm_handle_t *handle_;
