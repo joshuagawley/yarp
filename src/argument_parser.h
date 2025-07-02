@@ -14,9 +14,9 @@
 
 namespace {
 
-constexpr const char *kOptString = "cdehkmnpQVgilv";
+constexpr const char *kOptString = "cdehkmnpQVgilvu";
 
-static constexpr std::array<struct option, 17> kOpts = {{
+static constexpr std::array<struct option, 18> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
     {"version", no_argument, nullptr, 'V'},
@@ -33,6 +33,7 @@ static constexpr std::array<struct option, 17> kOpts = {{
     {"root", required_argument, nullptr, 'r'},
     {"dbpath", required_argument, nullptr, 'b'},
     {"verbose", no_argument, nullptr, 'v'},
+    {"upgrades", no_argument, nullptr, 'v'},
     {nullptr, 0, nullptr, 0},
 }};
 
