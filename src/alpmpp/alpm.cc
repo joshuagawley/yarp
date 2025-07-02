@@ -46,7 +46,9 @@ std::optional<AlpmPackage> Alpm::DbGetPkg(alpm_db_t *db,
   return pkg != nullptr ? std::make_optional<AlpmPackage>(pkg) : std::nullopt;
 }
 
-const char *Alpm::OptionGetRoot() { return alpm_option_get_root(handle_); }
+std::string_view Alpm::OptionGetRoot() const {
+  return alpm_option_get_root(handle_);
+}
 
 std::vector<alpm_db_t *> Alpm::GetSyncDbs() const {
   alpm_list_t *list = alpm_get_syncdbs(handle_);
@@ -59,12 +61,12 @@ std::vector<alpm_db_t *> Alpm::GetSyncDbs() const {
   return result;
 }
 
-alpm_db_t *Alpm::RegisterSyncDb(std::string_view name, int siglevel) {
+alpm_db_t *Alpm::RegisterSyncDb(std::string_view name, int siglevel) const {
   return alpm_register_syncdb(handle_, name.data(), siglevel);
 }
 
 std::optional<AlpmPackage> Alpm::LoadPkg(const std::filesystem::path &file_name,
-                                         bool full, PkgValidation level) {
+                                         bool full, PkgValidation level) const {
   alpm_pkg_t *pkg = nullptr;
 
   alpm_pkg_load(handle_, file_name.c_str(), full, std::to_underlying(level),
@@ -74,6 +76,6 @@ std::optional<AlpmPackage> Alpm::LoadPkg(const std::filesystem::path &file_name,
                         : std::make_optional<AlpmPackage>(pkg, true);
 }
 
-std::string_view Alpm::StrError() { return alpm_strerror(err); }
+std::string_view Alpm::StrError() const { return alpm_strerror(err); }
 
 }  // namespace alpmpp
