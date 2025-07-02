@@ -152,12 +152,11 @@ void PrintValidation(std::stringstream &ss,
       validation_methods.push_back("Signature");
     }
 
-    for (auto it = std::begin(validation_methods);
-         it != std::end(validation_methods); ++it) {
-      if (std::next(it) != std::end(validation_methods)) {
-        std::print(ss, "{}  ", *it);
+    for (const std::string_view method : validation_methods) {
+      if (method != validation_methods.back()) {
+        std::print(ss, "{}  ", method);
       }
-      std::print(ss, "{}", *it);
+      std::print(ss, "{}", method);
     }
   }
 }
