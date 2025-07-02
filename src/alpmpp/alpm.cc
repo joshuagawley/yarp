@@ -21,7 +21,10 @@ Alpm::Alpm(std::string_view root, std::string_view dbpath) {
   }
 }
 
-Alpm::~Alpm() { alpm_release(handle_); }
+Alpm::~Alpm() {
+  alpm_unregister_all_syncdbs(handle_);
+  alpm_release(handle_);
+}
 
 alpm_db_t *Alpm::GetLocalDb() const {
   alpm_db_t *db = alpm_get_localdb(handle_);
@@ -43,5 +46,20 @@ std::optional<AlpmPackage> Alpm::DbGetPkg(alpm_db_t *db,
 }
 
 const char *Alpm::OptionGetRoot() { return alpm_option_get_root(handle_); }
+
+std::vector<alpm_db_t *> Alpm::GetSyncDbs() const {
+  alpm_list_t *list = alpm_get_syncdbs(handle_);
+  std::vector<alpm_db_t *> result;
+  result.reserve(alpm_list_count(list));
+
+  for (alpm_list_t *elem = list; elem != nullptr; elem = alpm_list_next(elem)) {
+    result.emplace_back(static_cast<alpm_db_t *>(elem->data));
+  }
+  return result;
+}
+
+alpm_db_t *Alpm::RegisterSyncDb(std::string_view name, int siglevel) {
+  return alpm_register_syncdb(handle_, name.data(), siglevel);
+}
 
 }  // namespace alpmpp
