@@ -130,34 +130,34 @@ void PrintInstallScript(std::stringstream &ss, const bool has_scriptlet) {
   std::println(ss, "Install Script  : {}", scriptlet_str);
 }
 
-void PrintValidation(std::stringstream &ss, const int validation) {
+void PrintValidation(std::stringstream &ss,
+                     const alpmpp::PkgValidation validation) {
   std::print(ss, "Validated By    : ");
-  if (validation) {
-    if (validation & ALPM_PKG_VALIDATION_NONE) {
-      std::println(ss, "None");
-    } else {
-      std::vector<std::string> validation_methods;
-
-      if (validation & ALPM_PKG_VALIDATION_MD5SUM) {
-        validation_methods.push_back("MD5 Sum");
-      }
-      if (validation & ALPM_PKG_VALIDATION_SHA256SUM) {
-        validation_methods.push_back("SHA-256 Sum");
-      }
-      if (validation & ALPM_PKG_VALIDATION_SIGNATURE) {
-        validation_methods.push_back("Signature");
-      }
-
-      for (auto it = std::begin(validation_methods);
-           it != std::end(validation_methods); ++it) {
-        if (std::next(it) != std::end(validation_methods)) {
-          std::print(ss, "{}  ", *it);
-        }
-        std::print(ss, "{}", *it);
-      }
-    }
+  if ((validation & alpmpp::PkgValidation::kNone) ==
+      alpmpp::PkgValidation::kNone) {
+    std::println(ss, "None");
   } else {
-    std::println(ss, "Unknown");
+    std::vector<std::string> validation_methods;
+
+    if ((validation & alpmpp::PkgValidation::kMd5) ==
+        alpmpp::PkgValidation::kMd5) {
+      validation_methods.push_back("MD5 Sum");
+    }
+    if ((validation & alpmpp::PkgValidation::kSha256) ==
+        alpmpp::PkgValidation::kSha256) {
+      validation_methods.push_back("SHA-256 Sum");
+    }
+    if ((validation & alpmpp::PkgValidation::kSignature) ==
+        alpmpp::PkgValidation::kSignature) {
+      validation_methods.push_back("Signature");
+    }
+
+    for (const std::string_view method : validation_methods) {
+      if (method != validation_methods.back()) {
+        std::print(ss, "{}  ", method);
+      }
+      std::print(ss, "{}", method);
+    }
   }
 }
 
@@ -306,8 +306,8 @@ bool AlpmPackage::HasScriptlet() const noexcept {
   return alpm_pkg_has_scriptlet(pkg_);
 }
 
-int AlpmPackage::GetValidation() const noexcept {
-  return alpm_pkg_get_validation(pkg_);
+PkgValidation AlpmPackage::GetValidation() const noexcept {
+  return static_cast<PkgValidation>(alpm_pkg_get_validation(pkg_));
 }
 
 void *AlpmPackage::ChangelogOpen() const {

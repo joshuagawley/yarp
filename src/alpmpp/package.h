@@ -43,7 +43,7 @@ class AlpmPackage {
 
   off_t GetISize() const noexcept;
   PkgReason GetReason() const noexcept;
-  int GetValidation() const noexcept;
+  PkgValidation GetValidation() const noexcept;
 
   bool HasScriptlet() const noexcept;
 
