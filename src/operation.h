@@ -34,8 +34,9 @@ enum class QueryOptions : std::uint16_t {
   kChangelog = 1 << 9,
   kUpgrade = 1 << 10,
   kCheck = 1 << 11,
-  kLocality = 1 << 12,
-  kGroups = 1 << 13,
+  kForeign = 1 << 12,
+  kNative = 1 << 13,
+  kGroups = 1 << 14,
 };
 
 template <>
