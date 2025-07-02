@@ -39,6 +39,7 @@ class QueryHandler : public OperationHandler {
   void PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const;
   void CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const;
   PkgLocality GetPkgLocality(const alpmpp::AlpmPackage &pkg) const;
+  bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
 
   QueryOptions options_;
   std::vector<std::string> targets_;

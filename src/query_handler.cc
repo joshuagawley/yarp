@@ -6,6 +6,7 @@
 
 #include <cstdlib>
 #include <filesystem>
+#include <functional>
 #include <print>
 
 #include "alpmpp/file.h"
@@ -78,24 +79,6 @@ int QueryHandler::Execute() {
 std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
   std::vector<alpmpp::AlpmPackage> pkg_list;
 
-  const bool kOnlyDeps =
-      (options_ & QueryOptions::kDeps) == QueryOptions::kDeps;
-  const bool kOnlyExplicit =
-      (options_ & QueryOptions::kExplicit) == QueryOptions::kExplicit;
-  const bool kOnlyNative =
-      (options_ & QueryOptions::kNative) == QueryOptions::kNative;
-  const bool kOnlyForeign =
-      (options_ & QueryOptions::kForeign) == QueryOptions::kForeign;
-
-  const auto pkg_conditions_func = [this, kOnlyDeps, kOnlyExplicit,
-                                    kOnlyForeign, kOnlyNative](
-                                       const alpmpp::AlpmPackage &pkg) {
-    return (kOnlyDeps && pkg.GetReason() != alpmpp::PkgReason::kDepend) ||
-           (kOnlyExplicit && pkg.GetReason() != alpmpp::PkgReason::kExplicit) ||
-           (kOnlyForeign && GetPkgLocality(pkg) != PkgLocality::kForeign) ||
-           (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative);
-  };
-
   if (targets_.empty()) {
     // Get the entire package cache if no specific targets are given
 
@@ -114,7 +97,7 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
     }
   }
 
-  std::erase_if(pkg_list, pkg_conditions_func);
+  std::erase_if(pkg_list, std::bind_front(&QueryHandler::FilterPkg, this));
 
   return pkg_list;
 }
@@ -192,6 +175,22 @@ PkgLocality QueryHandler::GetPkgLocality(const alpmpp::AlpmPackage &pkg) const {
 
 void QueryHandler::PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const {
   std::println("{}", pkg.GetFileList(alpm_.OptionGetRoot()));
+}
+
+bool QueryHandler::FilterPkg(const alpmpp::AlpmPackage &pkg) const {
+  const bool kOnlyDeps =
+      (options_ & QueryOptions::kDeps) == QueryOptions::kDeps;
+  const bool kOnlyExplicit =
+      (options_ & QueryOptions::kExplicit) == QueryOptions::kExplicit;
+  const bool kOnlyNative =
+      (options_ & QueryOptions::kNative) == QueryOptions::kNative;
+  const bool kOnlyForeign =
+      (options_ & QueryOptions::kForeign) == QueryOptions::kForeign;
+
+  return (kOnlyDeps && pkg.GetReason() != alpmpp::PkgReason::kDepend) ||
+         (kOnlyExplicit && pkg.GetReason() != alpmpp::PkgReason::kExplicit) ||
+         (kOnlyForeign && GetPkgLocality(pkg) != PkgLocality::kForeign) ||
+         (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative);
 }
 
 }  // namespace pacmanpp
