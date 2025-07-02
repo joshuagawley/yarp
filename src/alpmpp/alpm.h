@@ -37,6 +37,8 @@ class Alpm {
 
   std::vector<alpm_db_t *> GetSyncDbs() const;
 
+  alpm_db_t *RegisterSyncDb(std::string_view name, int siglevel);
+
  private:
   alpm_handle_t *handle_;
   alpm_errno_t err = ALPM_ERR_OK;

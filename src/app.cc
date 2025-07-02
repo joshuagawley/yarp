@@ -23,6 +23,12 @@ App::App(std::span<char *> args) {
 
   alpm_ =
       std::make_unique<alpmpp::Alpm>(config_.get_root(), config_.get_db_path());
+
+  // Register sync databases
+  // TODO: Parse these from /etc/pacman.conf instead of hardcoding
+  alpm_->RegisterSyncDb("core", 0);
+  alpm_->RegisterSyncDb("extra", 0);
+  alpm_->RegisterSyncDb("multilib", 0);
 }
 
 int App::Run() {
