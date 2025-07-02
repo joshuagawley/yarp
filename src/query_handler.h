@@ -4,7 +4,6 @@
 #define PACMANPP_QUERY_HANDLER_H_
 
 #include "alpm.h"
-#include "alpmpp/package.h"
 #include "config.h"
 #include "operation.h"
 #include "operation_handler.h"

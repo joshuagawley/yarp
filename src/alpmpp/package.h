@@ -17,7 +17,37 @@ namespace alpmpp {
 
 class AlpmPackage {
  public:
-  explicit AlpmPackage(alpm_pkg_t *pkg) : pkg_(pkg) {}
+  constexpr AlpmPackage(alpm_pkg_t *pkg, bool owned = false)
+      : pkg_(pkg), owned_{owned} {}
+
+  ~AlpmPackage() {
+    if (owned_) alpm_pkg_free(pkg_);
+  }
+
+  // Copy constructor
+  AlpmPackage(const AlpmPackage&) = delete;
+  
+  // Copy assignment
+  AlpmPackage& operator=(const AlpmPackage&) = delete;
+  
+  // Move constructor
+  AlpmPackage(AlpmPackage&& other) noexcept 
+      : pkg_(other.pkg_), owned_(other.owned_) {
+    other.pkg_ = nullptr;
+    other.owned_ = false;
+  }
+  
+  // Move assignment
+  AlpmPackage& operator=(AlpmPackage&& other) noexcept {
+    if (this != &other) {
+      if (owned_) alpm_pkg_free(pkg_);
+      pkg_ = other.pkg_;
+      owned_ = other.owned_;
+      other.pkg_ = nullptr;
+      other.owned_ = false;
+    }
+    return *this;
+  }
 
   std::string_view GetName() const noexcept;
   std::string_view GetVersion() const noexcept;
@@ -56,6 +86,7 @@ class AlpmPackage {
 
  private:
   alpm_pkg_t *pkg_;
+  bool owned_ = false;
 };
 
 }  // namespace alpmpp

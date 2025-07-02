@@ -79,26 +79,38 @@ int QueryHandler::Execute() {
 std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
   std::vector<alpmpp::AlpmPackage> pkg_list;
 
-  if (targets_.empty()) {
-    // Get the entire package cache if no specific targets are given
-
-    // NB: This list is owned by the alpm library and should not be freed
-    // manually
-    pkg_list = alpm_.DbGetPkgCache(local_db_);
-  } else {
-    for (const std::string_view target : targets_) {
+  if ((options_ & QueryOptions::kIsFile) == QueryOptions::kIsFile) {
+    for (const std::string_view path : targets_) {
       std::optional<alpmpp::AlpmPackage> pkg =
-          alpm_.DbGetPkg(local_db_, target);
+          alpm_.LoadPkg(path, true, alpmpp::PkgValidation::kUnknown);
       if (pkg.has_value()) {
         pkg_list.push_back(std::move(*pkg));
       } else {
-        std::println("Error: package {} not found", target);
+        std::println("Error: Could not load package {}: {}", path,
+                     alpm_.StrError());
       }
     }
+  } else {
+    if (targets_.empty()) {
+      // Get the entire package cache if no specific targets are given
+
+      // NB: This list is owned by the alpm library and should not be freed
+      // manually
+      pkg_list = alpm_.DbGetPkgCache(local_db_);
+    } else {
+      for (const std::string_view target : targets_) {
+        std::optional<alpmpp::AlpmPackage> pkg =
+            alpm_.DbGetPkg(local_db_, target);
+        if (pkg.has_value()) {
+          pkg_list.push_back(std::move(*pkg));
+        } else {
+          std::println("Error: package {} not found", target);
+        }
+      }
+    }
+
+    std::erase_if(pkg_list, std::bind_front(&QueryHandler::FilterPkg, this));
   }
-
-  std::erase_if(pkg_list, std::bind_front(&QueryHandler::FilterPkg, this));
-
   return pkg_list;
 }
 

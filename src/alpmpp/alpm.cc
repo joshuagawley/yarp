@@ -7,6 +7,7 @@
 
 #include <format>
 #include <stdexcept>
+#include <utility>
 
 #include "package.h"
 #include "util.h"
@@ -61,5 +62,18 @@ std::vector<alpm_db_t *> Alpm::GetSyncDbs() const {
 alpm_db_t *Alpm::RegisterSyncDb(std::string_view name, int siglevel) {
   return alpm_register_syncdb(handle_, name.data(), siglevel);
 }
+
+std::optional<AlpmPackage> Alpm::LoadPkg(const std::filesystem::path &file_name,
+                                         bool full, PkgValidation level) {
+  alpm_pkg_t *pkg = nullptr;
+
+  alpm_pkg_load(handle_, file_name.c_str(), full, std::to_underlying(level),
+                &pkg);
+
+  return pkg == nullptr ? std::nullopt
+                        : std::make_optional<AlpmPackage>(pkg, true);
+}
+
+std::string_view Alpm::StrError() { return alpm_strerror(err); }
 
 }  // namespace alpmpp
