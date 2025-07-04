@@ -173,6 +173,7 @@ set(
     src/help_handler.h
     src/operation.h
     src/operation_handler.h
+    src/pacman_conf.h
     src/query_handler.h
     src/version_handler.h
     ${CMAKE_BINARY_DIR}/src/settings.h
