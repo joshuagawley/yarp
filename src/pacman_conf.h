@@ -19,6 +19,8 @@ struct Repository {
 
 class PacmanConf {
  public:
+  void ParseFromFile(const std::string_view config_file);
+
   // Accessors
   [[nodiscard]] constexpr const std::filesystem::path& root_dir()
       const noexcept {
@@ -114,6 +116,7 @@ class PacmanConf {
   }
 
   [[nodiscard]] constexpr bool color() const noexcept { return color_; }
+
   [[nodiscard]] constexpr double use_delta() const noexcept {
     return use_delta_;
   }
@@ -150,12 +153,12 @@ class PacmanConf {
   }
 
  private:
-  std::filesystem::path root_dir_;
-  std::filesystem::path db_path_;
-  std::filesystem::path cache_dir_;
-  std::filesystem::path hook_dir_;
-  std::filesystem::path gpg_dir_;
-  std::filesystem::path log_file_;
+  std::filesystem::path root_dir_ = "/";
+  std::filesystem::path db_path_ = "/var/lib/pacman/";
+  std::filesystem::path cache_dir_ = "/var/cache/pacman/pkg/";
+  std::filesystem::path hook_dir_ = "/etc/pacman.d/hooks/";
+  std::filesystem::path gpg_dir_ = "/etc/pacman.d/gnupg/";
+  std::filesystem::path log_file_ = "/var/log/pacman.log";
   std::vector<std::string> hold_pkg_;
   std::vector<std::string> ignore_pkg_;
   std::vector<std::string> ignore_group_;
@@ -168,16 +171,16 @@ class PacmanConf {
   std::vector<std::string> local_file_sig_level_;
   std::vector<std::string> remote_file_sig_level_;
   std::optional<std::string> download_user_;
-  bool use_syslog_;
-  bool color_;
-  double use_delta_;
-  bool total_download_;
-  bool check_space_;
-  bool verbose_pkg_lists_;
-  bool disable_download_timeout_;
-  int parallel_downloads_;
-  bool disable_sandbox_;
-  bool chomp_;
+  bool use_syslog_ = false;
+  bool color_ = false;
+  double use_delta_ = 0.0;
+  bool total_download_ = false;
+  bool check_space_ = false;
+  bool verbose_pkg_lists_ = false;
+  bool disable_download_timeout_ = false;
+  int parallel_downloads_ = 1;
+  bool disable_sandbox_ = false;
+  bool chomp_ = false;
   std::vector<Repository> repos_;
 };
 

@@ -160,6 +160,7 @@ set(
     src/app.cc
     src/help_handler.cc
     src/main.cc
+    src/pacman_conf.cc
     src/query_handler.cc
     src/version_handler.cc
 )
