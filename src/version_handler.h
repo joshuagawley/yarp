@@ -14,7 +14,7 @@ class VersionHandler : public OperationHandler {
   constexpr VersionHandler(Config &config, alpmpp::Alpm &alpm)
       : OperationHandler(config, alpm) {}
 
-  virtual ~VersionHandler() = default;
+  ~VersionHandler() override = default;
 
   int Execute() override;
 };

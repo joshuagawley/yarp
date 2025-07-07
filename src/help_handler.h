@@ -14,7 +14,7 @@ class HelpHandler : public OperationHandler {
   constexpr HelpHandler(Config &config, alpmpp::Alpm &alpm)
       : OperationHandler(config, alpm) {}
 
-  virtual ~HelpHandler() = default;
+  ~HelpHandler() override = default;
 
   int Execute() override;
 };

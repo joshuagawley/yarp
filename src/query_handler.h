@@ -28,7 +28,7 @@ class QueryHandler : public OperationHandler {
         targets_(std::move(targets)),
         local_db_(alpm_.GetLocalDb()) {}
 
-  virtual ~QueryHandler() = default;
+  ~QueryHandler() override = default;
 
   int Execute() override;
 
