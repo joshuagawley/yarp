@@ -9,16 +9,16 @@
 
 namespace pacmanpp {
 
-class HelpHandler : public OperationHandler {
+class HelpHandler final : public OperationHandler {
  public:
   constexpr HelpHandler(Config &config, alpmpp::Alpm &alpm)
       : OperationHandler(config, alpm) {}
 
-  virtual ~HelpHandler() = default;
+  ~HelpHandler() override = default;
 
   int Execute() override;
 };
 
 }  // namespace pacmanpp
 
-#endif  // PACMANPP_VERSION_HANDLER_H_
+#endif  // PACMANPP_HELP_HANDLER_H_

@@ -18,7 +18,7 @@
 namespace pacmanpp {
 
 App::App(std::span<char *> args) {
-  auto arg_parser = ArgumentParser{static_cast<int>(args.size()), args.data()};
+  const auto arg_parser = ArgumentParser{static_cast<int>(args.size()), args.data()};
   arg_parser.ParseArgs(operation_, query_options_, targets_, config_);
 
   alpm_ =

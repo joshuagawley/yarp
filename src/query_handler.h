@@ -18,7 +18,7 @@ struct EnableEnumBitwiseOperators<PkgLocality> {
   static constexpr bool enabled = true;
 };
 
-class QueryHandler : public OperationHandler {
+class QueryHandler final : public OperationHandler {
  public:
   constexpr QueryHandler(Config &config, alpmpp::Alpm &alpm,
                          QueryOptions query_options,
@@ -28,17 +28,17 @@ class QueryHandler : public OperationHandler {
         targets_(std::move(targets)),
         local_db_(alpm_.GetLocalDb()) {}
 
-  virtual ~QueryHandler() = default;
+  ~QueryHandler() override = default;
 
   int Execute() override;
 
  private:
-  int HandleGroups() const;
-  std::vector<alpmpp::AlpmPackage> GetPkgList() const;
+  [[nodiscard]] int HandleGroups() const;
+  [[nodiscard]] std::vector<alpmpp::AlpmPackage> GetPkgList() const;
   void PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const;
   void CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const;
-  PkgLocality GetPkgLocality(const alpmpp::AlpmPackage &pkg) const;
-  bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
+  [[nodiscard]] PkgLocality GetPkgLocality(const alpmpp::AlpmPackage &pkg) const;
+  [[nodiscard]] bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
 
   QueryOptions options_;
   std::vector<std::string> targets_;

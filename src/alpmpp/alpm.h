@@ -4,10 +4,7 @@
 #define ALPMPP_ALPM_H_
 
 #include <alpm.h>
-#include <alpm_list.h>
 
-#include <cstddef>
-#include <cstring>
 #include <filesystem>
 #include <optional>
 
@@ -20,23 +17,25 @@ class Alpm {
   Alpm(std::string_view root, std::string_view dbpath);
   ~Alpm();
 
-  alpm_db_t *GetLocalDb() const;
+  [[nodiscard]] alpm_db_t *GetLocalDb() const;
 
   static std::vector<AlpmPackage> DbGetPkgCache(alpm_db_t *db);
 
   static std::optional<AlpmPackage> DbGetPkg(alpm_db_t *db,
                                              std::string_view name);
 
-  std::optional<AlpmPackage> LoadPkg(const std::filesystem::path &file_name,
-                                     bool full, PkgValidation level) const;
+  [[nodiscard]] std::optional<AlpmPackage> LoadPkg(
+      const std::filesystem::path &file_name, bool full,
+      PkgValidation level) const;
 
-  std::string_view OptionGetRoot() const;
+  [[nodiscard]] std::string_view OptionGetRoot() const;
 
-  std::vector<alpm_db_t *> GetSyncDbs() const;
+  [[nodiscard]] std::vector<alpm_db_t *> GetSyncDbs() const;
 
-  alpm_db_t *RegisterSyncDb(std::string_view name, int siglevel) const;
+  [[nodiscard]] alpm_db_t *RegisterSyncDb(std::string_view name,
+                                          int siglevel) const;
 
-  std::string_view StrError() const;
+  [[nodiscard]] std::string_view StrError() const;
 
  private:
   alpm_handle_t *handle_;

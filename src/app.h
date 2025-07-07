@@ -16,7 +16,7 @@ namespace pacmanpp {
 
 class App {
  public:
-  App(std::span<char *> args);
+  explicit App(std::span<char *> args);
 
   int Run();
 

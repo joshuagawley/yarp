@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-#ifndef PACMANPP_SRC_BITWISE_ENUM_H_
-#define PACMANPP_SRC_BITWISE_ENUM_H_
+#ifndef PACMANPP_BITWISE_ENUM_H_
+#define PACMANPP_BITWISE_ENUM_H_
 
 #include <type_traits>
 #include <utility>
@@ -64,4 +64,4 @@ Enum &operator^=(Enum &lhs, const Enum rhs) {
 
 }  // namespace pacmanpp
 
-#endif  // PACMANPP_SRC_BITWISE_ENUM_H_
+#endif  // PACMANPP_BITWISE_ENUM_H_

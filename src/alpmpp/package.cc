@@ -25,15 +25,14 @@ void PrintStringVector(std::stringstream &ss, const std::string_view prefix,
                        const std::vector<T> &vector) {
   if (vector.empty()) {
     std::println(ss, "{}None", prefix);
-    return;
-  }
-
-  std::print(ss, "{}", prefix);
-  for (const T &elem : vector) {
-    if (elem != *(std::end(vector) - 1)) {
-      std::print(ss, "{}  ", elem);  // Not the last item, add space
-    } else {
-      std::println(ss, "{}", elem);  // Last item, no trailing space
+  } else {
+    std::print(ss, "{}", prefix);
+    for (const T &elem : vector) {
+      if (elem != *(std::end(vector) - 1)) {
+        std::print(ss, "{}  ", elem);  // Not the last item, add space
+      } else {
+        std::println(ss, "{}", elem);  // Last item, no trailing space
+      }
     }
   }
 }
@@ -42,17 +41,16 @@ void PrintDependsList(std::stringstream &ss, const std::string_view prefix,
                       std::vector<alpmpp::AlpmDepend> depends) {
   if (depends.empty()) {
     std::println(ss, "{}None", prefix);
-    return;
-  }
-
-  std::print(ss, "{}", prefix);
-  for (alpmpp::AlpmDepend &depend : depends) {
-    if (&depend != &depends.back()) {
-      std::print(ss, "{}  ",
-                 depend.GetName());  // Not the last item, add space
-    } else {
-      std::println(ss, "{}",
-                   depend.GetName());  // Last item, no trailing space
+  } else {
+    std::print(ss, "{}", prefix);
+    for (alpmpp::AlpmDepend &depend : depends) {
+      if (&depend != &depends.back()) {
+        std::print(ss, "{}  ",
+                   depend.name());  // Not the last item, add space
+      } else {
+        std::println(ss, "{}",
+                     depend.name());  // Last item, no trailing space
+      }
     }
   }
 }
@@ -63,18 +61,17 @@ void PrintOptDependsList(std::stringstream &ss,
 
   if (opt_depends.empty()) {
     std::println(ss, "{}None", kPrefix);
-    return;
-  }
-
-  std::print(ss, "{}", kPrefix);
-  for (alpmpp::AlpmDepend &depend : opt_depends) {
-    std::string dep_string = depend.ComputeString();
-    if (&depend != &opt_depends.back()) {
-      std::print(ss, "{}  ",
-                 dep_string);  // Not the last item, add space
-    } else {
-      std::println(ss, "{}",
-                   dep_string);  // Last item, no trailing space
+  } else {
+    std::print(ss, "{}", kPrefix);
+    for (alpmpp::AlpmDepend &depend : opt_depends) {
+      std::string dep_string = depend.ComputeString();
+      if (&depend != &opt_depends.back()) {
+        std::print(ss, "{}  ",
+                   dep_string);  // Not the last item, add space
+      } else {
+        std::println(ss, "{}",
+                     dep_string);  // Last item, no trailing space
+      }
     }
   }
 }
@@ -99,7 +96,7 @@ void PrintHumanizedSize(std::stringstream &ss, const std::string_view prefix,
                         const off_t size) {
   constexpr std::array<const char *, 6> units{"B",   "KiB", "MiB",
                                               "GiB", "TiB", "PiB"};
-  double size_d = static_cast<double>(size);
+  auto size_d = static_cast<double>(size);
   std::size_t i{};
 
   while (size_d >= 1024.0 && i < 5) {
@@ -118,7 +115,7 @@ void PrintHumanizedSize(std::stringstream &ss, const std::string_view prefix,
 void PrintHumanizedDate(std::stringstream &ss, const std::string_view prefix,
                         const alpm_time_t alpm_time) {
   // We use C-style time API instead of std::chrono
-  const std::time_t time = static_cast<std::time_t>(alpm_time);
+  const auto time = static_cast<std::time_t>(alpm_time);
   const tm *local_time = std::localtime(&time);
 
   // std::put_time doesn't work with std::format
@@ -141,15 +138,15 @@ void PrintValidation(std::stringstream &ss,
 
     if ((validation & alpmpp::PkgValidation::kMd5) ==
         alpmpp::PkgValidation::kMd5) {
-      validation_methods.push_back("MD5 Sum");
+      validation_methods.emplace_back("MD5 Sum");
     }
     if ((validation & alpmpp::PkgValidation::kSha256) ==
         alpmpp::PkgValidation::kSha256) {
-      validation_methods.push_back("SHA-256 Sum");
+      validation_methods.emplace_back("SHA-256 Sum");
     }
     if ((validation & alpmpp::PkgValidation::kSignature) ==
         alpmpp::PkgValidation::kSignature) {
-      validation_methods.push_back("Signature");
+      validation_methods.emplace_back("Signature");
     }
 
     for (const std::string_view method : validation_methods) {
@@ -168,10 +165,8 @@ namespace alpmpp {
 std::string AlpmPackage::GetFileList(std::string_view root_path) const {
   std::stringstream ss;
 
-  const std::vector<AlpmFile> files = GetFiles();
-
-  for (const AlpmFile &file : files) {
-    std::println(ss, "{} {}{}", GetName(), root_path, file.GetName());
+  for (const AlpmFile &file : files()) {
+    std::println(ss, "{} {}{}", name(), root_path, file.name());
   }
 
   return ss.str();
@@ -180,94 +175,94 @@ std::string AlpmPackage::GetFileList(std::string_view root_path) const {
 std::string AlpmPackage::GetInfo() const {
   std::stringstream ss;
 
-  std::println(ss, "Name            : {}", GetName());
-  std::println(ss, "Version         : {}", GetVersion());
-  std::println(ss, "Description     : {}", GetDesc());
-  std::println(ss, "Architecture    : {}", GetArch());
-  std::println(ss, "URL             : {}", GetURL());
+  std::println(ss, "Name            : {}", name());
+  std::println(ss, "Version         : {}", version());
+  std::println(ss, "Description     : {}", desc());
+  std::println(ss, "Architecture    : {}", arch());
+  std::println(ss, "URL             : {}", url());
 
-  PrintStringVector(ss, "Licenses        : ", GetLicenses());
-  PrintStringVector(ss, "Groups          : ", GetGroups());
-  PrintDependsList(ss, "Provides        : ", GetProvides());
-  PrintDependsList(ss, "Depends On      : ", GetDepends());
-  PrintOptDependsList(ss, GetOptDepends());
+  PrintStringVector(ss, "Licenses        : ", licenses());
+  PrintStringVector(ss, "Groups          : ", groups());
+  PrintDependsList(ss, "Provides        : ", provides());
+  PrintDependsList(ss, "Depends On      : ", depends());
+  PrintOptDependsList(ss, opt_depends());
   // alpm_pkg_compute_* don't free the list, so we set free_list to true
   PrintStringVector(ss, "Required By     : ", ComputeRequiredBy());
   PrintStringVector(ss, "Optional For    : ", ComputeOptionalFor());
 
-  PrintDependsList(ss, "Conflicts With  : ", GetConflicts());
-  PrintDependsList(ss, "Replaces        : ", GetReplaces());
-  PrintHumanizedSize(ss, "Installed Size  :", GetISize());
-  std::println(ss, "Packager        : {}", GetPackager());
-  PrintHumanizedDate(ss, "Build Date      : ", GetBuildDate());
-  PrintHumanizedDate(ss, "Install Date    : ", GetInstallDate());
-  PrintInstallReason(ss, GetReason());
+  PrintDependsList(ss, "Conflicts With  : ", conflicts());
+  PrintDependsList(ss, "Replaces        : ", replaces());
+  PrintHumanizedSize(ss, "Installed Size  :", i_size());
+  std::println(ss, "Packager        : {}", packager());
+  PrintHumanizedDate(ss, "Build Date      : ", build_date());
+  PrintHumanizedDate(ss, "Install Date    : ", install_date());
+  PrintInstallReason(ss, reason());
   PrintInstallScript(ss, HasScriptlet());
-  PrintValidation(ss, GetValidation());
+  PrintValidation(ss, validation());
 
   return ss.str();
 }
 
-std::string_view AlpmPackage::GetName() const noexcept {
+std::string_view AlpmPackage::name() const noexcept {
   return alpm_pkg_get_name(pkg_);
 }
 
-std::string_view AlpmPackage::GetVersion() const noexcept {
+std::string_view AlpmPackage::version() const noexcept {
   return alpm_pkg_get_version(pkg_);
 }
 
-std::string_view AlpmPackage::GetDesc() const noexcept {
+std::string_view AlpmPackage::desc() const noexcept {
   return alpm_pkg_get_desc(pkg_);
 }
 
-std::string_view AlpmPackage::GetArch() const noexcept {
+std::string_view AlpmPackage::arch() const noexcept {
   return alpm_pkg_get_arch(pkg_);
 }
 
-std::string_view AlpmPackage::GetURL() const noexcept {
+std::string_view AlpmPackage::url() const noexcept {
   return alpm_pkg_get_url(pkg_);
 }
 
-std::string_view AlpmPackage::GetPackager() const noexcept {
+std::string_view AlpmPackage::packager() const noexcept {
   return alpm_pkg_get_packager(pkg_);
 }
 
-std::vector<AlpmDepend> AlpmPackage::GetOptDepends() const noexcept {
+std::vector<AlpmDepend> AlpmPackage::opt_depends() const noexcept {
   return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
       alpm_pkg_get_optdepends(pkg_));
 }
 
-std::vector<AlpmDepend> AlpmPackage::GetDepends() const noexcept {
+std::vector<AlpmDepend> AlpmPackage::depends() const noexcept {
   return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
       alpm_pkg_get_depends(pkg_));
 }
 
-std::vector<AlpmDepend> AlpmPackage::GetProvides() const noexcept {
+std::vector<AlpmDepend> AlpmPackage::provides() const noexcept {
   return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
       alpm_pkg_get_provides(pkg_));
 }
 
-std::vector<std::string_view> AlpmPackage::GetGroups() const noexcept {
+std::vector<std::string_view> AlpmPackage::groups() const noexcept {
   return util::AlpmListToVector<const char *, std::string_view>(
       (alpm_pkg_get_groups(pkg_)));
 }
 
-std::vector<std::string_view> AlpmPackage::GetLicenses() const noexcept {
+std::vector<std::string_view> AlpmPackage::licenses() const noexcept {
   return util::AlpmListToVector<const char *, std::string_view>(
       alpm_pkg_get_licenses(pkg_));
 }
 
-std::vector<AlpmDepend> AlpmPackage::GetConflicts() const noexcept {
+std::vector<AlpmDepend> AlpmPackage::conflicts() const noexcept {
   return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
       alpm_pkg_get_conflicts(pkg_));
 }
 
-std::vector<AlpmDepend> AlpmPackage::GetReplaces() const noexcept {
+std::vector<AlpmDepend> AlpmPackage::replaces() const noexcept {
   return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
       alpm_pkg_get_replaces(pkg_));
 }
 
-std::vector<AlpmFile> AlpmPackage::GetFiles() const noexcept {
+std::vector<AlpmFile> AlpmPackage::files() const noexcept {
   std::vector<AlpmFile> result;
   alpm_filelist_t *file_list = alpm_pkg_get_files(pkg_);
   for (std::size_t i = 0; i < file_list->count; ++i) {
@@ -286,19 +281,19 @@ std::vector<std::string> AlpmPackage::ComputeRequiredBy() const noexcept {
       alpm_pkg_compute_requiredby(pkg_));
 }
 
-alpm_time_t AlpmPackage::GetBuildDate() const noexcept {
+alpm_time_t AlpmPackage::build_date() const noexcept {
   return alpm_pkg_get_builddate(pkg_);
 }
 
-alpm_time_t AlpmPackage::GetInstallDate() const noexcept {
+alpm_time_t AlpmPackage::install_date() const noexcept {
   return alpm_pkg_get_installdate(pkg_);
 }
 
-off_t AlpmPackage::GetISize() const noexcept {
+off_t AlpmPackage::i_size() const noexcept {
   return alpm_pkg_get_isize(pkg_);
 }
 
-PkgReason AlpmPackage::GetReason() const noexcept {
+PkgReason AlpmPackage::reason() const noexcept {
   return static_cast<PkgReason>(alpm_pkg_get_reason(pkg_));
 }
 
@@ -306,7 +301,7 @@ bool AlpmPackage::HasScriptlet() const noexcept {
   return alpm_pkg_has_scriptlet(pkg_);
 }
 
-PkgValidation AlpmPackage::GetValidation() const noexcept {
+PkgValidation AlpmPackage::validation() const noexcept {
   return static_cast<PkgValidation>(alpm_pkg_get_validation(pkg_));
 }
 
@@ -315,7 +310,7 @@ void *AlpmPackage::ChangelogOpen() const {
 }
 
 std::size_t AlpmPackage::ChangelogRead(void *fp, char *buf,
-                                       std::size_t size) const {
+                                       const std::size_t size) const {
   return alpm_pkg_changelog_read(buf, size, pkg_, fp);
 }
 

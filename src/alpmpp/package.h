@@ -4,7 +4,6 @@
 #define ALPMPP_PACKAGE_H_
 
 #include <alpm.h>
-#include <alpm_list.h>
 
 #include <string_view>
 #include <vector>
@@ -17,28 +16,23 @@ namespace alpmpp {
 
 class AlpmPackage {
  public:
-  constexpr AlpmPackage(alpm_pkg_t *pkg, bool owned = false)
+  constexpr explicit AlpmPackage(alpm_pkg_t *pkg, bool owned = false)
       : pkg_(pkg), owned_{owned} {}
 
   ~AlpmPackage() {
     if (owned_) alpm_pkg_free(pkg_);
   }
 
-  // Copy constructor
-  AlpmPackage(const AlpmPackage&) = delete;
-  
-  // Copy assignment
-  AlpmPackage& operator=(const AlpmPackage&) = delete;
-  
-  // Move constructor
-  AlpmPackage(AlpmPackage&& other) noexcept 
+  AlpmPackage(const AlpmPackage &) = delete;
+  AlpmPackage &operator=(const AlpmPackage &) = delete;
+
+  AlpmPackage(AlpmPackage &&other) noexcept
       : pkg_(other.pkg_), owned_(other.owned_) {
     other.pkg_ = nullptr;
     other.owned_ = false;
   }
-  
-  // Move assignment
-  AlpmPackage& operator=(AlpmPackage&& other) noexcept {
+
+  AlpmPackage &operator=(AlpmPackage &&other) noexcept {
     if (this != &other) {
       if (owned_) alpm_pkg_free(pkg_);
       pkg_ = other.pkg_;
@@ -49,40 +43,38 @@ class AlpmPackage {
     return *this;
   }
 
-  std::string_view GetName() const noexcept;
-  std::string_view GetVersion() const noexcept;
-  std::string_view GetDesc() const noexcept;
-  std::string_view GetArch() const noexcept;
-  std::string_view GetURL() const noexcept;
-  std::string_view GetPackager() const noexcept;
+  [[nodiscard]] std::string_view name() const noexcept;
+  [[nodiscard]] std::string_view version() const noexcept;
+  [[nodiscard]] std::string_view desc() const noexcept;
+  [[nodiscard]] std::string_view arch() const noexcept;
+  [[nodiscard]] std::string_view url() const noexcept;
+  [[nodiscard]] std::string_view packager() const noexcept;
 
-  std::vector<AlpmDepend> GetOptDepends() const noexcept;
-  std::vector<AlpmDepend> GetDepends() const noexcept;
-  std::vector<AlpmDepend> GetProvides() const noexcept;
-  std::vector<std::string_view> GetGroups() const noexcept;
-  std::vector<std::string_view> GetLicenses() const noexcept;
-  std::vector<AlpmDepend> GetConflicts() const noexcept;
-  std::vector<AlpmDepend> GetReplaces() const noexcept;
-  std::vector<AlpmFile> GetFiles() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> opt_depends() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> depends() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> provides() const noexcept;
+  [[nodiscard]] std::vector<std::string_view> groups() const noexcept;
+  [[nodiscard]] std::vector<std::string_view> licenses() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> conflicts() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> replaces() const noexcept;
+  [[nodiscard]] std::vector<AlpmFile> files() const noexcept;
+  [[nodiscard]] alpm_time_t build_date() const noexcept;
+  [[nodiscard]] alpm_time_t install_date() const noexcept;
+  [[nodiscard]] off_t i_size() const noexcept;
+  [[nodiscard]] PkgReason reason() const noexcept;
+  [[nodiscard]] PkgValidation validation() const noexcept;
 
-  std::vector<std::string> ComputeOptionalFor() const noexcept;
-  std::vector<std::string> ComputeRequiredBy() const noexcept;
+  [[nodiscard]] std::vector<std::string> ComputeOptionalFor() const noexcept;
+  [[nodiscard]] std::vector<std::string> ComputeRequiredBy() const noexcept;
 
-  alpm_time_t GetBuildDate() const noexcept;
-  alpm_time_t GetInstallDate() const noexcept;
+  [[nodiscard]] bool HasScriptlet() const noexcept;
 
-  off_t GetISize() const noexcept;
-  PkgReason GetReason() const noexcept;
-  PkgValidation GetValidation() const noexcept;
-
-  bool HasScriptlet() const noexcept;
-
-  void *ChangelogOpen() const;
+  [[nodiscard]] void *ChangelogOpen() const;
   std::size_t ChangelogRead(void *fp, char *buf, std::size_t size) const;
   int ChangelogClose(void *fp) const noexcept;
 
-  std::string GetFileList(std::string_view root_path) const;
-  std::string GetInfo() const;
+  [[nodiscard]] std::string GetFileList(std::string_view root_path) const;
+  [[nodiscard]] std::string GetInfo() const;
 
  private:
   alpm_pkg_t *pkg_;

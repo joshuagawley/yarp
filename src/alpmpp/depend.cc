@@ -6,7 +6,7 @@
 
 namespace alpmpp {
 
-std::string AlpmDepend::ComputeString() {
+std::string AlpmDepend::ComputeString() const {
   return alpm_dep_compute_string(depend_);
 }
 
