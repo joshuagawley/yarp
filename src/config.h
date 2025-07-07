@@ -9,7 +9,7 @@ namespace pacmanpp {
 
 class Config {
  public:
-  constexpr Config() {}
+  constexpr Config() = default;
 
   Config(const Config &) = delete;
   Config &operator=(const Config &) = delete;
