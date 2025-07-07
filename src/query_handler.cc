@@ -22,25 +22,23 @@ void PrintPkgChangelog(const alpmpp::AlpmPackage &pkg) {
 
   if (fp == nullptr) {
     std::println(stderr, "No changelog available for {}", pkg_name);
-    return;
+  } else {
+    std::println("Changelog for {}:", pkg_name);
+
+    std::array<char, 1024> buffer{};
+    std::size_t bytes_read = 0;
+
+    while ((bytes_read = pkg.ChangelogRead(fp, buffer.data(), buffer.size())) >
+           0) {
+      std::print("{}", std::string_view(buffer.data(), bytes_read));
+           }
+
+    const int result = pkg.ChangelogClose(fp);
+    if (!result) {
+      std::println("Error: could not close changelog.");
+    }
+    std::println("");
   }
-
-  std::println("Changelog for {}:", pkg_name);
-
-  std::array<char, 1024> buffer;
-  std::size_t bytes_read = 0;
-
-  while ((bytes_read = pkg.ChangelogRead(fp, buffer.data(), buffer.size())) >
-         0) {
-    // Use std::print to output the data
-    std::print("{}", std::string_view(buffer.data(), bytes_read));
-  }
-
-  const int result = pkg.ChangelogClose(fp);
-  if (!result) {
-    std::println("Error: could not close changelog.");
-  }
-  std::println("");  // Add newline at the end
 }
 
 void PrintPkgInfo(const alpmpp::AlpmPackage &pkg) {
@@ -77,7 +75,7 @@ int QueryHandler::Execute() {
 }
 
 std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
-  std::vector<alpmpp::AlpmPackage> pkg_list;
+  std::vector<alpmpp::AlpmPackage> pkg_list{};
 
   if ((options_ & QueryOptions::kIsFile) == QueryOptions::kIsFile) {
     for (const std::string_view path : targets_) {
@@ -96,11 +94,11 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
 
       // NB: This list is owned by the alpm library and should not be freed
       // manually
-      pkg_list = alpm_.DbGetPkgCache(local_db_);
+      pkg_list = alpmpp::Alpm::DbGetPkgCache(local_db_);
     } else {
       for (const std::string_view target : targets_) {
         std::optional<alpmpp::AlpmPackage> pkg =
-            alpm_.DbGetPkg(local_db_, target);
+            alpmpp::Alpm::DbGetPkg(local_db_, target);
         if (pkg.has_value()) {
           pkg_list.push_back(std::move(*pkg));
         } else {
@@ -117,13 +115,12 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
 int QueryHandler::HandleGroups() const {
   if (targets_.empty()) {
     alpm_list_t *all_groups = alpm_db_get_groupcache(local_db_);
-    for (alpm_list_t *elem = all_groups; elem != nullptr; elem = elem->next) {
-      alpm_group_t *group = static_cast<alpm_group_t *>(elem->data);
+    for (const alpm_list_t *elem = all_groups; elem != nullptr; elem = elem->next) {
+      auto *group = static_cast<alpm_group_t *>(elem->data);
 
       for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
            pkgs = pkgs->next) {
-        alpmpp::AlpmPackage pkg =
-            alpmpp::AlpmPackage{static_cast<alpm_pkg_t *>(pkgs->data)};
+        alpmpp::AlpmPackage pkg{static_cast<alpm_pkg_t *>(pkgs->data)};
         std::println("{} {}", group->name, pkg.GetName());
       }
     }
@@ -137,8 +134,7 @@ int QueryHandler::HandleGroups() const {
 
       for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
            pkgs = pkgs->next) {
-        alpmpp::AlpmPackage pkg =
-            alpmpp::AlpmPackage{static_cast<alpm_pkg_t *>(pkgs->data)};
+        alpmpp::AlpmPackage pkg{static_cast<alpm_pkg_t *>(pkgs->data)};
         std::println("{} {}", group->name, pkg.GetName());
       }
     }
@@ -177,7 +173,7 @@ PkgLocality QueryHandler::GetPkgLocality(const alpmpp::AlpmPackage &pkg) const {
   const std::string_view pkg_name = pkg.GetName();
 
   for (alpm_db_t *db : sync_dbs) {
-    if (alpm_.DbGetPkg(db, pkg_name).has_value()) {
+    if (alpmpp::Alpm::DbGetPkg(db, pkg_name).has_value()) {
       return PkgLocality::kNative;
     }
   }
