@@ -18,7 +18,7 @@ namespace {
 
 void PrintPkgChangelog(const alpmpp::AlpmPackage &pkg) {
   void *fp = pkg.ChangelogOpen();
-  const std::string_view pkg_name = pkg.GetName();
+  const std::string_view pkg_name = pkg.name();
 
   if (fp == nullptr) {
     std::println(stderr, "No changelog available for {}", pkg_name);
@@ -67,7 +67,7 @@ int QueryHandler::Execute() {
     } else if ((options_ & QueryOptions::kCheck) == QueryOptions::kCheck) {
       CheckPkgFiles(pkg);
     } else {
-      std::println("{} {}", pkg.GetName(), pkg.GetVersion());
+      std::println("{} {}", pkg.name(), pkg.version());
     }
   }
 
@@ -121,7 +121,7 @@ int QueryHandler::HandleGroups() const {
       for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
            pkgs = pkgs->next) {
         alpmpp::AlpmPackage pkg{static_cast<alpm_pkg_t *>(pkgs->data)};
-        std::println("{} {}", group->name, pkg.GetName());
+        std::println("{} {}", group->name, pkg.name());
       }
     }
   } else {
@@ -135,7 +135,7 @@ int QueryHandler::HandleGroups() const {
       for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
            pkgs = pkgs->next) {
         alpmpp::AlpmPackage pkg{static_cast<alpm_pkg_t *>(pkgs->data)};
-        std::println("{} {}", group->name, pkg.GetName());
+        std::println("{} {}", group->name, pkg.name());
       }
     }
   }
@@ -144,7 +144,7 @@ int QueryHandler::HandleGroups() const {
 
 void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
   int errors{};
-  const std::vector<alpmpp::AlpmFile> files = pkg.GetFiles();
+  const std::vector<alpmpp::AlpmFile> files = pkg.files();
   const std::string_view root = alpm_.OptionGetRoot();
 
   for (const alpmpp::AlpmFile &file : files) {
@@ -155,7 +155,7 @@ void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
       const bool expect_dir = *(std::end(absolute_file_name) - 1) == '/';
       const bool is_dir = std::filesystem::is_directory(absolute_file_name);
       if (expect_dir != is_dir) {
-        std::println("{}: {} (File type mismatch)", pkg.GetName(),
+        std::println("{}: {} (File type mismatch)", pkg.name(),
                      absolute_file_name);
         ++errors;
       }
@@ -164,13 +164,13 @@ void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
     }
   }
 
-  std::println("{}: {} total files, {} missing files", pkg.GetName(),
+  std::println("{}: {} total files, {} missing files", pkg.name(),
                files.size(), errors);
 }
 
 PkgLocality QueryHandler::GetPkgLocality(const alpmpp::AlpmPackage &pkg) const {
   const std::vector<alpm_db_t *> sync_dbs = alpm_.GetSyncDbs();
-  const std::string_view pkg_name = pkg.GetName();
+  const std::string_view pkg_name = pkg.name();
 
   for (alpm_db_t *db : sync_dbs) {
     if (alpmpp::Alpm::DbGetPkg(db, pkg_name).has_value()) {
@@ -195,8 +195,8 @@ bool QueryHandler::FilterPkg(const alpmpp::AlpmPackage &pkg) const {
   const bool kOnlyForeign =
       (options_ & QueryOptions::kForeign) == QueryOptions::kForeign;
 
-  return (kOnlyDeps && pkg.GetReason() != alpmpp::PkgReason::kDepend) ||
-         (kOnlyExplicit && pkg.GetReason() != alpmpp::PkgReason::kExplicit) ||
+  return (kOnlyDeps && pkg.reason() != alpmpp::PkgReason::kDepend) ||
+         (kOnlyExplicit && pkg.reason() != alpmpp::PkgReason::kExplicit) ||
          (kOnlyForeign && GetPkgLocality(pkg) != PkgLocality::kForeign) ||
          (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative);
 }

@@ -23,20 +23,15 @@ class AlpmPackage {
     if (owned_) alpm_pkg_free(pkg_);
   }
 
-  // Copy constructor
   AlpmPackage(const AlpmPackage &) = delete;
-
-  // Copy assignment
   AlpmPackage &operator=(const AlpmPackage &) = delete;
 
-  // Move constructor
   AlpmPackage(AlpmPackage &&other) noexcept
       : pkg_(other.pkg_), owned_(other.owned_) {
     other.pkg_ = nullptr;
     other.owned_ = false;
   }
 
-  // Move assignment
   AlpmPackage &operator=(AlpmPackage &&other) noexcept {
     if (this != &other) {
       if (owned_) alpm_pkg_free(pkg_);
@@ -48,31 +43,29 @@ class AlpmPackage {
     return *this;
   }
 
-  [[nodiscard]] std::string_view GetName() const noexcept;
-  [[nodiscard]] std::string_view GetVersion() const noexcept;
-  [[nodiscard]] std::string_view GetDesc() const noexcept;
-  [[nodiscard]] std::string_view GetArch() const noexcept;
-  [[nodiscard]] std::string_view GetURL() const noexcept;
-  [[nodiscard]] std::string_view GetPackager() const noexcept;
+  [[nodiscard]] std::string_view name() const noexcept;
+  [[nodiscard]] std::string_view version() const noexcept;
+  [[nodiscard]] std::string_view desc() const noexcept;
+  [[nodiscard]] std::string_view arch() const noexcept;
+  [[nodiscard]] std::string_view url() const noexcept;
+  [[nodiscard]] std::string_view packager() const noexcept;
 
-  [[nodiscard]] std::vector<AlpmDepend> GetOptDepends() const noexcept;
-  [[nodiscard]] std::vector<AlpmDepend> GetDepends() const noexcept;
-  [[nodiscard]] std::vector<AlpmDepend> GetProvides() const noexcept;
-  [[nodiscard]] std::vector<std::string_view> GetGroups() const noexcept;
-  [[nodiscard]] std::vector<std::string_view> GetLicenses() const noexcept;
-  [[nodiscard]] std::vector<AlpmDepend> GetConflicts() const noexcept;
-  [[nodiscard]] std::vector<AlpmDepend> GetReplaces() const noexcept;
-  [[nodiscard]] std::vector<AlpmFile> GetFiles() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> opt_depends() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> depends() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> provides() const noexcept;
+  [[nodiscard]] std::vector<std::string_view> groups() const noexcept;
+  [[nodiscard]] std::vector<std::string_view> licenses() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> conflicts() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> replaces() const noexcept;
+  [[nodiscard]] std::vector<AlpmFile> files() const noexcept;
+  [[nodiscard]] alpm_time_t build_date() const noexcept;
+  [[nodiscard]] alpm_time_t install_date() const noexcept;
+  [[nodiscard]] off_t i_size() const noexcept;
+  [[nodiscard]] PkgReason reason() const noexcept;
+  [[nodiscard]] PkgValidation validation() const noexcept;
 
   [[nodiscard]] std::vector<std::string> ComputeOptionalFor() const noexcept;
   [[nodiscard]] std::vector<std::string> ComputeRequiredBy() const noexcept;
-
-  [[nodiscard]] alpm_time_t GetBuildDate() const noexcept;
-  [[nodiscard]] alpm_time_t GetInstallDate() const noexcept;
-
-  [[nodiscard]] off_t GetISize() const noexcept;
-  [[nodiscard]] PkgReason GetReason() const noexcept;
-  [[nodiscard]] PkgValidation GetValidation() const noexcept;
 
   [[nodiscard]] bool HasScriptlet() const noexcept;
 

@@ -165,10 +165,8 @@ namespace alpmpp {
 std::string AlpmPackage::GetFileList(std::string_view root_path) const {
   std::stringstream ss;
 
-  const std::vector<AlpmFile> files = GetFiles();
-
-  for (const AlpmFile &file : files) {
-    std::println(ss, "{} {}{}", GetName(), root_path, file.GetName());
+  for (const AlpmFile &file : files()) {
+    std::println(ss, "{} {}{}", name(), root_path, file.GetName());
   }
 
   return ss.str();
@@ -177,94 +175,94 @@ std::string AlpmPackage::GetFileList(std::string_view root_path) const {
 std::string AlpmPackage::GetInfo() const {
   std::stringstream ss;
 
-  std::println(ss, "Name            : {}", GetName());
-  std::println(ss, "Version         : {}", GetVersion());
-  std::println(ss, "Description     : {}", GetDesc());
-  std::println(ss, "Architecture    : {}", GetArch());
-  std::println(ss, "URL             : {}", GetURL());
+  std::println(ss, "Name            : {}", name());
+  std::println(ss, "Version         : {}", version());
+  std::println(ss, "Description     : {}", desc());
+  std::println(ss, "Architecture    : {}", arch());
+  std::println(ss, "URL             : {}", url());
 
-  PrintStringVector(ss, "Licenses        : ", GetLicenses());
-  PrintStringVector(ss, "Groups          : ", GetGroups());
-  PrintDependsList(ss, "Provides        : ", GetProvides());
-  PrintDependsList(ss, "Depends On      : ", GetDepends());
-  PrintOptDependsList(ss, GetOptDepends());
+  PrintStringVector(ss, "Licenses        : ", licenses());
+  PrintStringVector(ss, "Groups          : ", groups());
+  PrintDependsList(ss, "Provides        : ", provides());
+  PrintDependsList(ss, "Depends On      : ", depends());
+  PrintOptDependsList(ss, opt_depends());
   // alpm_pkg_compute_* don't free the list, so we set free_list to true
   PrintStringVector(ss, "Required By     : ", ComputeRequiredBy());
   PrintStringVector(ss, "Optional For    : ", ComputeOptionalFor());
 
-  PrintDependsList(ss, "Conflicts With  : ", GetConflicts());
-  PrintDependsList(ss, "Replaces        : ", GetReplaces());
-  PrintHumanizedSize(ss, "Installed Size  :", GetISize());
-  std::println(ss, "Packager        : {}", GetPackager());
-  PrintHumanizedDate(ss, "Build Date      : ", GetBuildDate());
-  PrintHumanizedDate(ss, "Install Date    : ", GetInstallDate());
-  PrintInstallReason(ss, GetReason());
+  PrintDependsList(ss, "Conflicts With  : ", conflicts());
+  PrintDependsList(ss, "Replaces        : ", replaces());
+  PrintHumanizedSize(ss, "Installed Size  :", i_size());
+  std::println(ss, "Packager        : {}", packager());
+  PrintHumanizedDate(ss, "Build Date      : ", build_date());
+  PrintHumanizedDate(ss, "Install Date    : ", install_date());
+  PrintInstallReason(ss, reason());
   PrintInstallScript(ss, HasScriptlet());
-  PrintValidation(ss, GetValidation());
+  PrintValidation(ss, validation());
 
   return ss.str();
 }
 
-std::string_view AlpmPackage::GetName() const noexcept {
+std::string_view AlpmPackage::name() const noexcept {
   return alpm_pkg_get_name(pkg_);
 }
 
-std::string_view AlpmPackage::GetVersion() const noexcept {
+std::string_view AlpmPackage::version() const noexcept {
   return alpm_pkg_get_version(pkg_);
 }
 
-std::string_view AlpmPackage::GetDesc() const noexcept {
+std::string_view AlpmPackage::desc() const noexcept {
   return alpm_pkg_get_desc(pkg_);
 }
 
-std::string_view AlpmPackage::GetArch() const noexcept {
+std::string_view AlpmPackage::arch() const noexcept {
   return alpm_pkg_get_arch(pkg_);
 }
 
-std::string_view AlpmPackage::GetURL() const noexcept {
+std::string_view AlpmPackage::url() const noexcept {
   return alpm_pkg_get_url(pkg_);
 }
 
-std::string_view AlpmPackage::GetPackager() const noexcept {
+std::string_view AlpmPackage::packager() const noexcept {
   return alpm_pkg_get_packager(pkg_);
 }
 
-std::vector<AlpmDepend> AlpmPackage::GetOptDepends() const noexcept {
+std::vector<AlpmDepend> AlpmPackage::opt_depends() const noexcept {
   return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
       alpm_pkg_get_optdepends(pkg_));
 }
 
-std::vector<AlpmDepend> AlpmPackage::GetDepends() const noexcept {
+std::vector<AlpmDepend> AlpmPackage::depends() const noexcept {
   return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
       alpm_pkg_get_depends(pkg_));
 }
 
-std::vector<AlpmDepend> AlpmPackage::GetProvides() const noexcept {
+std::vector<AlpmDepend> AlpmPackage::provides() const noexcept {
   return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
       alpm_pkg_get_provides(pkg_));
 }
 
-std::vector<std::string_view> AlpmPackage::GetGroups() const noexcept {
+std::vector<std::string_view> AlpmPackage::groups() const noexcept {
   return util::AlpmListToVector<const char *, std::string_view>(
       (alpm_pkg_get_groups(pkg_)));
 }
 
-std::vector<std::string_view> AlpmPackage::GetLicenses() const noexcept {
+std::vector<std::string_view> AlpmPackage::licenses() const noexcept {
   return util::AlpmListToVector<const char *, std::string_view>(
       alpm_pkg_get_licenses(pkg_));
 }
 
-std::vector<AlpmDepend> AlpmPackage::GetConflicts() const noexcept {
+std::vector<AlpmDepend> AlpmPackage::conflicts() const noexcept {
   return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
       alpm_pkg_get_conflicts(pkg_));
 }
 
-std::vector<AlpmDepend> AlpmPackage::GetReplaces() const noexcept {
+std::vector<AlpmDepend> AlpmPackage::replaces() const noexcept {
   return util::AlpmListToVector<alpm_depend_t *, AlpmDepend>(
       alpm_pkg_get_replaces(pkg_));
 }
 
-std::vector<AlpmFile> AlpmPackage::GetFiles() const noexcept {
+std::vector<AlpmFile> AlpmPackage::files() const noexcept {
   std::vector<AlpmFile> result;
   alpm_filelist_t *file_list = alpm_pkg_get_files(pkg_);
   for (std::size_t i = 0; i < file_list->count; ++i) {
@@ -283,19 +281,19 @@ std::vector<std::string> AlpmPackage::ComputeRequiredBy() const noexcept {
       alpm_pkg_compute_requiredby(pkg_));
 }
 
-alpm_time_t AlpmPackage::GetBuildDate() const noexcept {
+alpm_time_t AlpmPackage::build_date() const noexcept {
   return alpm_pkg_get_builddate(pkg_);
 }
 
-alpm_time_t AlpmPackage::GetInstallDate() const noexcept {
+alpm_time_t AlpmPackage::install_date() const noexcept {
   return alpm_pkg_get_installdate(pkg_);
 }
 
-off_t AlpmPackage::GetISize() const noexcept {
+off_t AlpmPackage::i_size() const noexcept {
   return alpm_pkg_get_isize(pkg_);
 }
 
-PkgReason AlpmPackage::GetReason() const noexcept {
+PkgReason AlpmPackage::reason() const noexcept {
   return static_cast<PkgReason>(alpm_pkg_get_reason(pkg_));
 }
 
@@ -303,7 +301,7 @@ bool AlpmPackage::HasScriptlet() const noexcept {
   return alpm_pkg_has_scriptlet(pkg_);
 }
 
-PkgValidation AlpmPackage::GetValidation() const noexcept {
+PkgValidation AlpmPackage::validation() const noexcept {
   return static_cast<PkgValidation>(alpm_pkg_get_validation(pkg_));
 }
 
