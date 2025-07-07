@@ -3,7 +3,6 @@
 #ifndef ALPMPP_UTIL_H_
 #define ALPMPP_UTIL_H_
 
-#include <alpm.h>
 #include <alpm_list.h>
 
 #include <vector>

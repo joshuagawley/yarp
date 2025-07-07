@@ -4,7 +4,6 @@
 #define ALPMPP_PACKAGE_H_
 
 #include <alpm.h>
-#include <alpm_list.h>
 
 #include <string_view>
 #include <vector>

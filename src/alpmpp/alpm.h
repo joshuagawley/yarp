@@ -4,10 +4,7 @@
 #define ALPMPP_ALPM_H_
 
 #include <alpm.h>
-#include <alpm_list.h>
 
-#include <cstddef>
-#include <cstring>
 #include <filesystem>
 #include <optional>
 
