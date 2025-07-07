@@ -43,26 +43,51 @@ pacmanpp_add_test(NAME version001 DESCRIPTION "version001 -- pacmanpp -V")
 find_package(Catch2 3 QUIET)
 if(Catch2_FOUND)
     add_executable(test_pacman_conf test_pacman_conf.cc)
-    
+
     target_sources(test_pacman_conf
         PRIVATE
             test_pacman_conf.cc
             ${CMAKE_SOURCE_DIR}/src/pacman_conf.cc
     )
-    
-    target_include_directories(test_pacman_conf PRIVATE 
+
+    target_include_directories(test_pacman_conf PRIVATE
         ${CMAKE_SOURCE_DIR}/src
         ${CMAKE_BINARY_DIR}/src
     )
-    
+
     target_compile_features(test_pacman_conf PRIVATE cxx_std_23)
     target_compile_options(test_pacman_conf PRIVATE ${COMPILE_FLAGS})
-    
+
     target_link_libraries(test_pacman_conf PRIVATE Catch2::Catch2WithMain)
-    
+
+    add_executable(test_pacman_conf_new test_pacman_conf_new.cc)
+
+    target_sources(test_pacman_conf_new
+        PRIVATE
+            test_pacman_conf_new.cc
+            ${CMAKE_SOURCE_DIR}/src/pacman_conf.cc
+    )
+
+    target_include_directories(test_pacman_conf_new PRIVATE
+        ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_BINARY_DIR}/src
+    )
+
+    target_compile_features(test_pacman_conf_new PRIVATE cxx_std_23)
+    target_compile_options(test_pacman_conf_new PRIVATE ${COMPILE_FLAGS})
+
+    target_link_libraries(test_pacman_conf_new PRIVATE Catch2::Catch2WithMain)
+
+    add_custom_command(TARGET test_pacman_conf_new POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_pacman_conf.conf
+        ${CMAKE_CURRENT_BINARY_DIR}/test_pacman_conf.conf
+    )
+
     # Register test with CTest
     include(Catch)
     catch_discover_tests(test_pacman_conf)
+    catch_discover_tests(test_pacman_conf_new)
 else()
     message(STATUS "Catch2 not found, skipping C++ unit tests")
 endif()
