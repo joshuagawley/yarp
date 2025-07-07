@@ -47,7 +47,6 @@ inline std::string TrimCopy(std::string str) {
   return str;
 }
 
-// Split a string by whitespace, respecting quotes
 std::vector<std::string> SplitByWhitespace(std::string str) {
   std::vector<std::string> result;
   std::size_t pos = 0;
