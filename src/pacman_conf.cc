@@ -177,7 +177,7 @@ void PacmanConf::ParseFromFile(const std::string_view config_file) {
         parallel_downloads_ = std::stoi(value);
       } else if (key == "DisableSandbox") {
         disable_sandbox_ = true;
-      } else if (key == "Chomp") {
+      } else if (key == "ILoveCandy") {
         chomp_ = true;
       }
     } else if (current_repo != nullptr) {
