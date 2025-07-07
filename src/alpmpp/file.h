@@ -13,7 +13,7 @@ namespace alpmpp {
 
 class AlpmFile {
  public:
-  constexpr AlpmFile(alpm_file_t *file) : file_(file) {}
+  constexpr explicit AlpmFile(alpm_file_t *file) : file_(file) {}
 
   [[nodiscard]] constexpr std::string_view GetName() const noexcept { return file_->name; }
   [[nodiscard]] constexpr off_t GetSize() const noexcept { return file_->size; }
