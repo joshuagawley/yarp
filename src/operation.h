@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-#ifndef PACMANPP_SRC_OPERATION_H_
-#define PACMANPP_SRC_OPERATION_H_
+#ifndef PACMANPP_OPERATION_H_
+#define PACMANPP_OPERATION_H_
 
 #include <cstdint>
 
@@ -46,4 +46,4 @@ struct EnableEnumBitwiseOperators<QueryOptions> {
 
 }  // namespace pacmanpp
 
-#endif  // PACMANPP_SRC_OPERATION_H_
+#endif  // PACMANPP_OPERATION_H_

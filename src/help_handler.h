@@ -21,4 +21,4 @@ class HelpHandler : public OperationHandler {
 
 }  // namespace pacmanpp
 
-#endif  // PACMANPP_VERSION_HANDLER_H_
+#endif  // PACMANPP_HELP_HANDLER_H_

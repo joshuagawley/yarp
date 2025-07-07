@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-#ifndef PACMANPP_SRC_CONFIG_H_
-#define PACMANPP_SRC_CONFIG_H_
+#ifndef PACMANPP_CONFIG_H_
+#define PACMANPP_CONFIG_H_
 
 #include <filesystem>
 
@@ -39,4 +39,4 @@ class Config {
 
 }  // namespace pacmanpp
 
-#endif  // PACMANPP_SRC_CONFIG_H_
+#endif  // PACMANPP_CONFIG_H_
