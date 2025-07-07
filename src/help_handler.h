@@ -9,7 +9,7 @@
 
 namespace pacmanpp {
 
-class HelpHandler : public OperationHandler {
+class HelpHandler final : public OperationHandler {
  public:
   constexpr HelpHandler(Config &config, alpmpp::Alpm &alpm)
       : OperationHandler(config, alpm) {}

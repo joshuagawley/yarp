@@ -18,7 +18,7 @@ struct EnableEnumBitwiseOperators<PkgLocality> {
   static constexpr bool enabled = true;
 };
 
-class QueryHandler : public OperationHandler {
+class QueryHandler final : public OperationHandler {
  public:
   constexpr QueryHandler(Config &config, alpmpp::Alpm &alpm,
                          QueryOptions query_options,
