@@ -24,20 +24,20 @@ class AlpmPackage {
   }
 
   // Copy constructor
-  AlpmPackage(const AlpmPackage&) = delete;
-  
+  AlpmPackage(const AlpmPackage &) = delete;
+
   // Copy assignment
-  AlpmPackage& operator=(const AlpmPackage&) = delete;
-  
+  AlpmPackage &operator=(const AlpmPackage &) = delete;
+
   // Move constructor
-  AlpmPackage(AlpmPackage&& other) noexcept 
+  AlpmPackage(AlpmPackage &&other) noexcept
       : pkg_(other.pkg_), owned_(other.owned_) {
     other.pkg_ = nullptr;
     other.owned_ = false;
   }
-  
+
   // Move assignment
-  AlpmPackage& operator=(AlpmPackage&& other) noexcept {
+  AlpmPackage &operator=(AlpmPackage &&other) noexcept {
     if (this != &other) {
       if (owned_) alpm_pkg_free(pkg_);
       pkg_ = other.pkg_;
@@ -48,40 +48,40 @@ class AlpmPackage {
     return *this;
   }
 
-  std::string_view GetName() const noexcept;
-  std::string_view GetVersion() const noexcept;
-  std::string_view GetDesc() const noexcept;
-  std::string_view GetArch() const noexcept;
-  std::string_view GetURL() const noexcept;
-  std::string_view GetPackager() const noexcept;
+  [[nodiscard]] std::string_view GetName() const noexcept;
+  [[nodiscard]] std::string_view GetVersion() const noexcept;
+  [[nodiscard]] std::string_view GetDesc() const noexcept;
+  [[nodiscard]] std::string_view GetArch() const noexcept;
+  [[nodiscard]] std::string_view GetURL() const noexcept;
+  [[nodiscard]] std::string_view GetPackager() const noexcept;
 
-  std::vector<AlpmDepend> GetOptDepends() const noexcept;
-  std::vector<AlpmDepend> GetDepends() const noexcept;
-  std::vector<AlpmDepend> GetProvides() const noexcept;
-  std::vector<std::string_view> GetGroups() const noexcept;
-  std::vector<std::string_view> GetLicenses() const noexcept;
-  std::vector<AlpmDepend> GetConflicts() const noexcept;
-  std::vector<AlpmDepend> GetReplaces() const noexcept;
-  std::vector<AlpmFile> GetFiles() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> GetOptDepends() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> GetDepends() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> GetProvides() const noexcept;
+  [[nodiscard]] std::vector<std::string_view> GetGroups() const noexcept;
+  [[nodiscard]] std::vector<std::string_view> GetLicenses() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> GetConflicts() const noexcept;
+  [[nodiscard]] std::vector<AlpmDepend> GetReplaces() const noexcept;
+  [[nodiscard]] std::vector<AlpmFile> GetFiles() const noexcept;
 
-  std::vector<std::string> ComputeOptionalFor() const noexcept;
-  std::vector<std::string> ComputeRequiredBy() const noexcept;
+  [[nodiscard]] std::vector<std::string> ComputeOptionalFor() const noexcept;
+  [[nodiscard]] std::vector<std::string> ComputeRequiredBy() const noexcept;
 
-  alpm_time_t GetBuildDate() const noexcept;
-  alpm_time_t GetInstallDate() const noexcept;
+  [[nodiscard]] alpm_time_t GetBuildDate() const noexcept;
+  [[nodiscard]] alpm_time_t GetInstallDate() const noexcept;
 
-  off_t GetISize() const noexcept;
-  PkgReason GetReason() const noexcept;
-  PkgValidation GetValidation() const noexcept;
+  [[nodiscard]] off_t GetISize() const noexcept;
+  [[nodiscard]] PkgReason GetReason() const noexcept;
+  [[nodiscard]] PkgValidation GetValidation() const noexcept;
 
-  bool HasScriptlet() const noexcept;
+  [[nodiscard]] bool HasScriptlet() const noexcept;
 
-  void *ChangelogOpen() const;
+  [[nodiscard]] void *ChangelogOpen() const;
   std::size_t ChangelogRead(void *fp, char *buf, std::size_t size) const;
   int ChangelogClose(void *fp) const noexcept;
 
-  std::string GetFileList(std::string_view root_path) const;
-  std::string GetInfo() const;
+  [[nodiscard]] std::string GetFileList(std::string_view root_path) const;
+  [[nodiscard]] std::string GetInfo() const;
 
  private:
   alpm_pkg_t *pkg_;

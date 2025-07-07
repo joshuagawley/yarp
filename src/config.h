@@ -17,11 +17,15 @@ class Config {
   Config(Config &&) = delete;
   Config &operator=(Config &&) = delete;
 
-  constexpr bool IsVerbose() const noexcept { return verbose_; }
+  [[nodiscard]] constexpr bool IsVerbose() const noexcept { return verbose_; }
 
-  constexpr std::string get_root() const noexcept { return root_; }
+  [[nodiscard]] constexpr std::string get_root() const noexcept {
+    return root_;
+  }
 
-  constexpr std::string get_db_path() const noexcept { return db_path_; }
+  [[nodiscard]] constexpr std::string get_db_path() const noexcept {
+    return db_path_;
+  }
 
   constexpr void set_verbose(bool new_verbose) { verbose_ = new_verbose; }
 

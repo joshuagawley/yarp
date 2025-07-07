@@ -15,9 +15,11 @@ class AlpmFile {
  public:
   constexpr AlpmFile(alpm_file_t *file) : file_(file) {}
 
-  constexpr std::string_view GetName() const noexcept { return file_->name; }
-  constexpr off_t GetSize() const noexcept { return file_->size; }
-  constexpr mode_t GetMode() const noexcept { return file_->mode; }
+  [[nodiscard]] constexpr std::string_view GetName() const noexcept { return file_->name; }
+  [[nodiscard]] constexpr off_t GetSize() const noexcept { return file_->size; }
+  [[nodiscard]] constexpr mode_t GetMode() const noexcept {
+    return file_->mode;
+  }
 
  private:
   alpm_file_t *file_;
