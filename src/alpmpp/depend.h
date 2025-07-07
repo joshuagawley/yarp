@@ -22,7 +22,7 @@ class AlpmDepend {
  public:
   constexpr explicit AlpmDepend(alpm_depend_t *depend) : depend_(depend) {}
 
-  [[nodiscard]] constexpr std::string_view GetName() const noexcept {
+  [[nodiscard]] constexpr std::string_view name() const noexcept {
     return depend_->name;
   }
 

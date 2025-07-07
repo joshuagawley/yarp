@@ -46,10 +46,10 @@ void PrintDependsList(std::stringstream &ss, const std::string_view prefix,
     for (alpmpp::AlpmDepend &depend : depends) {
       if (&depend != &depends.back()) {
         std::print(ss, "{}  ",
-                   depend.GetName());  // Not the last item, add space
+                   depend.name());  // Not the last item, add space
       } else {
         std::println(ss, "{}",
-                     depend.GetName());  // Last item, no trailing space
+                     depend.name());  // Last item, no trailing space
       }
     }
   }
