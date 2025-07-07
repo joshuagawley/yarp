@@ -33,12 +33,12 @@ class QueryHandler final : public OperationHandler {
   int Execute() override;
 
  private:
-  int HandleGroups() const;
-  std::vector<alpmpp::AlpmPackage> GetPkgList() const;
+  [[nodiscard]] int HandleGroups() const;
+  [[nodiscard]] std::vector<alpmpp::AlpmPackage> GetPkgList() const;
   void PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const;
   void CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const;
-  PkgLocality GetPkgLocality(const alpmpp::AlpmPackage &pkg) const;
-  bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
+  [[nodiscard]] PkgLocality GetPkgLocality(const alpmpp::AlpmPackage &pkg) const;
+  [[nodiscard]] bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
 
   QueryOptions options_;
   std::vector<std::string> targets_;
