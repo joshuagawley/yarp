@@ -56,7 +56,7 @@ int QueryHandler::Execute() {
     return HandleGroups();
   }
 
-  std::vector<alpmpp::AlpmPackage> pkg_list = GetPkgList();
+  const std::vector<alpmpp::AlpmPackage> pkg_list = GetPkgList();
   if (pkg_list.empty()) return EXIT_FAILURE;
 
   for (const alpmpp::AlpmPackage &pkg : pkg_list) {

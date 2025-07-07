@@ -46,7 +46,8 @@ class ArgumentParser {
       : argc_(argc), argv_(argv) {}
 
   constexpr void ParseArgs(Operation &operation, QueryOptions &query_options,
-                           std::vector<std::string> &targets, Config &config) {
+                           std::vector<std::string> &targets,
+                           Config &config) const {
     int option_index = 0;
     int ch;
 

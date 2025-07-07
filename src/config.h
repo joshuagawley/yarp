@@ -27,11 +27,11 @@ class Config {
     return db_path_;
   }
 
-  constexpr void set_verbose(bool new_verbose) { verbose_ = new_verbose; }
+  constexpr void set_verbose(const bool new_verbose) { verbose_ = new_verbose; }
 
-  void set_root(std::string_view new_root) noexcept { root_ = new_root; }
+  void set_root(const std::string_view new_root) noexcept { root_ = new_root; }
 
-  void set_db_path(std::string_view new_db_path) noexcept {
+  void set_db_path(const std::string_view new_db_path) noexcept {
     db_path_ = new_db_path;
   }
 

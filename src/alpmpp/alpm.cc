@@ -14,7 +14,7 @@
 
 namespace alpmpp {
 
-Alpm::Alpm(std::string_view root, std::string_view dbpath) {
+Alpm::Alpm(const std::string_view root, const std::string_view dbpath) {
   handle_ = alpm_initialize(root.data(), dbpath.data(), &err);
   if (err != ALPM_ERR_OK) {
     throw std::runtime_error(std::format("Error: failed to initialize alpm: {}",
@@ -41,7 +41,7 @@ std::vector<AlpmPackage> Alpm::DbGetPkgCache(alpm_db_t *db) {
 }
 
 std::optional<AlpmPackage> Alpm::DbGetPkg(alpm_db_t *db,
-                                          std::string_view name) {
+                                          const std::string_view name) {
   alpm_pkg_t *pkg = alpm_db_get_pkg(db, name.data());
   return pkg != nullptr ? std::make_optional<AlpmPackage>(pkg) : std::nullopt;
 }
@@ -51,11 +51,11 @@ std::string_view Alpm::OptionGetRoot() const {
 }
 
 std::vector<alpm_db_t *> Alpm::GetSyncDbs() const {
-  alpm_list_t *list = alpm_get_syncdbs(handle_);
+  const alpm_list_t *list = alpm_get_syncdbs(handle_);
   std::vector<alpm_db_t *> result;
   result.reserve(alpm_list_count(list));
 
-  for (alpm_list_t *elem = list; elem != nullptr; elem = alpm_list_next(elem)) {
+  for (const alpm_list_t *elem = list; elem != nullptr; elem = alpm_list_next(elem)) {
     result.emplace_back(static_cast<alpm_db_t *>(elem->data));
   }
   return result;

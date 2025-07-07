@@ -19,7 +19,7 @@ struct Repository {
 
 class PacmanConf {
  public:
-  void ParseFromFile(const std::string_view config_file);
+  void ParseFromFile(std::string_view config_file);
 
   // Accessors
   [[nodiscard]] constexpr const std::filesystem::path& root_dir()

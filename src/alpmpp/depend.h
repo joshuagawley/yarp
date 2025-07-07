@@ -26,7 +26,7 @@ class AlpmDepend {
     return depend_->name;
   }
 
-  std::string ComputeString();
+  [[nodiscard]] std::string ComputeString() const;
 
  private:
   alpm_depend_t *depend_;
