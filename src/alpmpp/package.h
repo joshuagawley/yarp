@@ -16,7 +16,7 @@ namespace alpmpp {
 
 class AlpmPackage {
  public:
-  constexpr AlpmPackage(alpm_pkg_t *pkg, bool owned = false)
+  constexpr explicit AlpmPackage(alpm_pkg_t *pkg, bool owned = false)
       : pkg_(pkg), owned_{owned} {}
 
   ~AlpmPackage() {

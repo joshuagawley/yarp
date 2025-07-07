@@ -20,7 +20,7 @@ enum class DepMod {
 
 class AlpmDepend {
  public:
-  constexpr AlpmDepend(alpm_depend_t *depend) : depend_(depend) {}
+  constexpr explicit AlpmDepend(alpm_depend_t *depend) : depend_(depend) {}
 
   [[nodiscard]] constexpr std::string_view GetName() const noexcept {
     return depend_->name;
