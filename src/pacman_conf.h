@@ -158,7 +158,7 @@ class PacmanConf {
   std::filesystem::path cache_dir_ = "/var/cache/pacman/pkg/";
   std::filesystem::path hook_dir_ = "/etc/pacman.d/hooks/";
   std::filesystem::path gpg_dir_ = "/etc/pacman.d/gnupg/";
-  std::filesystem::path log_file_ = "/var/log/pacman.log";
+  std::filesystem::path log_file_ = "/var/log/pacman.log/";
   std::vector<std::string> hold_pkg_;
   std::vector<std::string> ignore_pkg_;
   std::vector<std::string> ignore_group_;
