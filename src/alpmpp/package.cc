@@ -25,15 +25,14 @@ void PrintStringVector(std::stringstream &ss, const std::string_view prefix,
                        const std::vector<T> &vector) {
   if (vector.empty()) {
     std::println(ss, "{}None", prefix);
-    return;
-  }
-
-  std::print(ss, "{}", prefix);
-  for (const T &elem : vector) {
-    if (elem != *(std::end(vector) - 1)) {
-      std::print(ss, "{}  ", elem);  // Not the last item, add space
-    } else {
-      std::println(ss, "{}", elem);  // Last item, no trailing space
+  } else {
+    std::print(ss, "{}", prefix);
+    for (const T &elem : vector) {
+      if (elem != *(std::end(vector) - 1)) {
+        std::print(ss, "{}  ", elem);  // Not the last item, add space
+      } else {
+        std::println(ss, "{}", elem);  // Last item, no trailing space
+      }
     }
   }
 }
@@ -42,17 +41,16 @@ void PrintDependsList(std::stringstream &ss, const std::string_view prefix,
                       std::vector<alpmpp::AlpmDepend> depends) {
   if (depends.empty()) {
     std::println(ss, "{}None", prefix);
-    return;
-  }
-
-  std::print(ss, "{}", prefix);
-  for (alpmpp::AlpmDepend &depend : depends) {
-    if (&depend != &depends.back()) {
-      std::print(ss, "{}  ",
-                 depend.GetName());  // Not the last item, add space
-    } else {
-      std::println(ss, "{}",
-                   depend.GetName());  // Last item, no trailing space
+  } else {
+    std::print(ss, "{}", prefix);
+    for (alpmpp::AlpmDepend &depend : depends) {
+      if (&depend != &depends.back()) {
+        std::print(ss, "{}  ",
+                   depend.GetName());  // Not the last item, add space
+      } else {
+        std::println(ss, "{}",
+                     depend.GetName());  // Last item, no trailing space
+      }
     }
   }
 }
@@ -63,18 +61,17 @@ void PrintOptDependsList(std::stringstream &ss,
 
   if (opt_depends.empty()) {
     std::println(ss, "{}None", kPrefix);
-    return;
-  }
-
-  std::print(ss, "{}", kPrefix);
-  for (alpmpp::AlpmDepend &depend : opt_depends) {
-    std::string dep_string = depend.ComputeString();
-    if (&depend != &opt_depends.back()) {
-      std::print(ss, "{}  ",
-                 dep_string);  // Not the last item, add space
-    } else {
-      std::println(ss, "{}",
-                   dep_string);  // Last item, no trailing space
+  } else {
+    std::print(ss, "{}", kPrefix);
+    for (alpmpp::AlpmDepend &depend : opt_depends) {
+      std::string dep_string = depend.ComputeString();
+      if (&depend != &opt_depends.back()) {
+        std::print(ss, "{}  ",
+                   dep_string);  // Not the last item, add space
+      } else {
+        std::println(ss, "{}",
+                     dep_string);  // Last item, no trailing space
+      }
     }
   }
 }
@@ -99,7 +96,7 @@ void PrintHumanizedSize(std::stringstream &ss, const std::string_view prefix,
                         const off_t size) {
   constexpr std::array<const char *, 6> units{"B",   "KiB", "MiB",
                                               "GiB", "TiB", "PiB"};
-  double size_d = static_cast<double>(size);
+  auto size_d = static_cast<double>(size);
   std::size_t i{};
 
   while (size_d >= 1024.0 && i < 5) {
@@ -118,7 +115,7 @@ void PrintHumanizedSize(std::stringstream &ss, const std::string_view prefix,
 void PrintHumanizedDate(std::stringstream &ss, const std::string_view prefix,
                         const alpm_time_t alpm_time) {
   // We use C-style time API instead of std::chrono
-  const std::time_t time = static_cast<std::time_t>(alpm_time);
+  const auto time = static_cast<std::time_t>(alpm_time);
   const tm *local_time = std::localtime(&time);
 
   // std::put_time doesn't work with std::format
@@ -141,15 +138,15 @@ void PrintValidation(std::stringstream &ss,
 
     if ((validation & alpmpp::PkgValidation::kMd5) ==
         alpmpp::PkgValidation::kMd5) {
-      validation_methods.push_back("MD5 Sum");
+      validation_methods.emplace_back("MD5 Sum");
     }
     if ((validation & alpmpp::PkgValidation::kSha256) ==
         alpmpp::PkgValidation::kSha256) {
-      validation_methods.push_back("SHA-256 Sum");
+      validation_methods.emplace_back("SHA-256 Sum");
     }
     if ((validation & alpmpp::PkgValidation::kSignature) ==
         alpmpp::PkgValidation::kSignature) {
-      validation_methods.push_back("Signature");
+      validation_methods.emplace_back("Signature");
     }
 
     for (const std::string_view method : validation_methods) {
@@ -315,7 +312,7 @@ void *AlpmPackage::ChangelogOpen() const {
 }
 
 std::size_t AlpmPackage::ChangelogRead(void *fp, char *buf,
-                                       std::size_t size) const {
+                                       const std::size_t size) const {
   return alpm_pkg_changelog_read(buf, size, pkg_, fp);
 }
 
