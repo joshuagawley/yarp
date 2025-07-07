@@ -17,32 +17,31 @@ constexpr auto IsNotSpace = [](const unsigned char ch) {
   return !std::isspace(ch);
 };
 
-inline void LeftTrim(std::string& str) {
-  str.erase(std::begin(str),
-            std::find_if(std::begin(str), std::end(str), IsNotSpace));
+void LeftTrim(std::string& str) {
+  str.erase(std::begin(str), std::ranges::find_if(str, IsNotSpace));
 }
 
-inline void RightTrim(std::string& str) {
+void RightTrim(std::string& str) {
   str.erase(std::find_if(std::rbegin(str), std::rend(str), IsNotSpace).base(),
             std::end(str));
 }
 
-inline void Trim(std::string& str) {
+void Trim(std::string& str) {
   LeftTrim(str);
   RightTrim(str);
 }
 
-inline std::string RightTrimCopy(std::string str) {
+std::string RightTrimCopy(std::string str) {
   RightTrim(str);
   return str;
 }
 
-inline std::string LeftxTrimCopy(std::string str) {
+std::string LeftTrimCopy(std::string str) {
   LeftTrim(str);
   return str;
 }
 
-inline std::string TrimCopy(std::string str) {
+std::string TrimCopy(std::string str) {
   Trim(str);
   return str;
 }
@@ -65,8 +64,8 @@ std::vector<std::string> SplitByWhitespace(std::string str) {
 void PacmanConf::ParseFromFile(const std::string_view config_file) {
   std::ifstream file{std::string(config_file)};
   if (!file.is_open()) {
-    throw std::runtime_error("Failed to open config file: " +
-                             std::string(config_file));
+    throw std::runtime_error(std::format("Failed to open config file: {}",
+                                         std::string(config_file)));
   }
   std::string line;
   std::string current_section;
@@ -74,8 +73,8 @@ void PacmanConf::ParseFromFile(const std::string_view config_file) {
 
   while (std::getline(file, line)) {
     // Remove comments
-    std::size_t comment_pos = line.find('#');
-    if (comment_pos != std::string::npos) {
+    if (std::size_t comment_pos = line.find('#');
+        comment_pos != std::string::npos) {
       line = line.substr(0, comment_pos);
     }
 
@@ -100,7 +99,7 @@ void PacmanConf::ParseFromFile(const std::string_view config_file) {
     }
 
     // Parse key-value pairs
-    size_t eq_pos = line.find('=');
+    std::size_t eq_pos = line.find('=');
     std::string key;
     std::string value;
 
