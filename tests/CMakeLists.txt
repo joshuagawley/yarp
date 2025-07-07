@@ -38,3 +38,37 @@ pacmanpp_add_test(NAME query014 DESCRIPTION "query014 -- pacmanpp -Qn jsoncpp [i
 pacmanpp_add_test(NAME query015 DESCRIPTION "query015 -- pacmanpp -Qp yay-12.5.0-1-x86_64.pkg.tar.zst [package archive]")
 pacmanpp_add_test(NAME changelog001 DESCRIPTION "changlog001 -- pacmanpp -Qc powertop")
 pacmanpp_add_test(NAME version001 DESCRIPTION "version001 -- pacmanpp -V")
+
+# C++ Unit Tests with Catch2
+find_package(Catch2 3 QUIET)
+if(Catch2_FOUND)
+    add_executable(test_pacman_conf test_pacman_conf.cc)
+
+    target_sources(test_pacman_conf
+        PRIVATE
+            test_pacman_conf.cc
+            ${CMAKE_SOURCE_DIR}/src/pacman_conf.cc
+    )
+
+    target_include_directories(test_pacman_conf PRIVATE
+        ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_BINARY_DIR}/src
+    )
+
+    target_compile_features(test_pacman_conf PRIVATE cxx_std_23)
+    target_compile_options(test_pacman_conf PRIVATE ${COMPILE_FLAGS})
+
+    target_link_libraries(test_pacman_conf PRIVATE Catch2::Catch2WithMain)
+
+    add_custom_command(TARGET test_pacman_conf POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_pacman_conf.conf
+        ${CMAKE_CURRENT_BINARY_DIR}/test_pacman_conf.conf
+    )
+
+    # Register test with CTest
+    include(Catch)
+    catch_discover_tests(test_pacman_conf)
+else()
+    message(STATUS "Catch2 not found, skipping C++ unit tests")
+endif()
