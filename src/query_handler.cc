@@ -150,7 +150,7 @@ void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
   for (const alpmpp::AlpmFile &file : files) {
     // TODO: see if we can avoid creating a new string here
     const std::string absolute_file_name =
-        std::format("{}{}", root, file.GetName());
+        std::format("{}{}", root, file.name());
     if (std::filesystem::exists(absolute_file_name)) {
       const bool expect_dir = *(std::end(absolute_file_name) - 1) == '/';
       const bool is_dir = std::filesystem::is_directory(absolute_file_name);

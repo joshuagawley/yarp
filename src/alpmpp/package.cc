@@ -166,7 +166,7 @@ std::string AlpmPackage::GetFileList(std::string_view root_path) const {
   std::stringstream ss;
 
   for (const AlpmFile &file : files()) {
-    std::println(ss, "{} {}{}", name(), root_path, file.GetName());
+    std::println(ss, "{} {}{}", name(), root_path, file.name());
   }
 
   return ss.str();
