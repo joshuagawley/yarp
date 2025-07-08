@@ -4,6 +4,7 @@
 
 #include <alpm.h>
 
+#include <algorithm>
 #include <cstdlib>
 #include <filesystem>
 #include <functional>
@@ -31,7 +32,7 @@ void PrintPkgChangelog(const alpmpp::AlpmPackage &pkg) {
     while ((bytes_read = pkg.ChangelogRead(fp, buffer.data(), buffer.size())) >
            0) {
       std::print("{}", std::string_view(buffer.data(), bytes_read));
-           }
+    }
 
     const int result = pkg.ChangelogClose(fp);
     if (!result) {
@@ -115,7 +116,8 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
 int QueryHandler::HandleGroups() const {
   if (targets_.empty()) {
     alpm_list_t *all_groups = alpm_db_get_groupcache(local_db_);
-    for (const alpm_list_t *elem = all_groups; elem != nullptr; elem = elem->next) {
+    for (const alpm_list_t *elem = all_groups; elem != nullptr;
+         elem = elem->next) {
       auto *group = static_cast<alpm_group_t *>(elem->data);
 
       for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
@@ -164,21 +166,20 @@ void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
     }
   }
 
-  std::println("{}: {} total files, {} missing files", pkg.name(),
-               files.size(), errors);
+  std::println("{}: {} total files, {} missing files", pkg.name(), files.size(),
+               errors);
 }
 
 PkgLocality QueryHandler::GetPkgLocality(const alpmpp::AlpmPackage &pkg) const {
   const std::vector<alpm_db_t *> sync_dbs = alpm_.GetSyncDbs();
   const std::string_view pkg_name = pkg.name();
 
-  for (alpm_db_t *db : sync_dbs) {
-    if (alpmpp::Alpm::DbGetPkg(db, pkg_name).has_value()) {
-      return PkgLocality::kNative;
-    }
-  }
+  const bool pkg_in_sync_db =
+      std::ranges::any_of(sync_dbs, [pkg_name](alpm_db_t *db) {
+        return alpmpp::Alpm::DbGetPkg(db, pkg_name).has_value();
+      });
 
-  return PkgLocality::kForeign;
+  return pkg_in_sync_db ? PkgLocality::kNative : PkgLocality::kForeign;
 }
 
 void QueryHandler::PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const {
