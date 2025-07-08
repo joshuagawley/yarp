@@ -35,9 +35,9 @@ SCENARIO("PacmanConf parsing behavior", "[PacmanConf]") {
       REQUIRE(conf.no_upgrade().empty());
       REQUIRE(conf.no_extract().empty());
       REQUIRE(conf.clean_method().empty());
-      REQUIRE(conf.sig_level().empty());
-      REQUIRE(conf.local_file_sig_level().empty());
-      REQUIRE(conf.remote_file_sig_level().empty());
+      REQUIRE(conf.sig_level() == alpmpp::SigLevel{});
+      REQUIRE(conf.local_file_sig_level() == alpmpp::SigLevel{});
+      REQUIRE(conf.remote_file_sig_level() == alpmpp::SigLevel{});
       REQUIRE(conf.download_user() == std::nullopt);
       REQUIRE(!conf.use_syslog());
       REQUIRE(!conf.color());
@@ -68,11 +68,14 @@ SCENARIO("PacmanConf parsing behavior", "[PacmanConf]") {
         REQUIRE((conf.download_user().has_value() &&
                  conf.download_user().value() == "foo"));
         REQUIRE(conf.sig_level() ==
-                std::vector<std::string>{"Required", "DatabaseOptional"});
+                (~alpmpp::SigLevel::kUseDefault & alpmpp::SigLevel::kPackage | alpmpp::SigLevel::kDatabase |
+                 alpmpp::SigLevel::kDatabaseOptional));
         REQUIRE(conf.local_file_sig_level() ==
-                std::vector<std::string>{"Optional"});
+                (~alpmpp::SigLevel::kUseDefault & alpmpp::SigLevel::kPackage | alpmpp::SigLevel::kDatabase |
+                 alpmpp::SigLevel::kPackageOptional |
+                 alpmpp::SigLevel::kDatabaseOptional));
         REQUIRE(conf.remote_file_sig_level() ==
-                std::vector<std::string>{"Required"});
+                (~alpmpp::SigLevel::kUseDefault & alpmpp::SigLevel::kPackage | alpmpp::SigLevel::kDatabase));
       }
     }
   }

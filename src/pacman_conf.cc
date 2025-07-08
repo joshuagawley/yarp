@@ -6,13 +6,13 @@
 #include <cctype>
 #include <fstream>
 #include <iterator>
+#include <ranges>
 #include <stdexcept>
 #include <string>
 
 namespace pacmanpp {
 
 namespace {
-
 constexpr auto IsNotSpace = [](const unsigned char ch) {
   return !std::isspace(ch);
 };
@@ -59,6 +59,81 @@ std::vector<std::string> SplitByWhitespace(std::string str) {
   return result;
 }
 
+alpmpp::SigLevel ParseSigLevel(const std::string& sig_level_str) {
+  alpmpp::SigLevel result{};
+
+  for (const std::string_view sig_level : SplitByWhitespace(sig_level_str)) {
+    std::string tail{};
+
+    const std::size_t kPackagePos = sig_level.find("Package");
+    const std::size_t kDatabasePos = sig_level.find("Database");
+
+    bool kIsPackage = kPackagePos != std::string_view::npos;
+    bool kIsDatabase = kDatabasePos != std::string_view::npos;
+
+    if (kIsDatabase) {
+      tail = sig_level.substr(8);
+    } else if (kIsPackage) {
+      tail = sig_level.substr(7);
+    } else {
+      // Flag affects both databases and packages
+      kIsDatabase = true;
+      kIsPackage = true;
+      tail = sig_level;
+    }
+
+    if (tail == "Never") {
+      if (kIsDatabase) {
+        result &= ~alpmpp::SigLevel::kDatabase;
+      }
+
+      if (kIsPackage) {
+        result &= ~alpmpp::SigLevel::kPackage;
+      }
+    } else if (tail == "Optional") {
+      if (kIsDatabase) {
+        result |=
+            (alpmpp::SigLevel::kDatabase | alpmpp::SigLevel::kDatabaseOptional);
+      }
+      if (kIsPackage) {
+        result |=
+            (alpmpp::SigLevel::kPackage | alpmpp::SigLevel::kPackageOptional);
+      }
+    } else if (tail == "Required") {
+      if (kIsDatabase) {
+        result |= alpmpp::SigLevel::kDatabase;
+        result &= ~alpmpp::SigLevel::kDatabaseOptional;
+      }
+      if (kIsPackage) {
+        result |= alpmpp::SigLevel::kPackage;
+        result &= ~alpmpp::SigLevel::kPackageOptional;
+      }
+    } else if (tail == "TrustOnly") {
+      if (kIsDatabase) {
+        result &= ~(alpmpp::SigLevel::kDatabaseMarginalOk |
+                   alpmpp::SigLevel::kDatabaseUnknownOk);
+      }
+      if (kIsPackage) {
+        result &= ~(alpmpp::SigLevel::kPackageMarginalOk |
+                   alpmpp::SigLevel::kPackageUnknownOk);
+      }
+    } else if (tail == "TrustAll") {
+      if (kIsDatabase) {
+        result |= (alpmpp::SigLevel::kDatabaseMarginalOk |
+                   alpmpp::SigLevel::kDatabaseUnknownOk);
+      }
+      if (kIsPackage) {
+        result |= (alpmpp::SigLevel::kPackageMarginalOk |
+                   alpmpp::SigLevel::kPackageUnknownOk);
+      }
+    }
+  }
+
+  result &= ~alpmpp::SigLevel::kUseDefault;
+
+  return result;
+}
+
 }  // namespace
 
 void PacmanConf::ParseFromFile(const std::string_view config_file) {
@@ -92,6 +167,7 @@ void PacmanConf::ParseFromFile(const std::string_view config_file) {
         repos_.emplace_back();
         current_repo = &repos_.back();
         current_repo->name = current_section;
+        current_repo->sig_level = sig_level_;
       } else {
         current_repo = nullptr;
       }
@@ -150,11 +226,11 @@ void PacmanConf::ParseFromFile(const std::string_view config_file) {
       } else if (key == "CleanMethod") {
         clean_method_ = SplitByWhitespace(value);
       } else if (key == "SigLevel") {
-        sig_level_ = SplitByWhitespace(value);
+        sig_level_ = ParseSigLevel(value);
       } else if (key == "LocalFileSigLevel") {
-        local_file_sig_level_ = SplitByWhitespace(value);
+        local_file_sig_level_ = ParseSigLevel(value);
       } else if (key == "RemoteFileSigLevel") {
-        remote_file_sig_level_ = SplitByWhitespace(value);
+        remote_file_sig_level_ = ParseSigLevel(value);
       } else if (key == "DownloadUser") {
         download_user_ = value;
       } else if (key == "UseSyslog") {
@@ -187,7 +263,7 @@ void PacmanConf::ParseFromFile(const std::string_view config_file) {
         // For now, just store the include path
         current_repo->servers.push_back("Include:" + value);
       } else if (key == "SigLevel") {
-        current_repo->sig_level = SplitByWhitespace(value);
+        current_repo->sig_level = ParseSigLevel(value);
       } else if (key == "Usage") {
         current_repo->usage = SplitByWhitespace(value);
       }

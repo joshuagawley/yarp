@@ -8,12 +8,14 @@
 #include <string>
 #include <vector>
 
+#include "alpmpp/types.h"
+
 namespace pacmanpp {
 
 struct Repository {
   std::string name;
   std::vector<std::string> servers;
-  std::vector<std::string> sig_level;
+  alpmpp::SigLevel  sig_level;
   std::vector<std::string> usage;
 };
 
@@ -91,17 +93,17 @@ class PacmanConf {
     return clean_method_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& sig_level()
+  [[nodiscard]] constexpr alpmpp::SigLevel sig_level()
       const noexcept {
     return sig_level_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& local_file_sig_level()
+  [[nodiscard]] constexpr alpmpp::SigLevel local_file_sig_level()
       const noexcept {
     return local_file_sig_level_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>&
+  [[nodiscard]] constexpr alpmpp::SigLevel
   remote_file_sig_level() const noexcept {
     return remote_file_sig_level_;
   }
@@ -152,6 +154,15 @@ class PacmanConf {
     return repos_;
   }
 
+
+  constexpr void set_root_dir(const std::string_view root_dir) {
+    root_dir_ = root_dir;
+  }
+
+  constexpr void set_db_path(const std::string_view db_path) {
+    db_path_ = db_path;
+  }
+
  private:
   std::filesystem::path root_dir_ = "/";
   std::filesystem::path db_path_ = "/var/lib/pacman/";
@@ -167,9 +178,9 @@ class PacmanConf {
   std::vector<std::string> no_upgrade_;
   std::vector<std::string> no_extract_;
   std::vector<std::string> clean_method_;
-  std::vector<std::string> sig_level_;
-  std::vector<std::string> local_file_sig_level_;
-  std::vector<std::string> remote_file_sig_level_;
+  alpmpp::SigLevel sig_level_{};
+  alpmpp::SigLevel local_file_sig_level_{};
+  alpmpp::SigLevel remote_file_sig_level_{};
   std::optional<std::string> download_user_;
   bool use_syslog_ = false;
   bool color_ = false;

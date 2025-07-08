@@ -22,17 +22,19 @@ App::App(std::span<char *> args) {
   arg_parser.ParseArgs(operation_, query_options_, targets_, config_);
 
   alpm_ =
-      std::make_unique<alpmpp::Alpm>(config_.get_root(), config_.get_db_path());
+      std::make_unique<alpmpp::Alpm>(config_.root_dir(), config_.db_path());
 
   // Register sync databases
-  // TODO: Parse these from /etc/pacman.conf instead of hardcoding
-  alpm_->RegisterSyncDb("core", 0);
-  alpm_->RegisterSyncDb("extra", 0);
-  alpm_->RegisterSyncDb("multilib", 0);
+  for (const Repository &repo : config_.repos()) {
+    alpm_db_t *db = alpm_->RegisterSyncDb(repo.name, std::to_underlying(repo.sig_level));
+    if (db == nullptr) {
+      throw std::runtime_error(std::format("Could not register db, name : {}", repo.name));
+    }
+  }
 }
 
 int App::Run() {
-  if (config_.IsVerbose()) {
+  if (config_.verbose()) {
     PrintVerbose();
   }
 
@@ -52,8 +54,8 @@ int App::Run() {
 }
 
 void App::PrintVerbose() const {
-  std::println("Root      : {}", config_.get_root());
-  std::println("DB Path   : {}", config_.get_db_path());
+  std::println("Root      : {}", config_.root_dir());
+  std::println("DB Path   : {}", config_.db_path());
 }
 
 }  // namespace pacmanpp
