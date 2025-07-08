@@ -37,7 +37,8 @@ class QueryHandler final : public OperationHandler {
   [[nodiscard]] std::vector<alpmpp::AlpmPackage> GetPkgList() const;
   void PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const;
   void CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const;
-  [[nodiscard]] PkgLocality GetPkgLocality(const alpmpp::AlpmPackage &pkg) const;
+  [[nodiscard]] PkgLocality GetPkgLocality(
+      const alpmpp::AlpmPackage &pkg) const;
   [[nodiscard]] bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
 
   QueryOptions options_;
