@@ -111,11 +111,11 @@ alpmpp::SigLevel ParseSigLevel(const std::string& sig_level_str) {
     } else if (tail == "TrustOnly") {
       if (kIsDatabase) {
         result &= ~(alpmpp::SigLevel::kDatabaseMarginalOk |
-                   alpmpp::SigLevel::kDatabaseUnknownOk);
+                    alpmpp::SigLevel::kDatabaseUnknownOk);
       }
       if (kIsPackage) {
         result &= ~(alpmpp::SigLevel::kPackageMarginalOk |
-                   alpmpp::SigLevel::kPackageUnknownOk);
+                    alpmpp::SigLevel::kPackageUnknownOk);
       }
     } else if (tail == "TrustAll") {
       if (kIsDatabase) {

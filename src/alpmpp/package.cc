@@ -289,9 +289,7 @@ alpm_time_t AlpmPackage::install_date() const noexcept {
   return alpm_pkg_get_installdate(pkg_);
 }
 
-off_t AlpmPackage::i_size() const noexcept {
-  return alpm_pkg_get_isize(pkg_);
-}
+off_t AlpmPackage::i_size() const noexcept { return alpm_pkg_get_isize(pkg_); }
 
 PkgReason AlpmPackage::reason() const noexcept {
   return static_cast<PkgReason>(alpm_pkg_get_reason(pkg_));

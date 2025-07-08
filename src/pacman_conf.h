@@ -15,7 +15,7 @@ namespace pacmanpp {
 struct Repository {
   std::string name;
   std::vector<std::string> servers;
-  alpmpp::SigLevel  sig_level;
+  alpmpp::SigLevel sig_level;
   std::vector<std::string> usage;
 };
 
@@ -93,8 +93,7 @@ class PacmanConf {
     return clean_method_;
   }
 
-  [[nodiscard]] constexpr alpmpp::SigLevel sig_level()
-      const noexcept {
+  [[nodiscard]] constexpr alpmpp::SigLevel sig_level() const noexcept {
     return sig_level_;
   }
 
@@ -103,8 +102,8 @@ class PacmanConf {
     return local_file_sig_level_;
   }
 
-  [[nodiscard]] constexpr alpmpp::SigLevel
-  remote_file_sig_level() const noexcept {
+  [[nodiscard]] constexpr alpmpp::SigLevel remote_file_sig_level()
+      const noexcept {
     return remote_file_sig_level_;
   }
 
@@ -153,7 +152,6 @@ class PacmanConf {
       const noexcept {
     return repos_;
   }
-
 
   constexpr void set_root_dir(const std::string_view root_dir) {
     root_dir_ = root_dir;
