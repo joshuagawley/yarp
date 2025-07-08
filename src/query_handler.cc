@@ -154,7 +154,7 @@ void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
     const std::string absolute_file_name =
         std::format("{}{}", root, file.name());
     if (std::filesystem::exists(absolute_file_name)) {
-      const bool expect_dir = *(std::end(absolute_file_name) - 1) == '/';
+      const bool expect_dir = absolute_file_name.back() == '/';
       const bool is_dir = std::filesystem::is_directory(absolute_file_name);
       if (expect_dir != is_dir) {
         std::println("{}: {} (File type mismatch)", pkg.name(),
