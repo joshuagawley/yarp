@@ -34,8 +34,7 @@ void PrintPkgChangelog(const alpmpp::AlpmPackage &pkg) {
       std::print("{}", std::string_view(buffer.data(), bytes_read));
     }
 
-    const int result = pkg.ChangelogClose(fp);
-    if (!result) {
+    if (const int result = pkg.ChangelogClose(fp); !result) {
       std::println("Error: could not close changelog.");
     }
     std::println("");
@@ -115,7 +114,7 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
 
 int QueryHandler::HandleGroups() const {
   if (targets_.empty()) {
-    alpm_list_t *all_groups = alpm_db_get_groupcache(local_db_);
+    const alpm_list_t *all_groups = alpm_db_get_groupcache(local_db_);
     for (const alpm_list_t *elem = all_groups; elem != nullptr;
          elem = elem->next) {
       auto *group = static_cast<alpm_group_t *>(elem->data);
