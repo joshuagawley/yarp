@@ -113,7 +113,6 @@ class ArgumentParser {
     // we need to process any remaining optional arguments after processing
     // the command line arguments with getopt
     if (operation == Operation::kQuery && optind < argc_) {
-      // TODO: option_index doesn't update in getopt loop
       for (int i = optind; i < argc_; ++i) {
         targets.emplace_back(argv_[i]);
       }
