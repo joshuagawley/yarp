@@ -12,11 +12,13 @@
 #include "config.h"
 #include "operation.h"
 
-namespace {
+namespace pacmanpp {
 
-constexpr const char *kOptString = "cdehkmnpQVgilv";
+namespace detail {
 
-static constexpr std::array<struct option, 17> kOpts = {{
+constexpr std::string_view kOptString = "cdehkmnpQVgilv";
+
+constexpr std::array<option, 17> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
     {"version", no_argument, nullptr, 'V'},
@@ -36,9 +38,7 @@ static constexpr std::array<struct option, 17> kOpts = {{
     {nullptr, 0, nullptr, 0},
 }};
 
-}  // namespace
-
-namespace pacmanpp {
+}  // namespace detail
 
 class ArgumentParser {
  public:
@@ -51,8 +51,8 @@ class ArgumentParser {
     int option_index = 0;
     int ch;
 
-    while ((ch = getopt_long(argc_, argv_, kOptString,
-                             const_cast<option *>(kOpts.data()),
+    while ((ch = getopt_long(argc_, argv_, detail::kOptString.data(),
+                             detail::kOpts.data(),
                              &option_index)) != -1) {
       switch (ch) {
         case 'h':
