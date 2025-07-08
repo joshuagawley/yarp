@@ -37,6 +37,10 @@ class Config {
     return pacman_conf_.repos();
   }
 
+  void ParseFromConfig(const std::string_view path = "/etc/pacman.conf") {
+    pacman_conf_.ParseFromFile(path);
+  }
+
   constexpr void set_verbose(const bool new_verbose) { verbose_ = new_verbose; }
 
   void set_root(const std::string_view new_root_dir) noexcept {

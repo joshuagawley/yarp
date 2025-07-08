@@ -26,7 +26,10 @@ App::App(std::span<char *> args) {
 
   // Register sync databases
   for (const Repository &repo : config_.repos()) {
-    sync_dbs_.emplace_back(alpm_->RegisterSyncDb(repo.name, std::to_underlying(repo.sig_level)));
+    alpm_db_t *db = alpm_->RegisterSyncDb(repo.name, std::to_underlying(repo.sig_level));
+    if (db == nullptr) {
+      throw std::runtime_error(std::format("Could not register db, name : {}", repo.name));
+    }
   }
 }
 

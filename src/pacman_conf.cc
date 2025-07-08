@@ -167,6 +167,7 @@ void PacmanConf::ParseFromFile(const std::string_view config_file) {
         repos_.emplace_back();
         current_repo = &repos_.back();
         current_repo->name = current_section;
+        current_repo->sig_level = sig_level_;
       } else {
         current_repo = nullptr;
       }

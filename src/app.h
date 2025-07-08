@@ -31,7 +31,6 @@ class App {
 
   // use unique_ptr for lazy initialization
   std::unique_ptr<alpmpp::Alpm> alpm_;
-  std::vector<alpm_db_t *> sync_dbs_;
   Config config_;
   Operation operation_ = Operation::kNone;
   QueryOptions query_options_ = QueryOptions::kNone;

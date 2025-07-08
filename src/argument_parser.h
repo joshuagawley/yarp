@@ -29,7 +29,7 @@ static constexpr std::array<struct option, 17> kOpts = {{
     {"list", no_argument, nullptr, 'l'},
     {"foreign", no_argument, nullptr, 'm'},
     {"native", no_argument, nullptr, 'n'},
-    {"file", no_argument, nullptr, 'n'},
+    {"file", no_argument, nullptr, 'p'},
     {"root", required_argument, nullptr, 'r'},
     {"dbpath", required_argument, nullptr, 'b'},
     {"verbose", no_argument, nullptr, 'v'},
@@ -118,7 +118,9 @@ class ArgumentParser {
         targets.emplace_back(argv_[i]);
       }
     }
-  };
+
+    config.ParseFromConfig();
+  }
 
  private:
   const int argc_;
