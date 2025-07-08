@@ -1,8 +1,10 @@
 # Ignore build artifacts
 /build/
+/cmake-build-*
 
 # Ignore IDE-specific files
 .vscode/
+.idea/
 .cache
 
 # Python
