@@ -208,9 +208,14 @@ class Test:
     def test_verbose_output(self, verbose_flag: str) -> None:
         result = self.run([verbose_flag])
         self.assert_returncode(result, 1)
-        self.assert_contains(result.stdout, "Root      : /")
-        self.assert_contains(result.stdout, "DB Path   : /var/lib/pacman")
-    
+        self.assert_contains(result.stdout, "Root       : /")
+        self.assert_contains(result.stdout, "DB Path    : /var/lib/pacman")
+        self.assert_contains(result.stdout, "Cache Dirs : /var/cache/pacman/pkg/")
+        self.assert_contains(result.stdout, "Hook Dirs  : /etc/pacman.d/hooks/")
+        self.assert_contains(result.stdout, "Log File   : /var/log/pacman.log/")
+        self.assert_contains(result.stdout, "GPG Dir    : /etc/pacman.d/gnupg/")
+        self.assert_contains(result.stdout, "Targets    : None")
+
     def test_version_output(self, version_flag: str) -> None:
         result = self.run([version_flag])
         self.assert_returncode(result, 0)

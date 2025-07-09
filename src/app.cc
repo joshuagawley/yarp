@@ -56,8 +56,18 @@ int App::Run() {
 }
 
 void App::PrintVerbose() const {
-  std::println("Root      : {}", config_.root_dir());
-  std::println("DB Path   : {}", config_.db_path());
+  std::println("Root       : {}", config_.root_dir());
+  std::println("DB Path    : {}", config_.db_path());
+  std::println("Cache Dirs : {}", config_.cache_dir());
+  std::println("Hook Dirs  : {}", config_.hook_dir());
+  // std::println("Lock File  : {}", config_.lock_file());
+  std::println("Log File   : {}", config_.log_file());
+  std::println("GPG Dir    : {}", config_.gpg_dir());
+
+  if (targets_.empty()) {
+    std::println("Targets    : None");
+  } else {
+  }
 }
 
 }  // namespace pacmanpp
