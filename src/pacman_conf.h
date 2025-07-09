@@ -34,14 +34,14 @@ class PacmanConf {
     return db_path_;
   }
 
-  [[nodiscard]] constexpr const std::filesystem::path& cache_dir()
+  [[nodiscard]] constexpr const std::vector<std::string>& cache_dirs()
       const noexcept {
-    return cache_dir_;
+    return cache_dirs_;
   }
 
-  [[nodiscard]] constexpr const std::filesystem::path& hook_dir()
+  [[nodiscard]] constexpr const std::vector<std::string>& hook_dirs()
       const noexcept {
-    return hook_dir_;
+    return hook_dirs_;
   }
 
   [[nodiscard]] constexpr const std::filesystem::path& gpg_dir()
@@ -164,8 +164,8 @@ class PacmanConf {
  private:
   std::filesystem::path root_dir_ = "/";
   std::filesystem::path db_path_ = "/var/lib/pacman/";
-  std::filesystem::path cache_dir_ = "/var/cache/pacman/pkg/";
-  std::filesystem::path hook_dir_ = "/etc/pacman.d/hooks/";
+  std::vector<std::string> cache_dirs_ = {"/var/cache/pacman/pkg/"};
+  std::vector<std::string> hook_dirs_ = {"/usr/share/libalpm/hooks/",  "/etc/pacman.d/hooks/"};
   std::filesystem::path gpg_dir_ = "/etc/pacman.d/gnupg/";
   std::filesystem::path log_file_ = "/var/log/pacman.log/";
   std::vector<std::string> hold_pkg_;

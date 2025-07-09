@@ -23,8 +23,8 @@ SCENARIO("PacmanConf parsing behavior", "[PacmanConf]") {
     THEN("The compiled-in defaults are used.") {
       REQUIRE(conf.root_dir() == "/");
       REQUIRE(conf.db_path() == "/var/lib/pacman/");
-      REQUIRE(conf.cache_dir() == "/var/cache/pacman/pkg/");
-      REQUIRE(conf.hook_dir() == "/etc/pacman.d/hooks/");
+      REQUIRE(conf.cache_dirs() == std::vector<std::string>{"/var/cache/pacman/pkg/"});
+      REQUIRE(conf.hook_dirs() == std::vector<std::string>{"/usr/share/libalpm/hooks/", "/etc/pacman.d/hooks/"});
       REQUIRE(conf.gpg_dir() == "/etc/pacman.d/gnupg/");
       REQUIRE(conf.log_file() == "/var/log/pacman.log/");
       REQUIRE(conf.hold_pkg().empty());
@@ -51,10 +51,10 @@ SCENARIO("PacmanConf parsing behavior", "[PacmanConf]") {
       THEN("Any non-default values override the compiled-in defaults.") {
         REQUIRE(conf.root_dir() == "/");
         REQUIRE(conf.db_path() == "/var/lib/pacman/");
-        REQUIRE(conf.cache_dir() == "/var/cache/pacman/pkg/");
+        REQUIRE(conf.cache_dirs() == std::vector<std::string>{"/var/cache/pacman/pkg/"});
         REQUIRE(conf.log_file() == "/var/log/pacman.log");
         REQUIRE(conf.gpg_dir() == "/etc/pacman.d/gnupg/");
-        REQUIRE(conf.hook_dir() == "/etc/pacman.d/hooks/");
+        REQUIRE(conf.hook_dirs() == std::vector<std::string>{"/usr/share/libalpm/hooks/", "/etc/pacman.d/hooks/", "/home/arch/my_pacman_hooks/"});
         REQUIRE(conf.hold_pkg() == std::vector<std::string>{"pacman", "glibc"});
         REQUIRE(conf.architecture() == std::vector<std::string>{"x86_64"});
         REQUIRE(conf.ignore_pkg() ==

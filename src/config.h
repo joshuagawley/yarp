@@ -32,12 +32,12 @@ class Config {
     return pacman_conf_.db_path();
   }
 
-  [[nodiscard]] constexpr std::string cache_dir() const noexcept {
-    return pacman_conf_.cache_dir();
+  [[nodiscard]] constexpr const std::vector<std::string> &cache_dirs() const noexcept {
+    return pacman_conf_.cache_dirs();
   }
 
-  [[nodiscard]] constexpr std::string hook_dir() const noexcept {
-    return pacman_conf_.hook_dir();
+  [[nodiscard]] constexpr const std::vector<std::string> &hook_dirs() const noexcept {
+    return pacman_conf_.hook_dirs();
   }
 
   // [[nodiscard]] constexpr std::string lock_file() const noexcept {

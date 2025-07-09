@@ -19,24 +19,6 @@
 
 namespace {
 
-template <typename T>
-  requires std::formattable<T, char>
-void PrintStringVector(std::stringstream &ss, const std::string_view prefix,
-                       const std::vector<T> &vector) {
-  if (vector.empty()) {
-    std::println(ss, "{}None", prefix);
-  } else {
-    std::print(ss, "{}", prefix);
-    for (const T &elem : vector) {
-      if (elem != *(std::end(vector) - 1)) {
-        std::print(ss, "{}  ", elem);  // Not the last item, add space
-      } else {
-        std::println(ss, "{}", elem);  // Last item, no trailing space
-      }
-    }
-  }
-}
-
 void PrintDependsList(std::stringstream &ss, const std::string_view prefix,
                       std::vector<alpmpp::AlpmDepend> depends) {
   if (depends.empty()) {
@@ -181,14 +163,14 @@ std::string AlpmPackage::GetInfo() const {
   std::println(ss, "Architecture    : {}", arch());
   std::println(ss, "URL             : {}", url());
 
-  PrintStringVector(ss, "Licenses        : ", licenses());
-  PrintStringVector(ss, "Groups          : ", groups());
+  util::PrintStringVector(ss, "Licenses        : ", licenses());
+  util::PrintStringVector(ss, "Groups          : ", groups());
   PrintDependsList(ss, "Provides        : ", provides());
   PrintDependsList(ss, "Depends On      : ", depends());
   PrintOptDependsList(ss, opt_depends());
   // alpm_pkg_compute_* don't free the list, so we set free_list to true
-  PrintStringVector(ss, "Required By     : ", ComputeRequiredBy());
-  PrintStringVector(ss, "Optional For    : ", ComputeOptionalFor());
+  util::PrintStringVector(ss, "Required By     : ", ComputeRequiredBy());
+  util::PrintStringVector(ss, "Optional For    : ", ComputeOptionalFor());
 
   PrintDependsList(ss, "Conflicts With  : ", conflicts());
   PrintDependsList(ss, "Replaces        : ", replaces());

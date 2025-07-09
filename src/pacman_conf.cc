@@ -197,13 +197,19 @@ void PacmanConf::ParseFromFile(const std::string_view config_file) {
       } else if (key == "DBPath") {
         db_path_ = value;
       } else if (key == "CacheDir") {
-        cache_dir_ = value;
+        cache_dirs_ = SplitByWhitespace(value);
       } else if (key == "LogFile") {
         log_file_ = value;
       } else if (key == "GPGDir") {
         gpg_dir_ = value;
       } else if (key == "HookDir") {
-        hook_dir_ = value;
+        // We need to always keep the first hook,
+        // so we extend rather than assign
+        std::vector<std::string> additional_hook_dirs =
+            SplitByWhitespace(value);
+        hook_dirs_.insert(std::end(hook_dirs_),
+                          std::begin(additional_hook_dirs),
+                          std::end(additional_hook_dirs));
       } else if (key == "HoldPkg") {
         hold_pkg_ = SplitByWhitespace(value);
       } else if (key == "IgnorePkg") {

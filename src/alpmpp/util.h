@@ -11,6 +11,24 @@ namespace alpmpp {
 
 namespace util {
 
+template <typename T>
+  requires std::formattable<T, char>
+void PrintStringVector(std::stringstream &ss, const std::string_view prefix,
+                       const std::vector<T> &vector) {
+  if (vector.empty()) {
+    std::println(ss, "{}None", prefix);
+  } else {
+    std::print(ss, "{}", prefix);
+    for (const T &elem : vector) {
+      if (elem != *(std::end(vector) - 1)) {
+        std::print(ss, "{}  ", elem);  // Not the last item, add space
+      } else {
+        std::println(ss, "{}", elem);  // Last item, no trailing space
+      }
+    }
+  }
+}
+
 template <typename Input, typename Output>
 constexpr std::vector<Output> AlpmListToVector(const alpm_list_t *list) {
   std::vector<Output> result;

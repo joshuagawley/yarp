@@ -211,7 +211,7 @@ class Test:
         self.assert_contains(result.stdout, "Root       : /")
         self.assert_contains(result.stdout, "DB Path    : /var/lib/pacman")
         self.assert_contains(result.stdout, "Cache Dirs : /var/cache/pacman/pkg/")
-        self.assert_contains(result.stdout, "Hook Dirs  : /etc/pacman.d/hooks/")
+        self.assert_contains(result.stdout, "Hook Dirs  : /usr/share/libalpm/hooks/  /etc/pacman.d/hooks/")
         self.assert_contains(result.stdout, "Log File   : /var/log/pacman.log/")
         self.assert_contains(result.stdout, "GPG Dir    : /etc/pacman.d/gnupg/")
         self.assert_contains(result.stdout, "Targets    : None")
