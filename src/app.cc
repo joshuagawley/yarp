@@ -9,6 +9,7 @@
 #include <span>
 
 #include "alpmpp/alpm.h"
+#include "alpmpp/util.h"
 #include "argument_parser.h"
 #include "help_handler.h"
 #include "operation.h"
@@ -56,18 +57,18 @@ int App::Run() {
 }
 
 void App::PrintVerbose() const {
-  std::println("Root       : {}", config_.root_dir());
-  std::println("DB Path    : {}", config_.db_path());
-  std::println("Cache Dirs : {}", config_.cache_dir());
-  std::println("Hook Dirs  : {}", config_.hook_dir());
-  // std::println("Lock File  : {}", config_.lock_file());
-  std::println("Log File   : {}", config_.log_file());
-  std::println("GPG Dir    : {}", config_.gpg_dir());
+  std::stringstream ss;
+  std::println(ss, "Root       : {}", config_.root_dir());
+  std::println(ss, "DB Path    : {}", config_.db_path());
 
-  if (targets_.empty()) {
-    std::println("Targets    : None");
-  } else {
-  }
+  alpmpp::util::PrintStringVector(ss, "Cache Dirs : ", config_.cache_dirs());
+  alpmpp::util::PrintStringVector(ss, "Hook Dirs  : ", config_.hook_dirs());
+  // std::println("Lock File  : {}", config_.lock_file());
+  std::println(ss, "Log File   : {}", config_.log_file());
+  std::println(ss, "GPG Dir    : {}", config_.gpg_dir());
+  alpmpp::util::PrintStringVector(ss, "Targets    : ", targets_);
+
+  std::print("{}", ss.str());
 }
 
 }  // namespace pacmanpp
