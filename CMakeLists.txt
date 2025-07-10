@@ -9,37 +9,37 @@ file(STRINGS version.txt version_txt REGEX "^[0-9]+\\.[0-9]+\\.[0-9]+.*$" LIMIT_
 
 find_package(Git REQUIRED)
 execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --show-toplevel
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-  RESULT_VARIABLE git_top_dir_result
-  OUTPUT_VARIABLE git_top_dir
-  OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        RESULT_VARIABLE git_top_dir_result
+        OUTPUT_VARIABLE git_top_dir
+        OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
 
 # Set fallback first, override if more information (from git) is found
 set(PACMANPP_VERSION "${version_txt}")
 
 # Prevent formatting errors & resolve symlinks (REALPATH)
 get_filename_component(resolved_project_source_dir ${PROJECT_SOURCE_DIR} REALPATH)
-if(NOT ("${git_top_dir}" STREQUAL ""))
-  get_filename_component(git_top_dir ${git_top_dir} REALPATH)
-endif()
+if (NOT ("${git_top_dir}" STREQUAL ""))
+    get_filename_component(git_top_dir ${git_top_dir} REALPATH)
+endif ()
 
-if(git_top_dir_result EQUAL 0 AND git_top_dir STREQUAL resolved_project_source_dir)
-  # If we are in a git repo we can get the version information from git describe
-  execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --dirty=-dev
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    RESULT_VARIABLE git_describe_result
-    OUTPUT_VARIABLE git_describe
-    OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+if (git_top_dir_result EQUAL 0 AND git_top_dir STREQUAL resolved_project_source_dir)
+    # If we are in a git repo we can get the version information from git describe
+    execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --dirty=-dev
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            RESULT_VARIABLE git_describe_result
+            OUTPUT_VARIABLE git_describe
+            OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
 
-  if(git_describe_result EQUAL 0)
-    set(PACMANPP_VERSION "${git_describe}")
-  else()
-    message(STATUS "Could not detect version with git, falling back to built-in version information.")
-  endif()
+    if (git_describe_result EQUAL 0)
+        set(PACMANPP_VERSION "${git_describe}")
+    else ()
+        message(STATUS "Could not detect version with git, falling back to built-in version information.")
+    endif ()
 
-else()
-  message(STATUS "CMake and git directory mismatch, falling back to built-in version information.") # Assuming that if git rev-parse doesn't return 0, git describe won't either
-endif()
+else ()
+    message(STATUS "CMake and git directory mismatch, falling back to built-in version information.") # Assuming that if git rev-parse doesn't return 0, git describe won't either
+endif ()
 
 
 include(CTest)
@@ -49,103 +49,103 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Set a default build type if none was specified
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
-  set(CMAKE_BUILD_TYPE
-      RelWithDebInfo
-      CACHE STRING "Choose the type of build." FORCE)
-  # Set the possible values of build type for cmake-gui, ccmake
-  set_property(
-    CACHE CMAKE_BUILD_TYPE
-    PROPERTY STRINGS
-             "Debug"
-             "Release"
-             "MinSizeRel"
-             "RelWithDebInfo")
-endif()
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
+    set(CMAKE_BUILD_TYPE
+            RelWithDebInfo
+            CACHE STRING "Choose the type of build." FORCE)
+    # Set the possible values of build type for cmake-gui, ccmake
+    set_property(
+            CACHE CMAKE_BUILD_TYPE
+            PROPERTY STRINGS
+            "Debug"
+            "Release"
+            "MinSizeRel"
+            "RelWithDebInfo")
+endif ()
 
 # Enhance error reporting and compiler messages
-if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
-  add_compile_options(-fcolor-diagnostics)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  add_compile_options(-fdiagnostics-color=always)
-else()
-  message(STATUS "No colored compiler diagnostic set for '${CMAKE_CXX_COMPILER_ID}' compiler.")
-endif()
+if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+    add_compile_options(-fcolor-diagnostics)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options(-fdiagnostics-color=always)
+else ()
+    message(STATUS "No colored compiler diagnostic set for '${CMAKE_CXX_COMPILER_ID}' compiler.")
+endif ()
 
 set(COMPILE_FLAGS
-  -Wall
-  -Wextra # reasonable and standard
-  -Wshadow # warn the user if a variable declaration shadows one from a parent context
-  -Wnon-virtual-dtor # warn the user if a class with virtual functions has a non-virtual destructor. This helps
-  # catch hard to track down memory errors
-  -Wold-style-cast # warn for c-style casts
-  -Wcast-align # warn for potential performance problem casts
-  -Wunused # warn on anything being unused
-  -Woverloaded-virtual # warn if you overload (not override) a virtual function
-  -Wpedantic # warn if non-standard C++ is used
-  -Wconversion # warn on type conversions that may lose data
-  -Wsign-conversion # warn on sign conversions
-  -Wnull-dereference # warn if a null dereference is detected
-  -Wdouble-promotion # warn if float is implicit promoted to double
-  -Wformat=2 # warn on security issues around functions that format output (ie printf)
-  -Wimplicit-fallthrough # warn on statements that fallthrough without an explicit annotation
+        -Wall
+        -Wextra # reasonable and standard
+        -Wshadow # warn the user if a variable declaration shadows one from a parent context
+        -Wnon-virtual-dtor # warn the user if a class with virtual functions has a non-virtual destructor. This helps
+        # catch hard to track down memory errors
+        -Wold-style-cast # warn for c-style casts
+        -Wcast-align # warn for potential performance problem casts
+        -Wunused # warn on anything being unused
+        -Woverloaded-virtual # warn if you overload (not override) a virtual function
+        -Wpedantic # warn if non-standard C++ is used
+        -Wconversion # warn on type conversions that may lose data
+        -Wsign-conversion # warn on sign conversions
+        -Wnull-dereference # warn if a null dereference is detected
+        -Wdouble-promotion # warn if float is implicit promoted to double
+        -Wformat=2 # warn on security issues around functions that format output (ie printf)
+        -Wimplicit-fallthrough # warn on statements that fallthrough without an explicit annotation
 )
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  list(APPEND
-    COMPILE_FLAGS
-    -Wmisleading-indentation # warn if indentation implies blocks where blocks do not exist
-    -Wduplicated-cond # warn if if / else chain has duplicated conditions
-    -Wduplicated-branches # warn if if / else branches have duplicated code
-    -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
-    -Wuseless-cast # warn if you perform a cast to the same type
-    -Wsuggest-override # warn if an overridden member function is not marked 'override' or 'final'
-  )
-endif()
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    list(APPEND
+            COMPILE_FLAGS
+            -Wmisleading-indentation # warn if indentation implies blocks where blocks do not exist
+            -Wduplicated-cond # warn if if / else chain has duplicated conditions
+            -Wduplicated-branches # warn if if / else branches have duplicated code
+            -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
+            -Wuseless-cast # warn if you perform a cast to the same type
+            -Wsuggest-override # warn if an overridden member function is not marked 'override' or 'final'
+    )
+endif ()
 
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
-if(WARNINGS_AS_ERRORS)
-  message(TRACE "Warnings are treated as errors")
-  list(APPEND COMPILE_FLAGS -Werror)
-endif()
+if (WARNINGS_AS_ERRORS)
+    message(TRACE "Warnings are treated as errors")
+    list(APPEND COMPILE_FLAGS -Werror)
+endif ()
 
 find_package(Alpm REQUIRED)
 
 configure_file(
-  ${CMAKE_CURRENT_LIST_DIR}/src/settings.h.in
-  ${CMAKE_BINARY_DIR}/src/settings.h
-  ESCAPE_QUOTES
+        ${CMAKE_CURRENT_LIST_DIR}/src/settings.h.in
+        ${CMAKE_BINARY_DIR}/src/settings.h
+        ESCAPE_QUOTES
 )
 
 set(ALPMPP_SOURCES
-    src/alpmpp/alpm.cc
-    src/alpmpp/depend.cc
-    src/alpmpp/package.cc
-    src/alpmpp/util.h
+        src/alpmpp/alpm.cc
+        src/alpmpp/depend.cc
+        src/alpmpp/package.cc
+        src/alpmpp/util.h
 )
 
 set(ALPMPP_HEADERS
-    src/alpmpp/alpm.h
-    src/alpmpp/bitwise_enum.h
-    src/alpmpp/depend.h
-    src/alpmpp/file.h
-    src/alpmpp/package.h
-    src/alpmpp/types.h
-    src/alpmpp/util.h
+        src/alpmpp/alpm.h
+        src/alpmpp/bitwise_enum.h
+        src/alpmpp/depend.h
+        src/alpmpp/file.h
+        src/alpmpp/package.h
+        src/alpmpp/types.h
+        src/alpmpp/util.h
 )
 
 add_library(alpmpp)
 
 target_sources(
-    alpmpp
-    PRIVATE
+        alpmpp
+        PRIVATE
         ${ALPMPP_SOURCES}
 
-    PUBLIC
-    FILE_SET HEADERS
-    TYPE HEADERS
-    FILES
+        PUBLIC
+        FILE_SET HEADERS
+        TYPE HEADERS
+        FILES
         ${ALPMPP_HEADERS}
 )
 
@@ -156,41 +156,42 @@ target_include_directories(alpmpp PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src")
 target_link_libraries(alpmpp PRIVATE Alpm::Alpm)
 
 set(
-    PACMANPP_SOURCES
-    src/app.cc
-    src/help_handler.cc
-    src/main.cc
-    src/pacman_conf.cc
-    src/query_handler.cc
-    src/version_handler.cc
+        PACMANPP_SOURCES
+        src/app.cc
+        src/argument_parser.cc
+        src/help_handler.cc
+        src/main.cc
+        src/pacman_conf.cc
+        src/query_handler.cc
+        src/version_handler.cc
 )
 
 set(
-    PACMANPP_HEADERS
-    src/app.h
-    src/argument_parser.h
-    src/bitwise_enum.h
-    src/config.h
-    src/help_handler.h
-    src/operation.h
-    src/operation_handler.h
-    src/pacman_conf.h
-    src/query_handler.h
-    src/version_handler.h
-    ${CMAKE_BINARY_DIR}/src/settings.h
+        PACMANPP_HEADERS
+        src/app.h
+        src/argument_parser.h
+        src/bitwise_enum.h
+        src/config.h
+        src/help_handler.h
+        src/operation.h
+        src/operation_handler.h
+        src/pacman_conf.h
+        src/query_handler.h
+        src/version_handler.h
+        ${CMAKE_BINARY_DIR}/src/settings.h
 )
 
 add_executable(pacmanpp)
 
 target_sources(
-    pacmanpp
-    PRIVATE
+        pacmanpp
+        PRIVATE
         ${PACMANPP_SOURCES}
 
-    PUBLIC
-    FILE_SET HEADERS
-    TYPE HEADERS
-    FILES
+        PUBLIC
+        FILE_SET HEADERS
+        TYPE HEADERS
+        FILES
         ${PACMANPP_HEADERS}
 )
 
@@ -202,8 +203,8 @@ set_target_properties(pacmanpp PROPERTIES CXX_EXTENSIONS OFF)
 
 target_link_libraries(pacmanpp PRIVATE alpmpp)
 
-if(BUILD_TESTING)
+if (BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
     enable_testing()
     add_subdirectory(tests)
-endif()
+endif ()
