@@ -57,37 +57,19 @@ class FileReader {
   std::ifstream file_;
 };
 
-constexpr auto IsNotSpace = [](const unsigned char ch) {
-  return !std::isspace(ch);
-};
-
-void LeftTrim(std::string& str) {
-  str.erase(std::begin(str), std::ranges::find_if(str, IsNotSpace));
-}
-
-void RightTrim(std::string& str) {
-  str.erase(std::find_if(std::rbegin(str), std::rend(str), IsNotSpace).base(),
-            std::end(str));
-}
-
+// from https://stackoverflow.com/a/66897681
 void Trim(std::string& str) {
-  LeftTrim(str);
-  RightTrim(str);
-}
+  constexpr auto kIsNotSpace = [](const std::uint8_t ch) {
+    return !std::isspace(ch);
+  };
 
-std::string RightTrimCopy(std::string str) {
-  RightTrim(str);
-  return str;
-}
+  // erase the spaces at the back first
+  // so we don't have to do extra work
+  str.erase(std::ranges::find_if(str | std::views::reverse, kIsNotSpace).base(),
+            std::end(str));
 
-std::string LeftTrimCopy(std::string str) {
-  LeftTrim(str);
-  return str;
-}
-
-std::string TrimCopy(std::string str) {
-  Trim(str);
-  return str;
+  // erase the spaces at the front
+  str.erase(std::begin(str), std::ranges::find_if(str, kIsNotSpace));
 }
 
 std::vector<std::string> SplitByWhitespace(std::string str) {
@@ -204,10 +186,10 @@ namespace detail {
 
 struct ParseState {
   std::string section;
-  Repository *current_repo = nullptr;
+  Repository* current_repo = nullptr;
 };
 
-} // namespace pacmanpp::detail
+}  // namespace detail
 
 std::expected<void, std::string> PacmanConf::ParseFromFile(
     const std::filesystem::path& config_file) {
@@ -215,9 +197,8 @@ std::expected<void, std::string> PacmanConf::ParseFromFile(
   return ParseOneFile(config_file, state);
 }
 
-
 std::expected<void, std::string> PacmanConf::ParseOneFile(
-    const std::filesystem::path& path, detail::ParseState &state) {
+    const std::filesystem::path& path, detail::ParseState& state) {
   FileReader reader{path};
 
   for (std::string line; reader.GetLine(line);) {
@@ -328,7 +309,8 @@ std::expected<void, std::string> PacmanConf::ParseOneFile(
 
         for (const std::string_view include_path : includes) {
           if (!ParseOneFile(include_path, state).has_value()) {
-            return std::unexpected(std::format("Could not parse Includes file : {}", include_path));
+            return std::unexpected(std::format(
+                "Could not parse Includes file : {}", include_path));
           }
         }
       } else if (key == "SigLevel") {
@@ -341,7 +323,8 @@ std::expected<void, std::string> PacmanConf::ParseOneFile(
   if (reader.ok()) {
     return {};
   } else {
-    return std::unexpected(std::format("Could not parse file at {}", path.c_str()));
+    return std::unexpected(
+        std::format("Could not parse file at {}", path.c_str()));
   }
 }
 
