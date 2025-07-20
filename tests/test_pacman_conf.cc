@@ -15,8 +15,7 @@ SCENARIO("PacmanConf parsing behavior", "[PacmanConf]") {
 
     WHEN("We try to parse a non-existant file")
     THEN("an exception is thrown.") {
-      REQUIRE_THROWS_AS(conf.ParseFromFile("black_hole.conf"),
-                        std::runtime_error);
+      REQUIRE(conf.ParseFromFile("black_hole.conf") == std::unexpected("Could not parse file at black_hole.conf"));
     }
 
     WHEN("We try to parse an empty file")

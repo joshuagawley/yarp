@@ -57,8 +57,8 @@ class Config {
     return pacman_conf_.repos();
   }
 
-  void ParseFromConfig(const std::string_view path = "/etc/pacman.conf") {
-    pacman_conf_.ParseFromFile(path);
+  std::expected<void, std::string> ParseFromConfig(const std::string_view path = "/etc/pacman.conf") {
+    return pacman_conf_.ParseFromFile(path);
   }
 
   constexpr void set_verbose(const bool new_verbose) { verbose_ = new_verbose; }
