@@ -17,8 +17,7 @@ class ArgumentParser {
       : argc_(argc), argv_(argv) {}
 
   void ParseArgs(Operation &operation, QueryOptions &query_options,
-                           std::vector<std::string> &targets,
-                           Config &config) const;
+                 std::vector<std::string> &targets, Config &config) const;
 
  private:
   const int argc_;

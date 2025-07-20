@@ -29,25 +29,25 @@ class Glob {
     if (glob_ok_) globfree(&glob_);
   }
 
-  using iterator = std::span<char*>::iterator;
+  using iterator = std::span<char *>::iterator;
   iterator begin() { return results_.begin(); }
   iterator end() { return results_.end(); }
 
  private:
   glob_t glob_;
   bool glob_ok_;
-  std::span<char*> results_;
+  std::span<char *> results_;
 };
 
 class FileReader {
  public:
-  explicit FileReader(const std::filesystem::path& path) : file_(path) {}
+  explicit FileReader(const std::filesystem::path &path) : file_(path) {}
 
   ~FileReader() {
     if (ok()) file_.close();
   }
 
-  bool GetLine(std::string& line) {
+  bool GetLine(std::string &line) {
     return static_cast<bool>(std::getline(file_, line));
   }
 
@@ -58,7 +58,7 @@ class FileReader {
 };
 
 // from https://stackoverflow.com/a/66897681
-void Trim(std::string& str) {
+void Trim(std::string &str) {
   constexpr auto kIsNotSpace = [](const std::uint8_t ch) {
     return !std::isspace(ch);
   };
@@ -103,7 +103,7 @@ std::pair<std::string, std::string> SplitKeyValue(const std::string_view line) {
   return {key, value};
 }
 
-alpmpp::SigLevel ParseSigLevel(const std::string& sig_level_str) {
+alpmpp::SigLevel ParseSigLevel(const std::string &sig_level_str) {
   alpmpp::SigLevel result{};
 
   for (const std::string_view sig_level : SplitByWhitespace(sig_level_str)) {
@@ -186,19 +186,19 @@ namespace detail {
 
 struct ParseState {
   std::string section;
-  Repository* current_repo = nullptr;
+  Repository *current_repo = nullptr;
 };
 
 }  // namespace detail
 
 std::expected<void, std::string> PacmanConf::ParseFromFile(
-    const std::filesystem::path& config_file) {
+    const std::filesystem::path &config_file) {
   detail::ParseState state{};
   return ParseOneFile(config_file, state);
 }
 
 std::expected<void, std::string> PacmanConf::ParseOneFile(
-    const std::filesystem::path& path, detail::ParseState& state) {
+    const std::filesystem::path &path, detail::ParseState &state) {
   FileReader reader{path};
 
   for (std::string line; reader.GetLine(line);) {
