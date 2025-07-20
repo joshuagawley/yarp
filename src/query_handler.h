@@ -3,11 +3,11 @@
 #ifndef PACMANPP_QUERY_HANDLER_H_
 #define PACMANPP_QUERY_HANDLER_H_
 
-#include "alpm.h"
+#include "alpmpp/alpm.h"
+#include "bitwise_enum.h"
 #include "config.h"
 #include "operation.h"
 #include "operation_handler.h"
-#include "src/bitwise_enum.h"
 
 namespace pacmanpp {
 
