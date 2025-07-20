@@ -3,6 +3,7 @@
 #ifndef PACMANPP_PACMAN_CONF_H_
 #define PACMANPP_PACMAN_CONF_H_
 
+#include <expected>
 #include <filesystem>
 #include <optional>
 #include <string>
@@ -21,7 +22,7 @@ struct Repository {
 
 class PacmanConf {
  public:
-  void ParseFromFile(std::string_view config_file);
+  std::expected<void, std::string> ParseFromFile(std::string_view config_file);
 
   // Accessors
   [[nodiscard]] constexpr const std::filesystem::path& root_dir()
@@ -165,7 +166,8 @@ class PacmanConf {
   std::filesystem::path root_dir_ = "/";
   std::filesystem::path db_path_ = "/var/lib/pacman/";
   std::vector<std::string> cache_dirs_ = {"/var/cache/pacman/pkg/"};
-  std::vector<std::string> hook_dirs_ = {"/usr/share/libalpm/hooks/",  "/etc/pacman.d/hooks/"};
+  std::vector<std::string> hook_dirs_ = {"/usr/share/libalpm/hooks/",
+                                         "/etc/pacman.d/hooks/"};
   std::filesystem::path gpg_dir_ = "/etc/pacman.d/gnupg/";
   std::filesystem::path log_file_ = "/var/log/pacman.log/";
   std::vector<std::string> hold_pkg_;

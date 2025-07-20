@@ -107,7 +107,9 @@ void ArgumentParser::ParseArgs(Operation &operation,
     }
   }
 
-  config.ParseFromConfig();
+  if (std::expected<void, std::string> parse_result = config.ParseFromConfig();
+      !parse_result.has_value())
+    throw std::runtime_error(parse_result.error());
 }
 
 }  // namespace  pacmanpp

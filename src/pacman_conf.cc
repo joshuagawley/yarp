@@ -136,7 +136,7 @@ alpmpp::SigLevel ParseSigLevel(const std::string& sig_level_str) {
 
 }  // namespace
 
-void PacmanConf::ParseFromFile(const std::string_view config_file) {
+std::expected<void, std::string> PacmanConf::ParseFromFile(const std::string_view config_file) {
   std::ifstream file{std::string(config_file)};
   if (!file.is_open()) {
     throw std::runtime_error(std::format("Failed to open config file: {}",
@@ -275,6 +275,7 @@ void PacmanConf::ParseFromFile(const std::string_view config_file) {
       }
     }
   }
+  return {};
 }
 
 }  // namespace pacmanpp
