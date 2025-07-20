@@ -5,7 +5,7 @@
 
 #include <cstdint>
 
-#include "src/bitwise_enum.h"
+#include "bitwise_enum.h"
 
 namespace pacmanpp {
 

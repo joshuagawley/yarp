@@ -3,7 +3,6 @@
 #include "package.h"
 
 #include <alpm.h>
-#include <alpm_list.h>
 
 #include <format>
 #include <iomanip>
@@ -13,7 +12,7 @@
 #include <vector>
 
 #include "depend.h"
-#include "src/alpmpp/file.h"
+#include "file.h"
 #include "types.h"
 #include "util.h"
 

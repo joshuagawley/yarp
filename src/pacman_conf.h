@@ -17,7 +17,7 @@ namespace detail {
 
 struct ParseState;
 
-} // namespace detail
+}  // namespace detail
 
 struct Repository {
   std::string name;
@@ -28,74 +28,75 @@ struct Repository {
 
 class PacmanConf {
  public:
-  std::expected<void, std::string> ParseFromFile(const std::filesystem::path &config_file);
+  std::expected<void, std::string> ParseFromFile(
+      const std::filesystem::path &config_file);
 
   // Accessors
-  [[nodiscard]] constexpr const std::filesystem::path& root_dir()
+  [[nodiscard]] constexpr const std::filesystem::path &root_dir()
       const noexcept {
     return root_dir_;
   }
 
-  [[nodiscard]] constexpr const std::filesystem::path& db_path()
+  [[nodiscard]] constexpr const std::filesystem::path &db_path()
       const noexcept {
     return db_path_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& cache_dirs()
+  [[nodiscard]] constexpr const std::vector<std::string> &cache_dirs()
       const noexcept {
     return cache_dirs_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& hook_dirs()
+  [[nodiscard]] constexpr const std::vector<std::string> &hook_dirs()
       const noexcept {
     return hook_dirs_;
   }
 
-  [[nodiscard]] constexpr const std::filesystem::path& gpg_dir()
+  [[nodiscard]] constexpr const std::filesystem::path &gpg_dir()
       const noexcept {
     return gpg_dir_;
   }
 
-  [[nodiscard]] constexpr const std::filesystem::path& log_file()
+  [[nodiscard]] constexpr const std::filesystem::path &log_file()
       const noexcept {
     return log_file_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& hold_pkg()
+  [[nodiscard]] constexpr const std::vector<std::string> &hold_pkg()
       const noexcept {
     return hold_pkg_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& ignore_pkg()
+  [[nodiscard]] constexpr const std::vector<std::string> &ignore_pkg()
       const noexcept {
     return ignore_pkg_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& ignore_group()
+  [[nodiscard]] constexpr const std::vector<std::string> &ignore_group()
       const noexcept {
     return ignore_group_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& architecture()
+  [[nodiscard]] constexpr const std::vector<std::string> &architecture()
       const noexcept {
     return architecture_;
   }
 
-  [[nodiscard]] constexpr const std::string& xfer_command() const noexcept {
+  [[nodiscard]] constexpr const std::string &xfer_command() const noexcept {
     return xfer_command_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& no_upgrade()
+  [[nodiscard]] constexpr const std::vector<std::string> &no_upgrade()
       const noexcept {
     return no_upgrade_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& no_extract()
+  [[nodiscard]] constexpr const std::vector<std::string> &no_extract()
       const noexcept {
     return no_extract_;
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string>& clean_method()
+  [[nodiscard]] constexpr const std::vector<std::string> &clean_method()
       const noexcept {
     return clean_method_;
   }
@@ -114,7 +115,7 @@ class PacmanConf {
     return remote_file_sig_level_;
   }
 
-  [[nodiscard]] constexpr const std::optional<std::string>& download_user()
+  [[nodiscard]] constexpr const std::optional<std::string> &download_user()
       const noexcept {
     return download_user_;
   }
@@ -155,7 +156,7 @@ class PacmanConf {
 
   [[nodiscard]] constexpr bool chomp() const noexcept { return chomp_; }
 
-  [[nodiscard]] constexpr const std::vector<Repository>& repos()
+  [[nodiscard]] constexpr const std::vector<Repository> &repos()
       const noexcept {
     return repos_;
   }
@@ -169,7 +170,8 @@ class PacmanConf {
   }
 
  private:
-  std::expected<void, std::string> ParseOneFile(const std::filesystem::path &path, detail::ParseState &state);
+  std::expected<void, std::string> ParseOneFile(
+      const std::filesystem::path &path, detail::ParseState &state);
 
   std::filesystem::path root_dir_ = "/";
   std::filesystem::path db_path_ = "/var/lib/pacman/";

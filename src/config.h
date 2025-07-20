@@ -32,11 +32,13 @@ class Config {
     return pacman_conf_.db_path();
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string> &cache_dirs() const noexcept {
+  [[nodiscard]] constexpr const std::vector<std::string> &cache_dirs()
+      const noexcept {
     return pacman_conf_.cache_dirs();
   }
 
-  [[nodiscard]] constexpr const std::vector<std::string> &hook_dirs() const noexcept {
+  [[nodiscard]] constexpr const std::vector<std::string> &hook_dirs()
+      const noexcept {
     return pacman_conf_.hook_dirs();
   }
 
@@ -57,7 +59,8 @@ class Config {
     return pacman_conf_.repos();
   }
 
-  std::expected<void, std::string> ParseFromConfig(const std::string_view path = "/etc/pacman.conf") {
+  std::expected<void, std::string> ParseFromConfig(
+      const std::string_view path = "/etc/pacman.conf") {
     return pacman_conf_.ParseFromFile(path);
   }
 

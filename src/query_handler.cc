@@ -13,7 +13,7 @@
 #include "alpmpp/file.h"
 #include "alpmpp/types.h"
 #include "operation.h"
-#include "src/alpmpp/package.h"
+#include "alpmpp/package.h"
 
 namespace {
 
