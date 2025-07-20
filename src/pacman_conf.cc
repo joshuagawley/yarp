@@ -2,17 +2,61 @@
 
 #include "pacman_conf.h"
 
+#include <glob.h>
+
 #include <algorithm>
 #include <cctype>
 #include <fstream>
+#include <iostream>
 #include <iterator>
 #include <ranges>
-#include <stdexcept>
 #include <string>
 
-namespace pacmanpp {
-
 namespace {
+
+class Glob {
+ public:
+  explicit Glob(const std::string_view pattern) {
+    glob_ok_ = glob(pattern.data(), GLOB_NOCHECK, nullptr, &glob_) == 0;
+    if (glob_ok_) {
+      results_ = std::span(glob_.gl_pathv, glob_.gl_pathc);
+    }
+  }
+
+  [[nodiscard]] constexpr bool ok() const { return glob_ok_; }
+
+  ~Glob() {
+    if (glob_ok_) globfree(&glob_);
+  }
+
+  using iterator = std::span<char*>::iterator;
+  iterator begin() { return results_.begin(); }
+  iterator end() { return results_.end(); }
+
+ private:
+  glob_t glob_;
+  bool glob_ok_;
+  std::span<char*> results_;
+};
+
+class FileReader {
+ public:
+  explicit FileReader(const std::filesystem::path& path) : file_(path) {}
+
+  ~FileReader() {
+    if (ok()) file_.close();
+  }
+
+  bool GetLine(std::string& line) {
+    return static_cast<bool>(std::getline(file_, line));
+  }
+
+  bool ok() const noexcept { return file_.is_open(); }
+
+ private:
+  std::ifstream file_;
+};
+
 constexpr auto IsNotSpace = [](const unsigned char ch) {
   return !std::isspace(ch);
 };
@@ -57,6 +101,24 @@ std::vector<std::string> SplitByWhitespace(std::string str) {
   result.push_back(str);
 
   return result;
+}
+
+std::pair<std::string, std::string> SplitKeyValue(const std::string_view line) {
+  const std::size_t kEqPos = line.find('=');
+  std::string key;
+  std::string value;
+
+  if (kEqPos != std::string::npos) {
+    key = line.substr(0, kEqPos);
+    value = line.substr(kEqPos + 1);
+
+    Trim(key);
+    Trim(value);
+  } else {
+    // Some options don't have values (like UseSyslog, Color, etc.)
+    key = line;
+  }
+  return {key, value};
 }
 
 alpmpp::SigLevel ParseSigLevel(const std::string& sig_level_str) {
@@ -136,62 +198,54 @@ alpmpp::SigLevel ParseSigLevel(const std::string& sig_level_str) {
 
 }  // namespace
 
-std::expected<void, std::string> PacmanConf::ParseFromFile(const std::string_view config_file) {
-  std::ifstream file{std::string(config_file)};
-  if (!file.is_open()) {
-    throw std::runtime_error(std::format("Failed to open config file: {}",
-                                         std::string(config_file)));
-  }
-  std::string line;
-  std::string current_section;
-  Repository* current_repo = nullptr;
+namespace pacmanpp {
 
-  while (std::getline(file, line)) {
-    // Remove comments
-    if (std::size_t comment_pos = line.find('#');
-        comment_pos != std::string::npos) {
-      line = line.substr(0, comment_pos);
-    }
+namespace detail {
 
+struct ParseState {
+  std::string section;
+  Repository *current_repo = nullptr;
+};
+
+} // namespace pacmanpp::detail
+
+std::expected<void, std::string> PacmanConf::ParseFromFile(
+    const std::filesystem::path& config_file) {
+  detail::ParseState state{};
+  return ParseOneFile(config_file, state);
+}
+
+
+std::expected<void, std::string> PacmanConf::ParseOneFile(
+    const std::filesystem::path& path, detail::ParseState &state) {
+  FileReader reader{path};
+
+  for (std::string line; reader.GetLine(line);) {
     Trim(line);
-    if (line.empty()) {
-      continue;
-    }
+
+    // Skip empty lines and commments
+    if (line.empty() || line.front() == '#') continue;
 
     // Check for section header
     if (line.front() == '[' && line.back() == ']') {
-      current_section = line.substr(1, line.length() - 2);
-
-      // If it's not the options section, it's a repository
-      if (current_section != "options") {
-        repos_.emplace_back();
-        current_repo = &repos_.back();
-        current_repo->name = current_section;
-        current_repo->sig_level = sig_level_;
-      } else {
-        current_repo = nullptr;
+      state.section = line.substr(1, line.size() - 2);
+      if (state.section != "options") {
+        // Vector takes ownership so we get the pointer of the last item pushed
+        // (i.e. the Repository object we just created)
+        Repository repo{};
+        repos_.push_back(repo);
+        state.current_repo = &repos_.back();
+        state.current_repo->name = state.section;
       }
       continue;
     }
 
     // Parse key-value pairs
-    std::size_t eq_pos = line.find('=');
-    std::string key;
-    std::string value;
 
-    if (eq_pos != std::string::npos) {
-      key = line.substr(0, eq_pos);
-      value = line.substr(eq_pos + 1);
-
-      Trim(key);
-      Trim(value);
-    } else {
-      // Some options don't have values (like UseSyslog, Color, etc.)
-      key = line;
-    }
+    auto [key, value] = SplitKeyValue(line);
 
     // Process based on current section
-    if (current_section == "options") {
+    if (state.section == "options") {
       if (key == "RootDir") {
         root_dir_ = value;
       } else if (key == "DBPath") {
@@ -260,22 +314,35 @@ std::expected<void, std::string> PacmanConf::ParseFromFile(const std::string_vie
       } else if (key == "ILoveCandy") {
         chomp_ = true;
       }
-    } else if (current_repo != nullptr) {
+    } else if (state.current_repo != nullptr) {
       // Repository section
       if (key == "Server") {
-        current_repo->servers.push_back(value);
+        state.current_repo->servers.push_back(value);
       } else if (key == "Include") {
         // In a real implementation, we'd parse the included file
         // For now, just store the include path
-        current_repo->servers.push_back("Include:" + value);
+        Glob includes{value};
+        if (!includes.ok()) {
+          return std::unexpected("Could not parse glob");
+        }
+
+        for (const std::string_view include_path : includes) {
+          if (!ParseOneFile(include_path, state).has_value()) {
+            return std::unexpected(std::format("Could not parse Includes file : {}", include_path));
+          }
+        }
       } else if (key == "SigLevel") {
-        current_repo->sig_level = ParseSigLevel(value);
+        state.current_repo->sig_level = ParseSigLevel(value);
       } else if (key == "Usage") {
-        current_repo->usage = SplitByWhitespace(value);
+        state.current_repo->usage = SplitByWhitespace(value);
       }
     }
   }
-  return {};
+  if (reader.ok()) {
+    return {};
+  } else {
+    return std::unexpected(std::format("Could not parse file at {}", path.c_str()));
+  }
 }
 
 }  // namespace pacmanpp

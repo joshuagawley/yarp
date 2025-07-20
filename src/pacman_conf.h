@@ -13,6 +13,12 @@
 
 namespace pacmanpp {
 
+namespace detail {
+
+struct ParseState;
+
+} // namespace detail
+
 struct Repository {
   std::string name;
   std::vector<std::string> servers;
@@ -22,7 +28,7 @@ struct Repository {
 
 class PacmanConf {
  public:
-  std::expected<void, std::string> ParseFromFile(std::string_view config_file);
+  std::expected<void, std::string> ParseFromFile(const std::filesystem::path &config_file);
 
   // Accessors
   [[nodiscard]] constexpr const std::filesystem::path& root_dir()
@@ -163,6 +169,8 @@ class PacmanConf {
   }
 
  private:
+  std::expected<void, std::string> ParseOneFile(const std::filesystem::path &path, detail::ParseState &state);
+
   std::filesystem::path root_dir_ = "/";
   std::filesystem::path db_path_ = "/var/lib/pacman/";
   std::vector<std::string> cache_dirs_ = {"/var/cache/pacman/pkg/"};
