@@ -4,10 +4,8 @@
 #define PACMANPP_QUERY_HANDLER_H_
 
 #include "alpmpp/alpm.h"
-#include "bitwise_enum.h"
 #include "config.h"
 #include "operation.h"
-#include "operation_handler.h"
 
 namespace pacmanpp {
 
@@ -18,19 +16,24 @@ struct EnableEnumBitwiseOperators<PkgLocality> {
   static constexpr bool enabled = true;
 };
 
-class QueryHandler final : public OperationHandler {
+class QueryHandler {
  public:
-  constexpr QueryHandler(Config &config, alpmpp::Alpm &alpm,
-                         QueryOptions query_options,
+  constexpr QueryHandler(alpmpp::Alpm *alpm, Config *config,
+                         const QueryOptions query_options,
                          std::vector<std::string> targets)
-      : OperationHandler(config, alpm),
+      : alpm_(alpm),
+        config_(config),
         options_(query_options),
         targets_(std::move(targets)),
-        local_db_(alpm_.GetLocalDb()) {}
+        local_db_(alpm_->GetLocalDb()) {}
 
-  ~QueryHandler() override = default;
+  QueryHandler(const QueryHandler &) = delete;
+  QueryHandler &operator=(const QueryHandler &) = delete;
 
-  int Execute() override;
+  QueryHandler(QueryHandler &&) = default;
+  QueryHandler &operator=(QueryHandler &&) = default;
+
+  int Execute();
 
  private:
   [[nodiscard]] int HandleGroups() const;
@@ -41,6 +44,8 @@ class QueryHandler final : public OperationHandler {
       const alpmpp::AlpmPackage &pkg) const;
   [[nodiscard]] bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
 
+  alpmpp::Alpm *alpm_;
+  Config *config_;
   QueryOptions options_;
   std::vector<std::string> targets_;
   alpm_db_t *local_db_ = nullptr;

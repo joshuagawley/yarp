@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "alpmpp/alpm.h"
@@ -21,12 +22,6 @@ class App {
   int Run();
 
  private:
-  template <typename Handler, typename... Args>
-  int ExecuteOperation(Args &&...args) {
-    Handler handler{config_, *alpm_, std::forward<Args>(args)...};
-    return handler.Execute();
-  }
-
   void PrintVerbose() const;
 
   // use unique_ptr for lazy initialization

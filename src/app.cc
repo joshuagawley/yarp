@@ -12,11 +12,15 @@
 #include "alpmpp/util.h"
 #include "argument_parser.h"
 #include "help_handler.h"
+#include "noop_handler.h"
 #include "operation.h"
 #include "query_handler.h"
 #include "version_handler.h"
 
 namespace pacmanpp {
+
+using OperationHandler =
+    std::variant<NoOpHandler, HelpHandler, QueryHandler, VersionHandler>;
 
 App::App(std::span<char *> args) {
   const auto arg_parser =
@@ -41,19 +45,27 @@ int App::Run() {
     PrintVerbose();
   }
 
+  OperationHandler handler;
+
   switch (operation_) {
     case Operation::kNone:
-      std::println("Error: no operation specified (use -h for help)");
-      return EXIT_FAILURE;
+      handler = NoOpHandler{};
+      break;
     case Operation::kHelp:
-      return ExecuteOperation<HelpHandler>();
+      handler = HelpHandler{};
+      break;
     case Operation::kQuery:
-      return ExecuteOperation<QueryHandler>(query_options_, targets_);
+      handler = QueryHandler{alpm_.get(), &config_, query_options_,
+                             std::move(targets_)};
+      break;
     case Operation::kVersion:
-      return ExecuteOperation<VersionHandler>();
+      handler = VersionHandler{};
+      break;
     default:
       return EXIT_SUCCESS;
   }
+
+  return std::visit([](auto &h) { return h.Execute(); }, handler);
 }
 
 void App::PrintVerbose() const {

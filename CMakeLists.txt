@@ -161,6 +161,7 @@ set(
         src/argument_parser.cc
         src/help_handler.cc
         src/main.cc
+        src/noop_handler.cc
         src/pacman_conf.cc
         src/query_handler.cc
         src/version_handler.cc
@@ -173,8 +174,8 @@ set(
         src/bitwise_enum.h
         src/config.h
         src/help_handler.h
+        src/noop_handler.h
         src/operation.h
-        src/operation_handler.h
         src/pacman_conf.h
         src/query_handler.h
         src/version_handler.h

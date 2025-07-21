@@ -3,20 +3,11 @@
 #ifndef PACMANPP_HELP_HANDLER_H_
 #define PACMANPP_HELP_HANDLER_H_
 
-#include "alpmpp/alpm.h"
-#include "config.h"
-#include "operation_handler.h"
-
 namespace pacmanpp {
 
-class HelpHandler final : public OperationHandler {
+class HelpHandler {
  public:
-  constexpr HelpHandler(Config &config, alpmpp::Alpm &alpm)
-      : OperationHandler(config, alpm) {}
-
-  ~HelpHandler() override = default;
-
-  int Execute() override;
+  int Execute();
 };
 
 }  // namespace pacmanpp

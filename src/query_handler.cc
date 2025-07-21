@@ -80,12 +80,12 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
   if ((options_ & QueryOptions::kIsFile) == QueryOptions::kIsFile) {
     for (const std::string_view path : targets_) {
       std::optional<alpmpp::AlpmPackage> pkg =
-          alpm_.LoadPkg(path, true, alpmpp::PkgValidation::kUnknown);
+          alpm_->LoadPkg(path, true, alpmpp::PkgValidation::kUnknown);
       if (pkg.has_value()) {
         pkg_list.push_back(std::move(*pkg));
       } else {
         std::println("Error: Could not load package {}: {}", path,
-                     alpm_.StrError());
+                     alpm_->StrError());
       }
     }
   } else {
@@ -146,7 +146,7 @@ int QueryHandler::HandleGroups() const {
 void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
   int errors{};
   const std::vector<alpmpp::AlpmFile> files = pkg.files();
-  const std::string_view root = alpm_.OptionGetRoot();
+  const std::string_view root = alpm_->OptionGetRoot();
 
   for (const alpmpp::AlpmFile &file : files) {
     // TODO: see if we can avoid creating a new string here
@@ -170,7 +170,7 @@ void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
 }
 
 PkgLocality QueryHandler::GetPkgLocality(const alpmpp::AlpmPackage &pkg) const {
-  const std::vector<alpm_db_t *> sync_dbs = alpm_.GetSyncDbs();
+  const std::vector<alpm_db_t *> sync_dbs = alpm_->GetSyncDbs();
   const std::string_view pkg_name = pkg.name();
 
   const bool pkg_in_sync_db =
@@ -182,7 +182,7 @@ PkgLocality QueryHandler::GetPkgLocality(const alpmpp::AlpmPackage &pkg) const {
 }
 
 void QueryHandler::PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const {
-  std::println("{}", pkg.GetFileList(alpm_.OptionGetRoot()));
+  std::println("{}", pkg.GetFileList(alpm_->OptionGetRoot()));
 }
 
 bool QueryHandler::FilterPkg(const alpmpp::AlpmPackage &pkg) const {

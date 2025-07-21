@@ -3,20 +3,11 @@
 #ifndef PACMANPP_VERSION_HANDLER_H_
 #define PACMANPP_VERSION_HANDLER_H_
 
-#include "alpmpp/alpm.h"
-#include "config.h"
-#include "operation_handler.h"
-
 namespace pacmanpp {
 
-class VersionHandler final : public OperationHandler {
+class VersionHandler {
  public:
-  constexpr VersionHandler(Config &config, alpmpp::Alpm &alpm)
-      : OperationHandler(config, alpm) {}
-
-  ~VersionHandler() override = default;
-
-  int Execute() override;
+  int Execute();
 };
 
 }  // namespace pacmanpp
