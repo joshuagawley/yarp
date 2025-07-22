@@ -1,5 +1,11 @@
 # SDPX-License-Identifier: MIT
 
+add_custom_target(copy_files ALL
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_pacman_conf.conf
+        ${CMAKE_CURRENT_BINARY_DIR}/test_pacman_conf.conf
+)
+
 function(pacmanpp_add_test)
     cmake_parse_arguments(ARG "" "NAME;DESCRIPTION" "" ${ARGN})
 
@@ -39,6 +45,8 @@ pacmanpp_add_test(NAME query014 DESCRIPTION "query014 -- pacmanpp -Qn jsoncpp [i
 pacmanpp_add_test(NAME query015 DESCRIPTION "query015 -- pacmanpp -Qp yay-12.5.0-1-x86_64.pkg.tar.zst [package archive]")
 pacmanpp_add_test(NAME changelog001 DESCRIPTION "changlog001 -- pacmanpp -Qc powertop")
 pacmanpp_add_test(NAME version001 DESCRIPTION "version001 -- pacmanpp -V")
+
+
 
 # C++ Unit Tests with Catch2
 find_package(Catch2 3 QUIET)
