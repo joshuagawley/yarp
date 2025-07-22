@@ -59,9 +59,17 @@ class Config {
     return pacman_conf_.repos();
   }
 
-  std::expected<void, std::string> ParseFromConfig(
-      const std::string_view path = "/etc/pacman.conf") {
-    return pacman_conf_.ParseFromFile(path);
+  [[nodiscard]] constexpr const std::filesystem::path &conf_file()
+      const noexcept {
+    return conf_file_;
+  }
+
+  std::expected<void, std::string> ParseFromConfig() {
+    return pacman_conf_.ParseFromFile(conf_file_);
+  }
+
+  constexpr void set_conf_file(const std::string_view new_conf_file) noexcept {
+    conf_file_ = new_conf_file;
   }
 
   constexpr void set_verbose(const bool new_verbose) { verbose_ = new_verbose; }
@@ -76,6 +84,7 @@ class Config {
 
  private:
   bool verbose_ = false;
+  std::filesystem::path conf_file_ = "/etc/pacman.conf";
   PacmanConf pacman_conf_;
 };
 
