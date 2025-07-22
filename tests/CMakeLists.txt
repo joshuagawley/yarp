@@ -1,5 +1,11 @@
 # SDPX-License-Identifier: MIT
 
+add_custom_target(copy_files ALL
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_pacman_conf.conf
+        ${CMAKE_CURRENT_BINARY_DIR}/test_pacman_conf.conf
+)
+
 function(pacmanpp_add_test)
     cmake_parse_arguments(ARG "" "NAME;DESCRIPTION" "" ${ARGN})
 
@@ -21,6 +27,7 @@ pacmanpp_add_test(NAME args001 DESCRIPTION "args001 -- pacmanpp")
 pacmanpp_add_test(NAME args002 DESCRIPTION "args002 -- pacmanpp -h")
 pacmanpp_add_test(NAME args004 DESCRIPTION "args004 -- pacmanpp --root=/ --dbpath=/var/lib/pacman")
 pacmanpp_add_test(NAME args005 DESCRIPTION "args005 -- pacmanpp -v")
+pacmanpp_add_test(NAME args007 DESCRIPTION "args007 -- pacmanpp --config test_pacman_conf.conf")
 pacmanpp_add_test(NAME query001 DESCRIPTION "query001 -- pacmanpp -Q foo")
 pacmanpp_add_test(NAME query002 DESCRIPTION "query002 -- pacmanpp -Q base")
 pacmanpp_add_test(NAME query003 DESCRIPTION "query003 -- pacmanpp --root `tmp_root` --dbpath `tmp_db` -Q bar [doesn't exist]")
@@ -38,6 +45,8 @@ pacmanpp_add_test(NAME query014 DESCRIPTION "query014 -- pacmanpp -Qn jsoncpp [i
 pacmanpp_add_test(NAME query015 DESCRIPTION "query015 -- pacmanpp -Qp yay-12.5.0-1-x86_64.pkg.tar.zst [package archive]")
 pacmanpp_add_test(NAME changelog001 DESCRIPTION "changlog001 -- pacmanpp -Qc powertop")
 pacmanpp_add_test(NAME version001 DESCRIPTION "version001 -- pacmanpp -V")
+
+
 
 # C++ Unit Tests with Catch2
 find_package(Catch2 3 QUIET)

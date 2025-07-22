@@ -71,6 +71,7 @@ int App::Run() {
 void App::PrintVerbose() const {
   std::stringstream ss;
   std::println(ss, "Root       : {}", config_.root_dir());
+  std::println(ss, "Conf File  : {}", config_.conf_file().c_str());
   std::println(ss, "DB Path    : {}", config_.db_path());
 
   alpmpp::util::PrintStringVector(ss, "Cache Dirs : ", config_.cache_dirs());

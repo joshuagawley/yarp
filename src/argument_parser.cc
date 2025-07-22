@@ -10,7 +10,7 @@ namespace {
 
 constexpr std::string_view kOptString = "cdehkmnpQVgilv";
 
-constexpr std::array<option, 17> kOpts = {{
+constexpr std::array<option, 18> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
     {"version", no_argument, nullptr, 'V'},
@@ -27,6 +27,7 @@ constexpr std::array<option, 17> kOpts = {{
     {"root", required_argument, nullptr, 'r'},
     {"dbpath", required_argument, nullptr, 'b'},
     {"verbose", no_argument, nullptr, 'v'},
+  {"config", required_argument, nullptr, 0},
     {nullptr, 0, nullptr, 0},
 }};
 
@@ -93,9 +94,15 @@ void ArgumentParser::ParseArgs(Operation &operation,
       case 'b':
         config.set_db_path(optarg);
         break;
-      default:
-        operation = Operation::kNone;
-        break;
+      case 0:
+        if (kOpts[option_index].flag != 0) {
+          operation = Operation::kNone;
+          break;
+        } else if (std::string_view{kOpts[option_index].name} == std::string_view{"config"}){
+          config.set_conf_file(optarg);
+          break;
+        }
+
     }
   }
 
