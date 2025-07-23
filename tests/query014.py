@@ -5,13 +5,10 @@ import sys
 
 test = pptest.Test(sys.argv[1])
 
-with pptest.TestEnvironment() as env:
+result = test.run(["-Qn", "pacman"])
 
-    result = test.run(
-        ["-Qn", "powertop"]
-    )
-
-    test.assert_returncode(result, 0)
-    test.assert_contains(result.stdout, "powertop 2.15-2")
+# pacman is in official repo, so it's native (returns 0)
+test.assert_returncode(result, 0)
+test.assert_equals(result.stdout, "pacman 5.2.2-3\n")
 
 test.exit_with_result()

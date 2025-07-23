@@ -4,6 +4,9 @@ add_custom_target(copy_files ALL
         COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_CURRENT_SOURCE_DIR}/test_pacman_conf.conf
         ${CMAKE_CURRENT_BINARY_DIR}/test_pacman_conf.conf
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/test-data
+        ${CMAKE_CURRENT_BINARY_DIR}/test-data
 )
 
 function(pacmanpp_add_test)

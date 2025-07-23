@@ -5,13 +5,9 @@ import sys
 
 test = pptest.Test(sys.argv[1])
 
-with pptest.TestEnvironment() as env:
+result = test.run(["-Qd", "pacman"])
 
-    result = test.run(
-        ["-Qd", "powertop"]
-    )
-
-    test.assert_returncode(result, 1)
-    test.assert_contains(result.stdout, "")
+test.assert_returncode(result, 0)
+test.assert_equals(result.stdout, "pacman 5.2.2-3\n")
 
 test.exit_with_result()

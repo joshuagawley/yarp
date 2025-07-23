@@ -5,13 +5,10 @@ import sys
 
 test = pptest.Test(sys.argv[1])
 
-with pptest.TestEnvironment() as env:
+result = test.run(["-Qd", "jsoncpp"])
 
-    result = test.run(
-        ["-Qd", "jsoncpp"]
-    )
-
-    test.assert_returncode(result, 0)
-    test.assert_contains(result.stdout, "jsoncpp 1.9.6-3")
+# jsoncpp is found as dependency in mock database
+test.assert_returncode(result, 0)
+test.assert_equals(result.stdout, "jsoncpp 1.9.4-1\n")
 
 test.exit_with_result()

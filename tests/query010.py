@@ -5,13 +5,10 @@ import sys
 
 test = pptest.Test(sys.argv[1])
 
-with pptest.TestEnvironment() as env:
+result = test.run(["-Qe", "jsoncpp"])
 
-    result = test.run(
-        ["-Qe", "jsoncpp"]
-    )
-
-    test.assert_returncode(result, 1)
-    test.assert_contains(result.stdout, "")
+# jsoncpp is not found as explicitly installed in mock database
+test.assert_returncode(result, 1)
+test.assert_contains(result.stdout, "")
 
 test.exit_with_result()

@@ -5,15 +5,11 @@ import sys
 
 test = pptest.Test(sys.argv[1])
 
-with pptest.TestEnvironment() as env:
+result = test.run(["-Qc", "libfoo"])
 
-    # TODO: Add a mock package intead of using a real one
-    result = test.run(
-        ["-Qc", "powertop"]
-    )
-
-    test.assert_returncode(result, 0)
-    test.assert_contains(result.stdout, "Changelog for powertop:")
-    test.assert_contains(result.stdout, "2012-05-12 Jaroslav Lichtblau (Dragonlord) <svetlemodry@archlinux.org>\n\t* powertop 2.0-1")
+test.assert_returncode(result, 0)
+test.assert_contains(result.stdout, "Changelog for libfoo")
+test.assert_contains(result.stdout, "1.0.0-1:")
+test.assert_contains(result.stdout, "first release version")
 
 test.exit_with_result()

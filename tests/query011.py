@@ -5,13 +5,9 @@ import sys
 
 test = pptest.Test(sys.argv[1])
 
-with pptest.TestEnvironment() as env:
+result = test.run(["-Qe", "polybar"])
 
-    result = test.run(
-        ["-Qe", "powertop"]
-    )
-
-    test.assert_returncode(result, 0)
-    test.assert_contains(result.stdout, "powertop 2.15-2")
+test.assert_returncode(result, 0)
+test.assert_equals(result.stdout, "polybar 1.0.0-1\n")
 
 test.exit_with_result()
