@@ -1,62 +1,10 @@
 # SPDX-License-Identifier: MIT
 
 import os
-import pathlib
-import shutil
 import subprocess
 import sys
-import tempfile
+from pathlib import Path
 from typing import Any, Dict, List, Optional
-
-
-class TestChangelogEntry:
-    def __init__(self, version: str, changes: List[str]) -> None:
-        self.version = version
-        self.changes = changes
-
-    def to_changelog_format(self) -> str:
-        lines = [f"{self.version}:"]
-        lines.extend(self.changes)
-        return "\n".join(lines)
-
-
-class TestPackage:
-    def __init__(
-        self,
-        name: str,
-        version: str,
-        description: str = "Test package",
-    ) -> None:
-        self.name = name
-        self.version = version
-        self.description = description
-        self.files: List[str] = []
-        self.groups: List[str] = []
-        self.url: str = ""
-        self.license: str = ""
-        self.architecture: str = ""
-        self.packager: str = ""
-        self.changelog_entries: List[TestChangelogEntry] = []
-
-    def add_changelog_entry(self, version: str, changes: List[str]) -> None:
-        entry = TestChangelogEntry(version, changes)
-        self.changelog_entries.append(entry)
-
-    def get_changelog_text(self) -> str:
-        header = f"Changelog for {self.name}"
-        entries = "\n\n".join(
-            entry.to_changelog_format() for entry in self.changelog_entries
-        )
-        return f"{header}\n{entries}"
-
-    def to_desc_format(self) -> str:
-        desc_parts = [
-            f"%NAME%\n{self.name}\n\n",
-            f"%VERSION%\n{self.version}\n\n",
-            f"%DESC%\n{self.description}\n\n",
-        ]
-
-        return "\n".join(desc_parts)
 
 
 class TestResult:
@@ -66,73 +14,31 @@ class TestResult:
         self.stderr = stderr
 
 
-class TestEnvironment:
-    def __init__(self) -> None:
-        self.packages: Dict[str, TestPackage] = {}
-
-    def __enter__(self):
-        self.temp_dir = tempfile.mkdtemp(prefix="pacmanpp_test_")
-        self.root = pathlib.Path(self.temp_dir) / "root"
-        self.db_path = self.root / "db"
-
-        # Create directory structure
-        self.root.mkdir(parents=True)
-        self.db_path.mkdir(parents=True)
-
-        # Create a minimal ALPM database structure
-        local_db = self.db_path / "local"
-        local_db.mkdir(parents=True)
-
-        (local_db / "ALPM_DB_VERSION").write_text("9\n")
-
-        return self
-
-    def __exit__(self, type, value, traceback):
-        if self.temp_dir and os.path.exists(self.temp_dir):
-            shutil.rmtree(self.temp_dir)
-
-    def add_package(self, pkg: TestPackage) -> None:
-        self.packages[pkg.name] = pkg
-        self._write_pkg_to_fs(pkg)
-
-    def create_package(
-        self, name: str, version: str, description: str = "Test package"
-    ) -> TestPackage:
-        pkg = TestPackage(name=name, version=version, description=description)
-        self.add_package(pkg)
-        return pkg
-
-    def get_package(self, name: str) -> Optional[TestPackage]:
-        return self.packages.get(name)
-
-    def remove_package(self, name: str) -> bool:
-        if name in self.packages:
-            pkg = self.packages[name]
-            del self.packages[name]
-
-            pkg_dir = self.db_path / "local" / f"{pkg.name}-{pkg.version}"
-            if pkg_dir.exists():
-                shutil.rmtree(pkg_dir)
-            return True
-        return False
-
-    def _write_pkg_to_fs(self, pkg: TestPackage) -> None:
-        pkg_dir = self.db_path / "local" / f"{pkg.name}-{pkg.version}"
-        pkg_dir.mkdir(parents=True)
-
-        (pkg_dir / "desc").write_text(pkg.to_desc_format())
-
-        if pkg.changelog_entries:
-            (pkg_dir / "changelog").write_text(pkg.get_changelog_text())
-
-
 class Test:
     def __init__(self, pacmanpp_path: str) -> None:
         self.pacmanpp = pacmanpp_path
         self._failed: bool = False
         self._failure_messages: List[str] = []
+        
+        # Set up mock database paths
+        build_dir = Path(pacmanpp_path).parent
+        self.test_data_dir = build_dir / "tests" / "test-data"
+        self.config_path = self.test_data_dir / "pacman.conf"
+        self.db_path = self.test_data_dir / "db"
 
     def run(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
+        cmd = [self.pacmanpp, "--root", "/var/empty", "--dbpath", str(self.db_path)] + args
+
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, env=env or os.environ.copy()
+        )
+
+        return TestResult(
+            returncode=result.returncode, stdout=result.stdout, stderr=result.stderr
+        )
+    
+    def run_raw(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
+        """Run pacmanpp without mock database arguments (for args tests)"""
         cmd = [self.pacmanpp] + args
 
         result = subprocess.run(
@@ -142,6 +48,7 @@ class Test:
         return TestResult(
             returncode=result.returncode, stdout=result.stdout, stderr=result.stderr
         )
+    
 
     def assert_equals(self, actual: Any, expected: Any, message: str = "") -> None:
         if actual != expected:
@@ -160,7 +67,7 @@ class Test:
             self._failure_messages.append(msg)
 
     def assert_not_contains(
-        self, haystack: str, needle: str, message: str = ""
+            self, haystack: str, needle: str, message: str = ""
     ) -> None:
         if needle in haystack:
             self._failed = True
@@ -184,21 +91,21 @@ class Test:
         sys.exit(0)
 
     def test_exact_output(
-        self, args: List[str], expected_stdout: str, expected_returncode: int = 0
+            self, args: List[str], expected_stdout: str, expected_returncode: int = 0
     ) -> None:
         result = self.run(args)
         self.assert_returncode(result, expected_returncode)
         self.assert_equals(result.stdout, expected_stdout, "Output mismatch")
 
     def test_error_contains(
-        self, args: List[str], expected_error: str, expected_returncode: int = 1
+            self, args: List[str], expected_error: str, expected_returncode: int = 1
     ) -> None:
-        result = self.run(args)
+        result = self.run_raw(args)
         self.assert_returncode(result, expected_returncode)
         self.assert_contains(result.stderr, expected_error, "Error message mismatch")
 
     def test_help_output(self, help_flag: str) -> None:
-        result = self.run([help_flag])
+        result = self.run_raw([help_flag])
         self.assert_returncode(result, 0)
         self.assert_contains(result.stdout, f"Usage: pacmanpp <operation>")
         self.assert_contains(result.stdout, "operations:")
@@ -206,7 +113,7 @@ class Test:
         self.assert_contains(result.stdout, "{-Q, --query}")
 
     def test_verbose_output(self, verbose_flag: str) -> None:
-        result = self.run([verbose_flag])
+        result = self.run_raw([verbose_flag])
         self.assert_returncode(result, 1)
         self.assert_contains(result.stdout, "Root       : /")
         self.assert_contains(result.stdout, "DB Path    : /var/lib/pacman")
@@ -217,6 +124,6 @@ class Test:
         self.assert_contains(result.stdout, "Targets    : None")
 
     def test_version_output(self, version_flag: str) -> None:
-        result = self.run([version_flag])
+        result = self.run_raw([version_flag])
         self.assert_returncode(result, 0)
         self.assert_equals(result.stdout, "pacmanpp version 0.0.0\n")
