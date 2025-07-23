@@ -26,16 +26,10 @@ class Test:
         self.config_path = self.test_data_dir / "pacman.conf"
         self.db_path = self.test_data_dir / "db"
 
+        self.mock_db_args = ["--root", "/var/empty", "--dbpath", str(self.db_path)]
+
     def run(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
-        cmd = [self.pacmanpp, "--root", "/var/empty", "--dbpath", str(self.db_path)] + args
-
-        result = subprocess.run(
-            cmd, capture_output=True, text=True, env=env or os.environ.copy()
-        )
-
-        return TestResult(
-            returncode=result.returncode, stdout=result.stdout, stderr=result.stderr
-        )
+        return self.run_raw(self.mock_db_args + args, env)
     
     def run_raw(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
         """Run pacmanpp without mock database arguments (for args tests)"""
