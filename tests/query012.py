@@ -8,7 +8,6 @@ test = pptest.Test(sys.argv[1])
 result = test.run(["-Qk", "alsa-lib"])
 
 test.assert_returncode(result, 0)
-# TODO: CI run prints missing files instead of expected `0 missing files`
 test.assert_contains(result.stdout, "alsa-lib:")
 test.assert_contains(result.stdout, "total files")
 
