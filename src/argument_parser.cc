@@ -35,7 +35,7 @@ constexpr std::array<option, 18> kOpts = {{
 
 namespace pacmanpp {
 
-void ArgumentParser::ParseArgs(Operation &operation,
+std::expected<void, std::string> ArgumentParser::ParseArgs(Operation &operation,
                                QueryOptions &query_options,
                                std::vector<std::string> &targets,
                                Config &config) const {
@@ -114,9 +114,7 @@ void ArgumentParser::ParseArgs(Operation &operation,
     }
   }
 
-  if (std::expected<void, std::string> parse_result = config.ParseFromConfig();
-      !parse_result.has_value())
-    throw std::runtime_error(parse_result.error());
+  return config.ParseFromConfig();
 }
 
 }  // namespace  pacmanpp
