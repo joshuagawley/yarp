@@ -45,6 +45,11 @@ void PrintPkgInfo(const alpmpp::AlpmPackage &pkg) {
   std::println("{}", pkg.GetInfo());
 }
 
+bool IsUnrequired(const alpmpp::AlpmPackage &pkg) {
+  std::vector<std::string> required_by = pkg.ComputeRequiredBy();
+  return required_by.empty();
+}
+
 }  // namespace
 
 namespace pacmanpp {
@@ -194,11 +199,14 @@ bool QueryHandler::FilterPkg(const alpmpp::AlpmPackage &pkg) const {
       (options_ & QueryOptions::kNative) == QueryOptions::kNative;
   const bool kOnlyForeign =
       (options_ & QueryOptions::kForeign) == QueryOptions::kForeign;
+  const bool kOnlyUnrequired =
+      (options_ & QueryOptions::kUnrequired) == QueryOptions::kUnrequired;
 
   return (kOnlyDeps && pkg.reason() != alpmpp::PkgReason::kDepend) ||
          (kOnlyExplicit && pkg.reason() != alpmpp::PkgReason::kExplicit) ||
          (kOnlyForeign && GetPkgLocality(pkg) != PkgLocality::kForeign) ||
-         (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative);
+         (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative) ||
+         (kOnlyUnrequired && !IsUnrequired(pkg));
 }
 
 }  // namespace pacmanpp
