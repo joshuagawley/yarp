@@ -8,9 +8,9 @@
 
 namespace {
 
-constexpr std::string_view kOptString = "cdehkmnpQVgilv";
+constexpr std::string_view kOptString = "cdehkmnptQVgilv";
 
-constexpr std::array<option, 18> kOpts = {{
+constexpr std::array<option, 19> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
     {"version", no_argument, nullptr, 'V'},
@@ -25,6 +25,7 @@ constexpr std::array<option, 18> kOpts = {{
     {"native", no_argument, nullptr, 'n'},
     {"file", no_argument, nullptr, 'p'},
     {"root", required_argument, nullptr, 'r'},
+    {"unrequired", no_argument, nullptr, 't'},
     {"dbpath", required_argument, nullptr, 'b'},
     {"verbose", no_argument, nullptr, 'v'},
   {"config", required_argument, nullptr, 0},
@@ -83,6 +84,9 @@ void ArgumentParser::ParseArgs(Operation &operation,
         break;
       case 'p':
         query_options |= QueryOptions::kIsFile;
+        break;
+      case 't':
+        query_options |= QueryOptions::kUnrequired;
         break;
       case 'v':
         config.set_verbose(true);
