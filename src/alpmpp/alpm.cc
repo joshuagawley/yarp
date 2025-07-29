@@ -79,4 +79,14 @@ std::optional<AlpmPackage> Alpm::LoadPkg(const std::filesystem::path &file_name,
 
 std::string_view Alpm::StrError() const { return alpm_strerror(err); }
 
+std::optional<AlpmPackage> Alpm::SyncGetNewVersion(const AlpmPackage &pkg) const {
+  alpm_pkg_t *new_pkg = alpm_sync_get_new_version(pkg.GetHandle(), alpm_get_syncdbs(handle_));
+  return new_pkg == nullptr ? std::nullopt : std::make_optional<AlpmPackage>(new_pkg, true);
+}
+
+bool Alpm::PkgShouldIgnore(const AlpmPackage &pkg) const {
+  return alpm_pkg_should_ignore(handle_, pkg.GetHandle());
+}
+
+
 }  // namespace alpmpp

@@ -43,6 +43,7 @@ class QueryHandler {
   [[nodiscard]] PkgLocality GetPkgLocality(
       const alpmpp::AlpmPackage &pkg) const;
   [[nodiscard]] bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
+  [[nodiscard]] bool IsUpgradable(const alpmpp::AlpmPackage &pkg) const;
 
   alpmpp::Alpm *alpm_;
   Config *config_;

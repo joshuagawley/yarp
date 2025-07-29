@@ -37,6 +37,10 @@ class Alpm {
 
   [[nodiscard]] std::string_view StrError() const;
 
+  [[nodiscard]] std::optional<AlpmPackage> SyncGetNewVersion(const AlpmPackage &pkg) const;
+
+  [[nodiscard]] bool PkgShouldIgnore(const AlpmPackage &pkg) const;
+
  private:
   alpm_handle_t *handle_;
   alpm_errno_t err = ALPM_ERR_OK;

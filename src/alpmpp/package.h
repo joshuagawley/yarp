@@ -73,8 +73,12 @@ class AlpmPackage {
   std::size_t ChangelogRead(void *fp, char *buf, std::size_t size) const;
   int ChangelogClose(void *fp) const noexcept;
 
+  [[nodiscard]] alpm_db_t *GetDb() const noexcept;
+
   [[nodiscard]] std::string GetFileList(std::string_view root_path) const;
   [[nodiscard]] std::string GetInfo() const;
+
+  [[nodiscard]] constexpr alpm_pkg_t *GetHandle() const noexcept { return pkg_; }
 
  private:
   alpm_pkg_t *pkg_;
