@@ -29,11 +29,14 @@ class Test:
         self.mock_db_args = ["--root", "/var/empty", "--dbpath", str(self.db_path)]
 
     def run(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
-        return self.run_raw(self.mock_db_args + args, env)
+        return self.run_raw(self.pacmanpp, self.mock_db_args + args, env)
     
-    def run_raw(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
-        """Run pacmanpp without mock database arguments (for args tests)"""
-        cmd = [self.pacmanpp] + args
+    def run_pacman(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
+        return self.run_raw("pacman", self.mock_db_args + args, env)
+    
+    def run_raw(self, command: str, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
+        """Run pacman or pacmanpp without mock database arguments (for args tests)"""
+        cmd = [command] + args
 
         result = subprocess.run(
             cmd, capture_output=True, text=True, env=env or os.environ.copy()
@@ -99,7 +102,7 @@ class Test:
         self.assert_contains(result.stderr, expected_error, "Error message mismatch")
 
     def test_help_output(self, help_flag: str) -> None:
-        result = self.run_raw([help_flag])
+        result = self.run_raw(self.pacmanpp, [help_flag])
         self.assert_returncode(result, 0)
         self.assert_contains(result.stdout, f"Usage: pacmanpp <operation>")
         self.assert_contains(result.stdout, "operations:")
@@ -107,7 +110,7 @@ class Test:
         self.assert_contains(result.stdout, "{-Q, --query}")
 
     def test_verbose_output(self, verbose_flag: str) -> None:
-        result = self.run_raw([verbose_flag])
+        result = self.run_raw(self.pacmanpp, [verbose_flag])
         self.assert_returncode(result, 1)
         self.assert_contains(result.stdout, "Root       : /")
         self.assert_contains(result.stdout, "DB Path    : /var/lib/pacman")
@@ -118,6 +121,6 @@ class Test:
         self.assert_contains(result.stdout, "Targets    : None")
 
     def test_version_output(self, version_flag: str) -> None:
-        result = self.run_raw([version_flag])
+        result = self.run_raw(self.pacmanpp, [version_flag])
         self.assert_returncode(result, 0)
         self.assert_equals(result.stdout, "pacmanpp version 0.0.0\n")
