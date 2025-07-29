@@ -47,6 +47,7 @@ pacmanpp_add_test(NAME query013 DESCRIPTION "query013 -- pacmanpp -Qm jsoncpp [i
 pacmanpp_add_test(NAME query014 DESCRIPTION "query014 -- pacmanpp -Qn jsoncpp [in official repo]")
 pacmanpp_add_test(NAME query015 DESCRIPTION "query015 -- pacmanpp -Qp yay-12.5.0-1-x86_64.pkg.tar.zst [package archive]")
 pacmanpp_add_test(NAME query016 DESCRIPTION "query016 -- pacmanpp -Qt foo [unrequired]")
+pacmanpp_add_test(NAME query017 DESCRIPTION "query017 -- pacmanpp -Qu cmake [upgrade]")
 pacmanpp_add_test(NAME changelog001 DESCRIPTION "changlog001 -- pacmanpp -Qc powertop")
 pacmanpp_add_test(NAME version001 DESCRIPTION "version001 -- pacmanpp -V")
 

@@ -297,4 +297,6 @@ int AlpmPackage::ChangelogClose(void *fp) const noexcept {
   return alpm_pkg_changelog_close(pkg_, fp);
 }
 
+alpm_db_t *AlpmPackage::GetDb() const noexcept { return alpm_pkg_get_db(pkg_); }
+
 }  // namespace alpmpp

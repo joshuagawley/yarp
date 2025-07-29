@@ -72,7 +72,22 @@ int QueryHandler::Execute() {
     } else if ((options_ & QueryOptions::kCheck) == QueryOptions::kCheck) {
       CheckPkgFiles(pkg);
     } else {
-      std::println("{} {}", pkg.name(), pkg.version());
+      std::print("{} {}", pkg.name(), pkg.version());
+
+      if ((options_ & QueryOptions::kUpgrade) == QueryOptions::kUpgrade) {
+        int usage;
+        alpmpp::AlpmPackage new_pkg = alpm_->SyncGetNewVersion(pkg).value();
+        alpm_db_t *db = new_pkg.GetDb();
+        alpm_db_get_usage(db, &usage);
+
+        std::print(" -> {}", new_pkg.version());
+
+        if (alpm_->PkgShouldIgnore(new_pkg) || !(usage & ALPM_DB_USAGE_UPGRADE)) {
+          std::print(" [ignored]");
+        }
+      } else {
+        std::println();
+      }
     }
   }
 
@@ -190,6 +205,10 @@ void QueryHandler::PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const {
   std::println("{}", pkg.GetFileList(alpm_->OptionGetRoot()));
 }
 
+bool QueryHandler::IsUpgradable(const alpmpp::AlpmPackage &pkg) const {
+  return alpm_->SyncGetNewVersion(pkg).has_value();
+}
+
 bool QueryHandler::FilterPkg(const alpmpp::AlpmPackage &pkg) const {
   const bool kOnlyDeps =
       (options_ & QueryOptions::kDeps) == QueryOptions::kDeps;
@@ -201,12 +220,15 @@ bool QueryHandler::FilterPkg(const alpmpp::AlpmPackage &pkg) const {
       (options_ & QueryOptions::kForeign) == QueryOptions::kForeign;
   const bool kOnlyUnrequired =
       (options_ & QueryOptions::kUnrequired) == QueryOptions::kUnrequired;
+  const bool kOnlyUpgrade =
+      (options_ & QueryOptions::kUpgrade) == QueryOptions::kUpgrade;
 
   return (kOnlyDeps && pkg.reason() != alpmpp::PkgReason::kDepend) ||
          (kOnlyExplicit && pkg.reason() != alpmpp::PkgReason::kExplicit) ||
          (kOnlyForeign && GetPkgLocality(pkg) != PkgLocality::kForeign) ||
          (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative) ||
-         (kOnlyUnrequired && !IsUnrequired(pkg));
+         (kOnlyUnrequired && !IsUnrequired(pkg)) ||
+         (kOnlyUpgrade && !IsUpgradable(pkg));
 }
 
 }  // namespace pacmanpp
