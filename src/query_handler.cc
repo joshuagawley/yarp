@@ -80,7 +80,7 @@ int QueryHandler::Execute() {
         alpm_db_t *db = new_pkg.GetDb();
         alpm_db_get_usage(db, &usage);
 
-        std::print("-> {}", new_pkg.version());
+        std::print(" -> {}", new_pkg.version());
 
         if (alpm_->PkgShouldIgnore(new_pkg) || !(usage & ALPM_DB_USAGE_UPGRADE)) {
           std::print(" [ignored]");
