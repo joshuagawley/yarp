@@ -38,7 +38,7 @@ void PrintPkgChangelog(const alpmpp::AlpmPackage &pkg) {
     }
 
     if (const int result = pkg.ChangelogClose(fp); !result) {
-      std::println("Error: could not close changelog.");
+      std::println(stderr, "Error: could not close changelog.");
     }
     std::println("");
   }
@@ -138,7 +138,7 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
       if (pkg.has_value()) {
         pkg_list.push_back(std::move(*pkg));
       } else {
-        std::println("Error: Could not load package {}: {}", path,
+        std::println(stderr, "Error: Could not load package {}: {}", path,
                      alpm_->StrError());
       }
     }
@@ -156,7 +156,7 @@ std::vector<alpmpp::AlpmPackage> QueryHandler::GetPkgList() const {
         if (pkg.has_value()) {
           pkg_list.push_back(std::move(*pkg));
         } else {
-          std::println("Error: package {} not found", target);
+          std::println(stderr, "Error: package {} not found", target);
         }
       }
     }
