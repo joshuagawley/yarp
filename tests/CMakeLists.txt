@@ -50,6 +50,8 @@ pacmanpp_add_test(NAME query016 DESCRIPTION "query016 -- pacmanpp -Qt foo [unreq
 pacmanpp_add_test(NAME query017 DESCRIPTION "query017 -- pacmanpp -Qu cmake [upgrade]")
 pacmanpp_add_test(NAME query018 DESCRIPTION "query018 -- pacmanpp -Qo pacman [file exists]")
 pacmanpp_add_test(NAME query019 DESCRIPTION "query019 -- pacmanpp -Qo bar [file doesn't exists]")
+pacmanpp_add_test(NAME query020 DESCRIPTION "query020 -- pacmanpp -Qs pacman [exists in local database]")
+pacmanpp_add_test(NAME query021 DESCRIPTION "query020 -- pacmanpp -Qs pacmanpp [doesn't exist in local database]")
 pacmanpp_add_test(NAME changelog001 DESCRIPTION "changlog001 -- pacmanpp -Qc powertop")
 pacmanpp_add_test(NAME version001 DESCRIPTION "version001 -- pacmanpp -V")
 
