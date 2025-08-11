@@ -37,6 +37,7 @@ class QueryHandler {
 
  private:
   [[nodiscard]] int HandleGroups() const;
+  [[nodiscard]] int HandleOwns() const;
   [[nodiscard]] std::vector<alpmpp::AlpmPackage> GetPkgList() const;
   void PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const;
   void CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const;
