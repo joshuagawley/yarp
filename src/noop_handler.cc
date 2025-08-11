@@ -8,7 +8,7 @@
 namespace pacmanpp {
 
 int NoOpHandler::Execute() {
-  std::println("Error: no operation specified (use -h for help)");
+  std::println(stderr, "Error: no operation specified (use -h for help)");
   return EXIT_FAILURE;
 }
 
