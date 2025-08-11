@@ -8,9 +8,9 @@
 
 namespace {
 
-constexpr std::string_view kOptString = "cdehkmnptuQVgilv";
+constexpr std::string_view kOptString = "cdehkmnoptuQVgilv";
 
-constexpr std::array<option, 20> kOpts = {{
+constexpr std::array<option, 21> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
     {"version", no_argument, nullptr, 'V'},
@@ -23,13 +23,14 @@ constexpr std::array<option, 20> kOpts = {{
     {"list", no_argument, nullptr, 'l'},
     {"foreign", no_argument, nullptr, 'm'},
     {"native", no_argument, nullptr, 'n'},
+    {"owns", no_argument, nullptr, 'o'},
     {"file", no_argument, nullptr, 'p'},
     {"root", required_argument, nullptr, 'r'},
     {"unrequired", no_argument, nullptr, 't'},
     {"upgrade", no_argument, nullptr, 'u'},
     {"dbpath", required_argument, nullptr, 'b'},
     {"verbose", no_argument, nullptr, 'v'},
-  {"config", required_argument, nullptr, 0},
+    {"config", required_argument, nullptr, 0},
     {nullptr, 0, nullptr, 0},
 }};
 
@@ -83,6 +84,9 @@ void ArgumentParser::ParseArgs(Operation &operation,
       case 'n':
         query_options |= QueryOptions::kNative;
         break;
+      case 'o':
+        query_options |= QueryOptions::kOwns;
+        break;
       case 'p':
         query_options |= QueryOptions::kIsFile;
         break;
@@ -106,11 +110,11 @@ void ArgumentParser::ParseArgs(Operation &operation,
         if (kOpts[option_index].flag != 0) {
           operation = Operation::kNone;
           break;
-        } else if (std::string_view{kOpts[option_index].name} == std::string_view{"config"}){
+        } else if (std::string_view{kOpts[option_index].name} ==
+                   std::string_view{"config"}) {
           config.set_conf_file(optarg);
           break;
         }
-
     }
   }
 

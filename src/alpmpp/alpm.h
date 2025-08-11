@@ -37,9 +37,13 @@ class Alpm {
 
   [[nodiscard]] std::string_view StrError() const;
 
-  [[nodiscard]] std::optional<AlpmPackage> SyncGetNewVersion(const AlpmPackage &pkg) const;
+  [[nodiscard]] std::optional<AlpmPackage> SyncGetNewVersion(
+      const AlpmPackage &pkg) const;
 
   [[nodiscard]] bool PkgShouldIgnore(const AlpmPackage &pkg) const;
+
+  [[nodiscard]] static bool FileListContains(const std::vector<AlpmFile> &files,
+                                             std::string_view path);
 
  private:
   alpm_handle_t *handle_;

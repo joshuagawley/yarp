@@ -8,12 +8,15 @@
 #include <cstdlib>
 #include <filesystem>
 #include <functional>
+#include <iostream>
 #include <print>
+#include <ranges>
 
 #include "alpmpp/file.h"
-#include "alpmpp/types.h"
-#include "operation.h"
 #include "alpmpp/package.h"
+#include "alpmpp/types.h"
+#include "alpmpp/util.h"
+#include "operation.h"
 
 namespace {
 
@@ -50,43 +53,74 @@ bool IsUnrequired(const alpmpp::AlpmPackage &pkg) {
   return required_by.empty();
 }
 
+std::optional<std::filesystem::path> GetFromPath(
+    const std::filesystem::path &file_name) {
+  const std::string_view env_path = std::getenv("PATH");
+  if (env_path.empty()) return std::nullopt;
+
+  auto valid_paths = env_path | std::views::split(':') |
+                     std::views::transform([&file_name](auto &&range) {
+                       std::string_view dir(std::begin(range), std::end(range));
+                       // Remove trailing slashes
+                       while (!dir.empty() && dir.back() == '/') {
+                         dir.remove_suffix(1);
+                       }
+                       return std::filesystem::path(dir) / file_name;
+                     }) |
+                     std::views::filter([](const std::filesystem::path &path) {
+                       std::error_code ec;
+                       return std::filesystem::exists(path, ec) && !ec;
+                     });
+  const auto it = std::begin(valid_paths);
+  return it != std::end(valid_paths) ? std::optional(*it) : std::nullopt;
+}
+
 }  // namespace
 
 namespace pacmanpp {
 
 int QueryHandler::Execute() {
+  // We check if we're querying for groups before checking for empty targets
+  // because if no targets are given when querying for groups, we simply print
+  // all installed groups
   if ((options_ & QueryOptions::kGroups) == QueryOptions::kGroups) {
     return HandleGroups();
-  }
+  } else if (targets_.empty()) {
+    std::println(stderr, "Error: no targets specified (use -h for help)");
+    return EXIT_FAILURE;
+  } else if ((options_ & QueryOptions::kOwns) == QueryOptions::kOwns) {
+    return HandleOwns();
+  } else {
+    const std::vector<alpmpp::AlpmPackage> pkg_list = GetPkgList();
+    if (pkg_list.empty()) return EXIT_FAILURE;
 
-  const std::vector<alpmpp::AlpmPackage> pkg_list = GetPkgList();
-  if (pkg_list.empty()) return EXIT_FAILURE;
-
-  for (const alpmpp::AlpmPackage &pkg : pkg_list) {
-    if ((options_ & QueryOptions::kChangelog) == QueryOptions::kChangelog) {
-      PrintPkgChangelog(pkg);
-    } else if ((options_ & QueryOptions::kList) == QueryOptions::kList) {
-      PrintPkgFileList(pkg);
-    } else if ((options_ & QueryOptions::kInfo) == QueryOptions::kInfo) {
-      PrintPkgInfo(pkg);
-    } else if ((options_ & QueryOptions::kCheck) == QueryOptions::kCheck) {
-      CheckPkgFiles(pkg);
-    } else {
-      std::print("{} {}", pkg.name(), pkg.version());
-
-      if ((options_ & QueryOptions::kUpgrade) == QueryOptions::kUpgrade) {
-        int usage;
-        alpmpp::AlpmPackage new_pkg = alpm_->SyncGetNewVersion(pkg).value();
-        alpm_db_t *db = new_pkg.GetDb();
-        alpm_db_get_usage(db, &usage);
-
-        std::print(" -> {}", new_pkg.version());
-
-        if (alpm_->PkgShouldIgnore(new_pkg) || !(usage & ALPM_DB_USAGE_UPGRADE)) {
-          std::print(" [ignored]");
-        }
+    for (const alpmpp::AlpmPackage &pkg : pkg_list) {
+      if ((options_ & QueryOptions::kChangelog) == QueryOptions::kChangelog) {
+        PrintPkgChangelog(pkg);
+      } else if ((options_ & QueryOptions::kList) == QueryOptions::kList) {
+        PrintPkgFileList(pkg);
+      } else if ((options_ & QueryOptions::kInfo) == QueryOptions::kInfo) {
+        PrintPkgInfo(pkg);
+      } else if ((options_ & QueryOptions::kCheck) == QueryOptions::kCheck) {
+        CheckPkgFiles(pkg);
       } else {
-        std::println();
+        std::print("{} {}", pkg.name(), pkg.version());
+
+        if ((options_ & QueryOptions::kUpgrade) == QueryOptions::kUpgrade) {
+          int usage;
+          alpmpp::AlpmPackage new_pkg = alpm_->SyncGetNewVersion(pkg).value();
+          alpm_db_t *db = new_pkg.GetDb();
+          alpm_db_get_usage(db, &usage);
+
+          std::print(" -> {}", new_pkg.version());
+
+          if (alpm_->PkgShouldIgnore(new_pkg) ||
+              !(usage & ALPM_DB_USAGE_UPGRADE)) {
+            std::print(" [ignored]");
+          }
+        } else {
+          std::println();
+        }
       }
     }
   }
@@ -160,6 +194,55 @@ int QueryHandler::HandleGroups() const {
       }
     }
   }
+  return EXIT_SUCCESS;
+}
+
+int QueryHandler::HandleOwns() const {
+  std::filesystem::path root_dir = alpm_->OptionGetRoot();
+  const std::vector<alpmpp::AlpmPackage> pkg_list =
+      alpmpp::Alpm::DbGetPkgCache(local_db_);
+  std::error_code ec;
+  bool found = false;
+
+  for (const std::string_view target : targets_) {
+    std::filesystem::path path{target};
+    if (path.empty()) {
+      std::println(stderr, "Error: empty string passed into file owner query");
+      return EXIT_FAILURE;
+    }
+
+    if (!std::filesystem::exists(std::filesystem::symlink_status(path, ec))) {
+      const std::optional<std::filesystem::path> resolved_path =
+          GetFromPath(path);
+      if (!resolved_path.has_value()) {
+        std::println(stderr, "Error: Could not find {} in PATH", target);
+        return EXIT_FAILURE;
+      }
+      path = resolved_path.value();
+    }
+
+    const std::filesystem::path canonicalized =
+        std::filesystem::weakly_canonical(path, ec);
+    if (ec) return ec.value();
+
+    // Alpm needs the relative path from the root dir
+    const std::filesystem::path relative_path =
+        std::filesystem::relative(canonicalized, root_dir);
+
+    for (const alpmpp::AlpmPackage &pkg : pkg_list) {
+      if (alpmpp::Alpm::FileListContains(pkg.files(), relative_path.c_str())) {
+        std::println("{} is owned by {} {}", target, pkg.name(), pkg.version());
+        found = true;
+      }
+    }
+    if (!found) {
+      std::println(stderr, "No package owns {}", target);
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
   return EXIT_SUCCESS;
 }
 
