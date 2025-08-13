@@ -38,6 +38,7 @@ class QueryHandler {
  private:
   [[nodiscard]] int HandleGroups() const;
   [[nodiscard]] int HandleOwns() const;
+  [[nodiscard]] int HandleSearch() const;
   [[nodiscard]] std::vector<alpmpp::AlpmPackage> GetPkgList() const;
   void PrintPkgFileList(const alpmpp::AlpmPackage &pkg) const;
   void CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const;
@@ -45,6 +46,7 @@ class QueryHandler {
       const alpmpp::AlpmPackage &pkg) const;
   [[nodiscard]] bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
   [[nodiscard]] bool IsUpgradable(const alpmpp::AlpmPackage &pkg) const;
+  [[nodiscard]] std::expected<void, std::string> PrintPkgSearch() const;
 
   alpmpp::Alpm *alpm_;
   Config *config_;

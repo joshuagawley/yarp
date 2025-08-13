@@ -42,6 +42,16 @@ constexpr std::vector<Output> AlpmListToVector(const alpm_list_t *list) {
   return result;
 }
 
+inline alpm_list_t *StringVectorToAlpmList(const std::vector<std::string> &vec) {
+  alpm_list_t *list = nullptr;
+
+  for (const std::string &str : vec) {
+    list = alpm_list_add(list, const_cast<void *>(reinterpret_cast<const void*>(str.c_str())));
+  }
+
+  return list;
+}
+
 }  // namespace util
 }  // namespace alpmpp
 

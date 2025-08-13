@@ -47,6 +47,15 @@ std::optional<AlpmPackage> Alpm::DbGetPkg(alpm_db_t *db,
   return pkg != nullptr ? std::make_optional<AlpmPackage>(pkg) : std::nullopt;
 }
 
+std::vector<AlpmPackage> Alpm::DbSearch(
+    alpm_db_t *db, const std::vector<std::string> &needles) {
+  alpm_list_t *search_list = nullptr;
+
+  alpm_db_search(db, util::StringVectorToAlpmList(needles), &search_list);
+
+  return util::AlpmListToVector<alpm_pkg_t *, AlpmPackage>(search_list);
+}
+
 std::string_view Alpm::OptionGetRoot() const {
   return alpm_option_get_root(handle_);
 }
