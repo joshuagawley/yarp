@@ -107,6 +107,15 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     )
 endif ()
 
+if (BUILD_COVERAGE)
+    list(APPEND
+            COMPILE_FLAGS
+            --coverage
+            -fprofile-arcs
+            -ftest-coverage
+    )
+endif ()
+
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 if (WARNINGS_AS_ERRORS)
     message(TRACE "Warnings are treated as errors")
