@@ -24,6 +24,9 @@ class Alpm {
   static std::optional<AlpmPackage> DbGetPkg(alpm_db_t *db,
                                              std::string_view name);
 
+  static std::vector<AlpmPackage> DbSearch(
+      alpm_db_t *db, const std::vector<std::string> &needles);
+
   [[nodiscard]] std::optional<AlpmPackage> LoadPkg(
       const std::filesystem::path &file_name, bool full,
       PkgValidation level) const;

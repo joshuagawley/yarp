@@ -90,6 +90,8 @@ int QueryHandler::Execute() {
     return EXIT_FAILURE;
   } else if ((options_ & QueryOptions::kOwns) == QueryOptions::kOwns) {
     return HandleOwns();
+  } else if ((options_ & QueryOptions::kSearch) == QueryOptions::kSearch) {
+    return HandleSearch();
   } else {
     const std::vector<alpmpp::AlpmPackage> pkg_list = GetPkgList();
     if (pkg_list.empty()) return EXIT_FAILURE;
@@ -246,6 +248,16 @@ int QueryHandler::HandleOwns() const {
   return EXIT_SUCCESS;
 }
 
+int QueryHandler::HandleSearch() const {
+  std::expected<void, std::string> result = PrintPkgSearch();
+  if (result.has_value()) {
+    return EXIT_SUCCESS;
+  } else {
+    std::println("{}", result.error());
+    return EXIT_FAILURE;
+  }
+}
+
 void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
   int errors{};
   const std::vector<alpmpp::AlpmFile> files = pkg.files();
@@ -312,6 +324,39 @@ bool QueryHandler::FilterPkg(const alpmpp::AlpmPackage &pkg) const {
          (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative) ||
          (kOnlyUnrequired && !IsUnrequired(pkg)) ||
          (kOnlyUpgrade && !IsUpgradable(pkg));
+}
+
+std::expected<void, std::string> QueryHandler::PrintPkgSearch() const {
+  const std::vector<alpmpp::AlpmPackage> search_list =
+      alpmpp::Alpm::DbSearch(local_db_, targets_);
+
+  if (search_list.empty()) {
+    return std::unexpected("Error: could not determine search list");
+  }
+
+  std::stringstream ss;
+
+  for (const alpmpp::AlpmPackage &pkg : search_list) {
+    const std::vector<std::string_view> groups = pkg.groups();
+
+    std::print(ss, "{}/{} {}", alpm_db_get_name(local_db_), pkg.name(),
+               pkg.version());
+    if (!groups.empty()) {
+      std::print(ss, " (");
+      for (const std::string_view &group : groups) {
+        if (group != *(std::end(groups) - 1)) {
+          std::print(ss, "{}  ", group);  // Not the last item, add space
+        } else {
+          std::print(ss, "{}", group);  // Last item, no trailing space
+        }
+      }
+      std::print(ss, ")");
+    }
+    std::println(ss, "\n    {}", pkg.desc());
+  }
+  std::println("{}", ss.str());
+
+  return {};
 }
 
 }  // namespace pacmanpp
