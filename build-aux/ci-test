@@ -46,7 +46,7 @@ cmake -B "$builddir" \
   -DCMAKE_INSTALL_PREFIX=/usr \
   -DCMAKE_BUILD_TYPE=RelWithDebInfo \
   ${cmake_flags}
-cmake --build "$builddir"
+cd "builddir" && ninja -v
 endgroup
 
 # test, excluding changelog tests
