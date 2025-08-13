@@ -108,12 +108,9 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif ()
 
 if (BUILD_COVERAGE)
-    list(APPEND
-            COMPILE_FLAGS
-            --coverage
-            -fprofile-arcs
-            -ftest-coverage
-    )
+    list(APPEND COMPILE_FLAGS --coverage)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
 endif ()
 
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
