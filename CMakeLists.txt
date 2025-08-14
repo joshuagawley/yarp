@@ -156,6 +156,35 @@ target_include_directories(alpmpp PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src")
 target_link_libraries(alpmpp PRIVATE Alpm::Alpm)
 
 set(
+        AURPP_SOURCES
+        src/aurpp/package.cc
+)
+
+set(
+        AURPP_HEADERS
+        src/aurpp/package.h
+)
+
+add_library(aurpp)
+
+target_sources(
+        aurpp
+        PRIVATE
+        ${ALPMPP_SOURCES}
+
+        PUBLIC
+        FILE_SET HEADERS
+        TYPE HEADERS
+        FILES
+        ${ALPMPP_HEADERS}
+)
+
+target_compile_options(aurpp PRIVATE ${COMPILE_FLAGS})
+target_compile_features(aurpp PRIVATE cxx_std_23)
+set_target_properties(aurpp PROPERTIES CXX_EXTENSIONS OFF)
+target_include_directories(aurpp PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src")
+
+set(
         PACMANPP_SOURCES
         src/app.cc
         src/argument_parser.cc
