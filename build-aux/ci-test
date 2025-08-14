@@ -26,7 +26,13 @@ group 'setup'
 builddir=build
 test_install=0
 
-pacman -Syu --noconfirm base-devel cmake python git powertop ttf-nerd-fonts-symbols
+pacman -Syu --noconfirm base-devel cmake python git ninja catch2
+# Add after the existing pacman install line
+if [ "$1" = "coverage" ]; then
+    pacman -S --noconfirm lcov
+    cmake_flags="-DENABLE_COVERAGE=ON"
+fi
+
 
 # Needed to ensure PATH is properly set for perl, etc.
 source /etc/profile
@@ -36,15 +42,24 @@ endgroup
 # build
 group 'build'
 cmake -B "$builddir" \
+  -GNinja \
   -DCMAKE_INSTALL_PREFIX=/usr \
-  -DCMAKE_BUILD_TYPE=RelWithDebInfo
-cmake --build "$builddir"
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  ${cmake_flags}
+cd "builddir" && ninja -v
 endgroup
 
 # test, excluding changelog tests
 group 'test'
 cd "$builddir" && ctest --output-on-failure
+# After running tests, generate coverage if enabled
+if [ "$1" = "coverage" ]; then
+    lcov --capture --directory . --output-file coverage.info
+    lcov --remove coverage.info '/usr/*' --output-file coverage.info
+fi
 endgroup
+
+
 
 # install
 if (( test_install )); then

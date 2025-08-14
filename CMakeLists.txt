@@ -3,6 +3,9 @@
 cmake_minimum_required(VERSION 3.23)
 project(pacmanpp LANGUAGES CXX)
 
+# Add this option near your other options
+option(ENABLE_COVERAGE "Enable coverage reporting" OFF)
+
 # Extract version information from version.txt. The first line that looks like
 # a version string is used, so the file supports comments
 file(STRINGS version.txt version_txt REGEX "^[0-9]+\\.[0-9]+\\.[0-9]+.*$" LIMIT_COUNT 1)
@@ -102,6 +105,12 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             -Wuseless-cast # warn if you perform a cast to the same type
             -Wsuggest-override # warn if an overridden member function is not marked 'override' or 'final'
     )
+endif ()
+
+if (BUILD_COVERAGE)
+    list(APPEND COMPILE_FLAGS --coverage)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
 endif ()
 
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
@@ -233,8 +242,30 @@ set_target_properties(pacmanpp PROPERTIES CXX_EXTENSIONS OFF)
 
 target_link_libraries(pacmanpp PRIVATE alpmpp)
 
-if (BUILD_TESTING)
+if(BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
     enable_testing()
     add_subdirectory(tests)
-endif ()
+endif()
+
+if(ENABLE_COVERAGE)
+    find_program(LCOV_PATH lcov)
+    find_program(GENHTML_PATH genhtml)
+
+    if(LCOV_PATH AND GENHTML_PATH)
+        add_custom_target(coverage
+                COMMAND ${LCOV_PATH} --directory . --capture --output-file coverage.info
+                COMMAND ${LCOV_PATH} --remove coverage.info '/usr/*' --output-file coverage.info
+                COMMAND ${LCOV_PATH} --list coverage.info
+                COMMAND ${GENHTML_PATH} -o coverage_html coverage.info
+                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                COMMENT "Generating coverage report"
+        )
+
+        add_custom_target(coverage-clean
+                COMMAND ${LCOV_PATH} --directory . --zerocounters
+                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                COMMENT "Cleaning coverage data"
+        )
+    endif()
+endif()

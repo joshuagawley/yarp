@@ -10,5 +10,9 @@ jobs:
         
         steps:
             - uses: actions/checkout@v4
-            - run: build-aux/ci-test plain
+            - run: build-aux/ci-test coverage
+            - name: Upload coverage to Codecov
+              uses: codecov/codecov-action@v3
+              with:
+                  file: ./build/coverage.info
         
