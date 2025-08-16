@@ -40,7 +40,7 @@ class AurPackage {
     return url_;
   }
 
-  [[nodiscard]] constexpr std::uint64_t num_votes() const noexcept {
+  [[nodiscard]] constexpr int num_votes() const noexcept {
     return num_votes_;
   }
 
@@ -57,15 +57,15 @@ class AurPackage {
     return package_base_;
   }
 
-  [[nodiscard]] constexpr std::int64_t package_base_id() const noexcept {
+  [[nodiscard]] constexpr int package_base_id() const noexcept {
     return package_base_id_;
   }
 
-  [[nodiscard]] constexpr std::int64_t first_submitted() const noexcept {
+  [[nodiscard]] constexpr int first_submitted() const noexcept {
     return first_submitted_;
   }
 
-  [[nodiscard]] constexpr std::int64_t last_modified() const noexcept {
+  [[nodiscard]] constexpr int last_modified() const noexcept {
     return last_modified_;
   }
 
@@ -74,7 +74,7 @@ class AurPackage {
     return url_path_;
   }
 
-  [[nodiscard]] constexpr std::int64_t id() const noexcept { return id_; }
+  [[nodiscard]] constexpr int id() const noexcept { return id_; }
 
   [[nodiscard]] constexpr std::optional<std::vector<std::string>> depends()
       const noexcept {
@@ -142,7 +142,7 @@ class AurPackage {
 
   constexpr void set_url(const std::string_view url) { url_ = url; }
 
-  constexpr void set_num_votes(const std::uint64_t num_votes) {
+  constexpr void set_num_votes(const int num_votes) {
     num_votes_ = num_votes;
   }
 
@@ -158,15 +158,15 @@ class AurPackage {
     package_base_ = package_base;
   }
 
-  constexpr void set_package_base_id(const std::int64_t package_base_id) {
+  constexpr void set_package_base_id(const int package_base_id) {
     package_base_id_ = package_base_id;
   }
 
-  constexpr void set_first_submitted(const std::int64_t first_submitted) {
+  constexpr void set_first_submitted(const int first_submitted) {
     first_submitted_ = first_submitted;
   }
 
-  constexpr void set_last_modified(const std::int64_t last_modified) {
+  constexpr void set_last_modified(const int last_modified) {
     last_modified_ = last_modified;
   }
 
@@ -174,7 +174,7 @@ class AurPackage {
     url_path_ = url_path;
   }
 
-  constexpr void set_id(const std::int64_t id) { id_ = id; }
+  constexpr void set_id(const int id) { id_ = id; }
 
   constexpr void set_depends(std::vector<std::string> depends) {
     depends_ = std::move(depends);
@@ -225,15 +225,15 @@ class AurPackage {
   std::optional<std::string> description_;
   std::optional<std::string> maintainer_;
   std::optional<std::string> url_;
-  std::uint64_t num_votes_{};
+  int num_votes_{};
   double popularity_{};
   std::optional<std::uint64_t> out_of_date_;
   std::string package_base_;
-  std::int64_t package_base_id_{};
-  std::int64_t first_submitted_{};
-  std::int64_t last_modified_{};
+  int package_base_id_{};
+  int first_submitted_{};
+  int last_modified_{};
   std::optional<std::string> url_path_;
-  std::int64_t id_{};
+  int id_{};
 
   // The following fields are optional and only returned when using
   // the `multiinfo` method

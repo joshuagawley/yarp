@@ -39,7 +39,7 @@ AurPackage AurPackage::FromJson(const Json::Value &json) {
   pkg.set_popularity(json["Popularity"].asDouble());
   if (const Json::Value &out_of_date = json["OutOfDate"];
       !out_of_date.isNull()) {
-    pkg.set_out_of_date(out_of_date.asInt());
+    pkg.set_out_of_date(out_of_date.asUInt64());
   }
   pkg.set_package_base(json["PackageBase"].asString());
   pkg.set_package_base_id(json["PackageBaseID"].asInt());
