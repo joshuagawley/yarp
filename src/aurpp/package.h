@@ -3,6 +3,8 @@
 #ifndef AURPP_PACKAGE_H
 #define AURPP_PACKAGE_H
 
+#include <json/json.h>
+
 #include <cstdint>
 #include <optional>
 #include <string>
@@ -13,6 +15,8 @@ namespace aurpp {
 class AurPackage {
  public:
   constexpr AurPackage() = default;
+
+  static AurPackage FromJson(const Json::Value &json);
 
   [[nodiscard]] constexpr std::string_view name() const noexcept {
     return name_;
@@ -36,9 +40,7 @@ class AurPackage {
     return url_;
   }
 
-  [[nodiscard]] constexpr std::uint64_t num_votes() const noexcept {
-    return num_votes_;
-  }
+  [[nodiscard]] constexpr int num_votes() const noexcept { return num_votes_; }
 
   [[nodiscard]] constexpr double popularity() const noexcept {
     return popularity_;
@@ -53,15 +55,15 @@ class AurPackage {
     return package_base_;
   }
 
-  [[nodiscard]] constexpr std::int64_t package_base_id() const noexcept {
+  [[nodiscard]] constexpr int package_base_id() const noexcept {
     return package_base_id_;
   }
 
-  [[nodiscard]] constexpr std::int64_t first_submitted() const noexcept {
+  [[nodiscard]] constexpr int first_submitted() const noexcept {
     return first_submitted_;
   }
 
-  [[nodiscard]] constexpr std::int64_t last_modified() const noexcept {
+  [[nodiscard]] constexpr int last_modified() const noexcept {
     return last_modified_;
   }
 
@@ -70,20 +72,20 @@ class AurPackage {
     return url_path_;
   }
 
-  [[nodiscard]] constexpr std::int64_t id() const noexcept { return id_; }
+  [[nodiscard]] constexpr int id() const noexcept { return id_; }
 
-  [[nodiscard]] constexpr std::optional<std::vector<std::string>>
-  depends() const noexcept {
+  [[nodiscard]] constexpr std::optional<std::vector<std::string>> depends()
+      const noexcept {
     return depends_;
   }
 
-  [[nodiscard]] constexpr std::optional<std::vector<std::string>>
-  make_depends() const noexcept {
+  [[nodiscard]] constexpr std::optional<std::vector<std::string>> make_depends()
+      const noexcept {
     return make_depends_;
   }
 
-  [[nodiscard]] constexpr std::optional<std::vector<std::string>>
-  opt_depends() const noexcept {
+  [[nodiscard]] constexpr std::optional<std::vector<std::string>> opt_depends()
+      const noexcept {
     return opt_depends_;
   }
 
@@ -92,39 +94,136 @@ class AurPackage {
     return check_depends_;
   }
 
-  [[nodiscard]] constexpr std::optional<std::vector<std::string>>
-  conflicts() const noexcept {
+  [[nodiscard]] constexpr std::optional<std::vector<std::string>> conflicts()
+      const noexcept {
     return conflicts_;
   }
 
-  [[nodiscard]] constexpr std::optional<std::vector<std::string>>
-  provides() const noexcept {
+  [[nodiscard]] constexpr std::optional<std::vector<std::string>> provides()
+      const noexcept {
     return provides_;
   }
 
-  [[nodiscard]] constexpr std::optional<std::vector<std::string>>
-  replaces() const noexcept {
+  [[nodiscard]] constexpr std::optional<std::vector<std::string>> replaces()
+      const noexcept {
     return replaces_;
   }
 
-  [[nodiscard]] constexpr std::optional<std::vector<std::string>>
-  groups() const noexcept {
+  [[nodiscard]] constexpr std::optional<std::vector<std::string>> groups()
+      const noexcept {
     return groups_;
   }
 
-  [[nodiscard]] constexpr std::optional<std::vector<std::string>>
-  license() const noexcept {
+  [[nodiscard]] constexpr std::optional<std::vector<std::string>> license()
+      const noexcept {
     return license_;
   }
 
-  [[nodiscard]] constexpr std::optional<std::vector<std::string>>
-  keywords() const noexcept {
+  [[nodiscard]] constexpr std::optional<std::vector<std::string>> keywords()
+      const noexcept {
     return keywords_;
   }
 
-  [[nodiscard]] std::string GetGitUrl(std::string_view aur_base_url) const;
+  constexpr void set_name(const std::string_view name) noexcept {
+    name_ = name;
+  }
 
-  [[nodiscard]] std::string GetWebUrl(std::string_view aur_base_url) const;
+  constexpr void set_version(const std::string_view version) noexcept {
+    version_ = version;
+  }
+
+  constexpr void set_description(const std::string_view description) noexcept {
+    description_ = description;
+  }
+
+  constexpr void set_maintainer(const std::string_view maintainer) noexcept {
+    maintainer_ = maintainer;
+  }
+
+  constexpr void set_url(const std::string_view url) noexcept { url_ = url; }
+
+  constexpr void set_num_votes(const int num_votes) noexcept {
+    num_votes_ = num_votes;
+  }
+
+  constexpr void set_popularity(const double popularity) noexcept {
+    popularity_ = popularity;
+  }
+
+  constexpr void set_out_of_date(const std::uint64_t out_of_date) noexcept {
+    out_of_date_ = out_of_date;
+  }
+
+  constexpr void set_package_base(
+      const std::string_view package_base) noexcept {
+    package_base_ = package_base;
+  }
+
+  constexpr void set_package_base_id(const int package_base_id) noexcept {
+    package_base_id_ = package_base_id;
+  }
+
+  constexpr void set_first_submitted(const int first_submitted) noexcept {
+    first_submitted_ = first_submitted;
+  }
+
+  constexpr void set_last_modified(const int last_modified) noexcept {
+    last_modified_ = last_modified;
+  }
+
+  constexpr void set_url_path(const std::string_view url_path) noexcept {
+    url_path_ = url_path;
+  }
+
+  constexpr void set_id(const int id) noexcept { id_ = id; }
+
+  constexpr void set_depends(std::vector<std::string> depends) noexcept {
+    depends_ = std::move(depends);
+  }
+  constexpr void set_make_depends(
+      std::vector<std::string> make_depends) noexcept {
+    make_depends_ = std::move(make_depends);
+  }
+
+  constexpr void set_opt_depends(
+      std::vector<std::string> opt_depends) noexcept {
+    opt_depends_ = std::move(opt_depends);
+  }
+
+  constexpr void set_check_depends(
+      std::vector<std::string> check_depends) noexcept {
+    check_depends_ = std::move(check_depends);
+  }
+
+  constexpr void set_conflicts(std::vector<std::string> conflicts) noexcept {
+    conflicts_ = std::move(conflicts);
+  }
+
+  constexpr void set_provides(std::vector<std::string> provides) noexcept {
+    provides_ = std::move(provides);
+  }
+
+  constexpr void set_replaces(std::vector<std::string> replaces) noexcept {
+    replaces_ = std::move(replaces);
+  }
+
+  constexpr void set_groups(std::vector<std::string> groups) noexcept {
+    groups_ = std::move(groups);
+  }
+
+  constexpr void set_license(std::vector<std::string> license) noexcept {
+    license_ = std::move(license);
+  }
+
+  constexpr void set_keywords(std::vector<std::string> keywords) noexcept {
+    keywords_ = std::move(keywords);
+  }
+
+  [[nodiscard]] std::string GetGitUrl(
+      std::string_view aur_base_url) const noexcept;
+
+  [[nodiscard]] std::string GetWebUrl(
+      std::string_view aur_base_url) const noexcept;
 
  private:
   std::string name_;
@@ -132,15 +231,15 @@ class AurPackage {
   std::optional<std::string> description_;
   std::optional<std::string> maintainer_;
   std::optional<std::string> url_;
-  std::uint64_t num_votes_{};
+  int num_votes_{};
   double popularity_{};
   std::optional<std::uint64_t> out_of_date_;
   std::string package_base_;
-  std::int64_t package_base_id_{};
-  std::int64_t first_submitted_{};
-  std::int64_t last_modified_{};
+  int package_base_id_{};
+  int first_submitted_{};
+  int last_modified_{};
   std::optional<std::string> url_path_;
-  std::int64_t id_{};
+  int id_{};
 
   // The following fields are optional and only returned when using
   // the `multiinfo` method

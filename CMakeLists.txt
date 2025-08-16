@@ -111,6 +111,7 @@ if (WARNINGS_AS_ERRORS)
 endif ()
 
 find_package(Alpm REQUIRED)
+find_package(Jsoncpp REQUIRED)
 
 configure_file(
         ${CMAKE_CURRENT_LIST_DIR}/src/settings.h.in
@@ -183,6 +184,7 @@ target_compile_options(aurpp PRIVATE ${COMPILE_FLAGS})
 target_compile_features(aurpp PRIVATE cxx_std_23)
 set_target_properties(aurpp PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(aurpp PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src")
+target_link_libraries(aurpp PRIVATE Jsoncpp::Jsoncpp)
 
 set(
         PACMANPP_SOURCES

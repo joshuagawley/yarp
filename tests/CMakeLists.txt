@@ -12,19 +12,62 @@ add_custom_target(copy_files ALL
 function(pacmanpp_add_test)
     cmake_parse_arguments(ARG "" "NAME;DESCRIPTION" "" ${ARGN})
 
-    if(NOT ARG_NAME)
+    if (NOT ARG_NAME)
         message(FATAL_ERROR "Could not find NAME")
-    endif()
+    endif ()
 
-     if(NOT ARG_DESCRIPTION)
+    if (NOT ARG_DESCRIPTION)
         message(FATAL_ERROR "Could not find NAME")
-    endif()
+    endif ()
 
     add_test(NAME "${ARG_DESCRIPTION}"
             COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${ARG_NAME}.py ${CMAKE_BINARY_DIR}/pacmanpp
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 endfunction(pacmanpp_add_test)
+
+function(pacmanpp_add_unit_test)
+    cmake_parse_arguments(ARG "" "NAME" "SOURCES;COPY_FILES;LIBRARIES" ${ARGN})
+
+    if (NOT ARG_NAME)
+        message(FATAL_ERROR "Could not find NAME for C++ test")
+    endif ()
+
+    if (NOT ARG_SOURCES)
+        message(FATAL_ERROR "Could not find SOURCES for C++ test")
+    endif ()
+
+    add_executable(${ARG_NAME} ${ARG_SOURCES})
+
+    target_sources(${ARG_NAME}
+            PRIVATE
+            ${ARG_SOURCES}
+    )
+
+    target_include_directories(${ARG_NAME} PRIVATE
+            ${CMAKE_SOURCE_DIR}/src
+            ${CMAKE_BINARY_DIR}/src
+    )
+
+    target_compile_features(${ARG_NAME} PRIVATE cxx_std_23)
+    target_compile_options(${ARG_NAME} PRIVATE ${COMPILE_FLAGS})
+
+    # Link against Catch2 and any additional libraries in a single call
+    target_link_libraries(${ARG_NAME} PRIVATE Catch2::Catch2WithMain ${ARG_LIBRARIES})
+
+    # Copy any specified files to the build directory
+    if (ARG_COPY_FILES)
+        foreach (file ${ARG_COPY_FILES})
+            add_custom_command(TARGET ${ARG_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+                    ${CMAKE_CURRENT_BINARY_DIR}/${file}
+            )
+        endforeach ()
+    endif ()
+
+    catch_discover_tests(${ARG_NAME})
+endfunction(pacmanpp_add_unit_test)
 
 pacmanpp_add_test(NAME args001 DESCRIPTION "args001 -- pacmanpp")
 pacmanpp_add_test(NAME args002 DESCRIPTION "args002 -- pacmanpp -h")
@@ -55,38 +98,28 @@ pacmanpp_add_test(NAME query021 DESCRIPTION "query020 -- pacmanpp -Qs pacmanpp [
 pacmanpp_add_test(NAME changelog001 DESCRIPTION "changlog001 -- pacmanpp -Qc powertop")
 pacmanpp_add_test(NAME version001 DESCRIPTION "version001 -- pacmanpp -V")
 
-
-
-# C++ Unit Tests with Catch2
 find_package(Catch2 3 QUIET)
-if(Catch2_FOUND)
-    add_executable(test_pacman_conf test_pacman_conf.cc)
-
-    target_sources(test_pacman_conf
-        PRIVATE
+if (Catch2_FOUND)
+    include(Catch)
+    pacmanpp_add_unit_test(
+            NAME test_pacman_conf
+            SOURCES
             test_pacman_conf.cc
             ${CMAKE_SOURCE_DIR}/src/pacman_conf.cc
+            COPY_FILES
+            test_pacman_conf.conf
     )
-
-    target_include_directories(test_pacman_conf PRIVATE
-        ${CMAKE_SOURCE_DIR}/src
-        ${CMAKE_BINARY_DIR}/src
+    pacmanpp_add_unit_test(
+            NAME test_aur_package
+            SOURCES
+            test_aur_package.cc
+            ${CMAKE_SOURCE_DIR}/src/aurpp/package.cc
+            COPY_FILES
+            paru.json
+            LIBRARIES
+            aurpp
+            Jsoncpp::Jsoncpp
     )
-
-    target_compile_features(test_pacman_conf PRIVATE cxx_std_23)
-    target_compile_options(test_pacman_conf PRIVATE ${COMPILE_FLAGS})
-
-    target_link_libraries(test_pacman_conf PRIVATE Catch2::Catch2WithMain)
-
-    add_custom_command(TARGET test_pacman_conf POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_pacman_conf.conf
-        ${CMAKE_CURRENT_BINARY_DIR}/test_pacman_conf.conf
-    )
-
-    # Register test with CTest
-    include(Catch)
-    catch_discover_tests(test_pacman_conf)
-else()
+else ()
     message(STATUS "Catch2 not found, skipping C++ unit tests")
-endif()
+endif ()
