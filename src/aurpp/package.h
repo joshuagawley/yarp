@@ -18,7 +18,7 @@ class AurPackage {
 
   static AurPackage FromJson(const Json::Value &json);
 
-      [[nodiscard]] constexpr std::string_view name() const noexcept {
+  [[nodiscard]] constexpr std::string_view name() const noexcept {
     return name_;
   }
 
@@ -40,9 +40,7 @@ class AurPackage {
     return url_;
   }
 
-  [[nodiscard]] constexpr int num_votes() const noexcept {
-    return num_votes_;
-  }
+  [[nodiscard]] constexpr int num_votes() const noexcept { return num_votes_; }
 
   [[nodiscard]] constexpr double popularity() const noexcept {
     return popularity_;
@@ -142,9 +140,7 @@ class AurPackage {
 
   constexpr void set_url(const std::string_view url) { url_ = url; }
 
-  constexpr void set_num_votes(const int num_votes) {
-    num_votes_ = num_votes;
-  }
+  constexpr void set_num_votes(const int num_votes) { num_votes_ = num_votes; }
 
   constexpr void set_popularity(const double popularity) {
     popularity_ = popularity;
