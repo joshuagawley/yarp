@@ -103,11 +103,13 @@ AurPackage AurPackage::FromJson(const Json::Value &json) {
   return pkg;
 }
 
-std::string AurPackage::GetGitUrl(std::string_view aur_base_url) const {
+std::string AurPackage::GetGitUrl(
+    std::string_view aur_base_url) const noexcept {
   return std::format("{}/{}.git", aur_base_url, package_base_);
 }
 
-std::string AurPackage::GetWebUrl(std::string_view aur_base_url) const {
+std::string AurPackage::GetWebUrl(
+    std::string_view aur_base_url) const noexcept {
   return std::format("{}/packages/{}", aur_base_url, name_);
 }
 

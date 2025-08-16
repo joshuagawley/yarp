@@ -124,96 +124,106 @@ class AurPackage {
     return keywords_;
   }
 
-  constexpr void set_name(const std::string_view name) { name_ = name; }
+  constexpr void set_name(const std::string_view name) noexcept {
+    name_ = name;
+  }
 
-  constexpr void set_version(const std::string_view version) {
+  constexpr void set_version(const std::string_view version) noexcept {
     version_ = version;
   }
 
-  constexpr void set_description(const std::string_view description) {
+  constexpr void set_description(const std::string_view description) noexcept {
     description_ = description;
   }
 
-  constexpr void set_maintainer(const std::string_view maintainer) {
+  constexpr void set_maintainer(const std::string_view maintainer) noexcept {
     maintainer_ = maintainer;
   }
 
-  constexpr void set_url(const std::string_view url) { url_ = url; }
+  constexpr void set_url(const std::string_view url) noexcept { url_ = url; }
 
-  constexpr void set_num_votes(const int num_votes) { num_votes_ = num_votes; }
+  constexpr void set_num_votes(const int num_votes) noexcept {
+    num_votes_ = num_votes;
+  }
 
-  constexpr void set_popularity(const double popularity) {
+  constexpr void set_popularity(const double popularity) noexcept {
     popularity_ = popularity;
   }
 
-  constexpr void set_out_of_date(const std::uint64_t out_of_date) {
+  constexpr void set_out_of_date(const std::uint64_t out_of_date) noexcept {
     out_of_date_ = out_of_date;
   }
 
-  constexpr void set_package_base(const std::string_view package_base) {
+  constexpr void set_package_base(
+      const std::string_view package_base) noexcept {
     package_base_ = package_base;
   }
 
-  constexpr void set_package_base_id(const int package_base_id) {
+  constexpr void set_package_base_id(const int package_base_id) noexcept {
     package_base_id_ = package_base_id;
   }
 
-  constexpr void set_first_submitted(const int first_submitted) {
+  constexpr void set_first_submitted(const int first_submitted) noexcept {
     first_submitted_ = first_submitted;
   }
 
-  constexpr void set_last_modified(const int last_modified) {
+  constexpr void set_last_modified(const int last_modified) noexcept {
     last_modified_ = last_modified;
   }
 
-  constexpr void set_url_path(const std::string_view url_path) {
+  constexpr void set_url_path(const std::string_view url_path) noexcept {
     url_path_ = url_path;
   }
 
-  constexpr void set_id(const int id) { id_ = id; }
+  constexpr void set_id(const int id) noexcept { id_ = id; }
 
-  constexpr void set_depends(std::vector<std::string> depends) {
+  constexpr void set_depends(std::vector<std::string> depends) noexcept {
     depends_ = std::move(depends);
   }
-  constexpr void set_make_depends(std::vector<std::string> make_depends) {
+  constexpr void set_make_depends(
+      std::vector<std::string> make_depends) noexcept {
     make_depends_ = std::move(make_depends);
   }
 
-  constexpr void set_opt_depends(std::vector<std::string> opt_depends) {
+  constexpr void set_opt_depends(
+      std::vector<std::string> opt_depends) noexcept {
     opt_depends_ = std::move(opt_depends);
   }
 
-  constexpr void set_check_depends(std::vector<std::string> check_depends) {
+  constexpr void set_check_depends(
+      std::vector<std::string> check_depends) noexcept {
     check_depends_ = std::move(check_depends);
   }
 
-  constexpr void set_conflicts(std::vector<std::string> conflicts) {
+  constexpr void set_conflicts(std::vector<std::string> conflicts) noexcept {
     conflicts_ = std::move(conflicts);
   }
 
-  constexpr void set_provides(std::vector<std::string> provides) {
+  constexpr void set_provides(std::vector<std::string> provides) noexcept {
     provides_ = std::move(provides);
   }
 
-  constexpr void set_replaces(std::vector<std::string> replaces) {
+  constexpr void set_replaces(std::vector<std::string> replaces) noexcept {
     replaces_ = std::move(replaces);
   }
 
-  constexpr void set_groups(std::vector<std::string> groups) {
+  constexpr void set_groups(std::vector<std::string> groups) noexcept {
     groups_ = std::move(groups);
   }
 
-  constexpr void set_license(std::vector<std::string> license) {
+  constexpr void set_license(std::vector<std::string> license) noexcept {
     license_ = std::move(license);
   }
 
-  constexpr void set_keywords(std::vector<std::string> keywords) {
+  constexpr void set_keywords(std::vector<std::string> keywords) noexcept {
     keywords_ = std::move(keywords);
   }
 
-  [[nodiscard]] std::string GetGitUrl(std::string_view aur_base_url) const;
+  [[nodiscard]] std::string GetGitUrl(
+      std::string_view aur_base_url) const noexcept;
 
-  [[nodiscard]] std::string GetWebUrl(std::string_view aur_base_url) const;
+  [[nodiscard]] std::string GetWebUrl(
+      std::string_view aur_base_url) const noexcept;
 
  private:
   std::string name_;
