@@ -1,9 +1,8 @@
 # SPDX-License-Identifier: MIT
 
+# TODO: determine version using git hash if found
 cmake_minimum_required(VERSION 3.23)
-project(pacmanpp LANGUAGES CXX)
-
-include(CTest)
+project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -18,6 +17,7 @@ find_package(Jsoncpp REQUIRED)
 
 add_subdirectory(src)
 
+include(CTest)
 if (BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
     find_package(Catch2 3 REQUIRED)
