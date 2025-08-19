@@ -48,8 +48,4 @@ target_sources(
         ${PACMANPP_HEADERS}
 )
 
-target_compile_options(pacmanpp PRIVATE ${COMPILE_FLAGS})
-target_compile_features(pacmanpp PRIVATE cxx_std_23)
-set_target_properties(pacmanpp PROPERTIES CXX_EXTENSIONS OFF)
-target_include_directories(pacmanpp PRIVATE "${CMAKE_SOURCE_DIR}/src")
-target_link_libraries(pacmanpp PRIVATE alpmpp)
+target_link_libraries(pacmanpp PRIVATE project_settings alpmpp)
