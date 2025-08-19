@@ -3,13 +3,12 @@
 #ifndef PACMANPP_SRC_APP_H_
 #define PACMANPP_SRC_APP_H_
 
+#include <alpmpp/alpm.h>
+
 #include <memory>
 #include <string>
-#include <utility>
-#include <variant>
 #include <vector>
 
-#include "alpmpp/alpm.h"
 #include "config.h"
 #include "operation.h"
 

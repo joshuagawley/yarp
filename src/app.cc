@@ -2,14 +2,15 @@
 
 #include "app.h"
 
+#include <alpmpp/alpm.h>
+#include <alpmpp/util.h>
 #include <sys/types.h>
 
 #include <cstdlib>
 #include <print>
 #include <span>
+#include <variant>
 
-#include "alpmpp/alpm.h"
-#include "alpmpp/util.h"
 #include "argument_parser.h"
 #include "help_handler.h"
 #include "noop_handler.h"

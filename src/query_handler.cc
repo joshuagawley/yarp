@@ -4,6 +4,11 @@
 
 #include <alpm.h>
 
+#include <alpmpp/file.h>
+#include <alpmpp/package.h>
+#include <alpmpp/types.h>
+#include <alpmpp/util.h>
+
 #include <algorithm>
 #include <cstdlib>
 #include <filesystem>
@@ -12,10 +17,6 @@
 #include <print>
 #include <ranges>
 
-#include "alpmpp/file.h"
-#include "alpmpp/package.h"
-#include "alpmpp/types.h"
-#include "alpmpp/util.h"
 #include "operation.h"
 
 namespace {

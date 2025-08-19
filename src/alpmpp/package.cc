@@ -11,10 +11,10 @@
 #include <string>
 #include <vector>
 
-#include "depend.h"
-#include "file.h"
-#include "types.h"
-#include "util.h"
+#include <alpmpp/depend.h>
+#include <alpmpp/file.h>
+#include <alpmpp/types.h>
+#include <alpmpp/util.h>
 
 namespace {
 

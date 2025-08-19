@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-#include "package.h"
+#include <aurpp/package.h>
 
 #include <format>
 #include <functional>
