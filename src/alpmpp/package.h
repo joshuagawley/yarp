@@ -5,12 +5,12 @@
 
 #include <alpm.h>
 
+#include <alpmpp/depend.h>
+#include <alpmpp/file.h>
+#include <alpmpp/types.h>
+
 #include <string_view>
 #include <vector>
-
-#include "depend.h"
-#include "file.h"
-#include "types.h"
 
 namespace alpmpp {
 
@@ -78,7 +78,9 @@ class AlpmPackage {
   [[nodiscard]] std::string GetFileList(std::string_view root_path) const;
   [[nodiscard]] std::string GetInfo() const;
 
-  [[nodiscard]] constexpr alpm_pkg_t *GetHandle() const noexcept { return pkg_; }
+  [[nodiscard]] constexpr alpm_pkg_t *GetHandle() const noexcept {
+    return pkg_;
+  }
 
  private:
   alpm_pkg_t *pkg_;

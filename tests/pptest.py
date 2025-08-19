@@ -19,9 +19,9 @@ class Test:
         self.pacmanpp = pacmanpp_path
         self._failed: bool = False
         self._failure_messages: List[str] = []
-        
-        # Set up mock database paths
-        build_dir = Path(pacmanpp_path).parent
+
+        # pacmanpp binary is located in [build-dir]/src/pacmanpp
+        build_dir = Path(pacmanpp_path).parent.parent
         self.test_data_dir = build_dir / "tests" / "test-data"
         self.config_path = self.test_data_dir / "pacman.conf"
         self.db_path = self.test_data_dir / "db"

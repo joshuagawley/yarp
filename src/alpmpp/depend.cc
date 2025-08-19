@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-#include "depend.h"
-
 #include <alpm.h>
+
+#include <alpmpp/depend.h>
 
 namespace alpmpp {
 

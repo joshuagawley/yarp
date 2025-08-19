@@ -5,10 +5,11 @@
 
 #include <alpm.h>
 
+#include <alpmpp/package.h>
+
 #include <filesystem>
 #include <optional>
 
-#include "package.h"
 
 namespace alpmpp {
 

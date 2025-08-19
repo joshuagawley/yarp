@@ -6,7 +6,7 @@
 namespace pacmanpp {
 
 constexpr std::string_view kPacmanppName = "@CMAKE_PROJECT_NAME@";
-constexpr std::string_view kPacmanppVersion = "@PACMANPP_VERSION@";
+constexpr std::string_view kPacmanppVersion = "@CMAKE_PROJECT_VERSION@";
 
 }  // namespace pacmanpp
 

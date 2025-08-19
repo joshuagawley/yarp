@@ -3,7 +3,8 @@
 #ifndef PACMANPP_QUERY_HANDLER_H_
 #define PACMANPP_QUERY_HANDLER_H_
 
-#include "alpmpp/alpm.h"
+#include <alpmpp/alpm.h>
+
 #include "config.h"
 #include "operation.h"
 

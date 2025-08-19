@@ -3,13 +3,13 @@
 #ifndef PACMANPP_PACMAN_CONF_H_
 #define PACMANPP_PACMAN_CONF_H_
 
+#include <alpmpp/types.h>
+
 #include <expected>
 #include <filesystem>
 #include <optional>
 #include <string>
 #include <vector>
-
-#include "alpmpp/types.h"
 
 namespace pacmanpp {
 

@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: MIT
 
-#include "alpm.h"
-
 #include <alpm.h>
 #include <alpm_list.h>
+
+#include <alpmpp/alpm.h>
+#include <alpmpp/package.h>
+#include <alpmpp/util.h>
 
 #include <algorithm>
 #include <format>
 #include <stdexcept>
 #include <utility>
-
-#include "package.h"
-#include "util.h"
 
 namespace alpmpp {
 
