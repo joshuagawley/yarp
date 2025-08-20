@@ -1,0 +1,5 @@
+pacmanpp_add_test(NAME args001 DESCRIPTION "args001 -- pacmanpp")
+pacmanpp_add_test(NAME args002 DESCRIPTION "args002 -- pacmanpp -h")
+pacmanpp_add_test(NAME args004 DESCRIPTION "args004 -- pacmanpp --root=/ --dbpath=/var/lib/pacman")
+pacmanpp_add_test(NAME args005 DESCRIPTION "args005 -- pacmanpp -v")
+pacmanpp_add_test(NAME args007 DESCRIPTION "args007 -- pacmanpp --config test_pacman_conf.conf")
