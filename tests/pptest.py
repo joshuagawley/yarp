@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: MIT
 
 import os
+import pathlib
 import subprocess
 import sys
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 
@@ -15,16 +15,13 @@ class TestResult:
 
 
 class Test:
-    def __init__(self, pacmanpp_path: str) -> None:
+    def __init__(self, pacmanpp_path: str, test_data_path: pathlib.Path) -> None:
         self.pacmanpp = pacmanpp_path
         self._failed: bool = False
         self._failure_messages: List[str] = []
 
-        # pacmanpp binary is located in [build-dir]/src/pacmanpp
-        build_dir = Path(pacmanpp_path).parent.parent
-        self.test_data_dir = build_dir / "tests" / "test-data"
-        self.config_path = self.test_data_dir / "pacman.conf"
-        self.db_path = self.test_data_dir / "db"
+        self.config_path = test_data_path / "pacman.conf"
+        self.db_path = test_data_path / "db"
 
         self.mock_db_args = ["--root", "/var/empty", "--dbpath", str(self.db_path)]
 

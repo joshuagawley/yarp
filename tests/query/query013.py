@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: MIT
 
-import pptest
+import pathlib
 import sys
+sys.path.insert(0, '..')
+import pptest
 
-test = pptest.Test(sys.argv[1])
+test = pptest.Test(sys.argv[1], pathlib.Path(sys.argv[2]))
 
 result = test.run(["-Qm", "pacman"])
 

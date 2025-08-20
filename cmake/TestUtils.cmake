@@ -6,11 +6,11 @@ function(pacmanpp_add_test)
     endif ()
 
     if (NOT ARG_DESCRIPTION)
-        message(FATAL_ERROR "Could not find NAME")
+        message(FATAL_ERROR "Could not find DESCRIPTION")
     endif ()
 
     add_test(NAME "${ARG_DESCRIPTION}"
-            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${ARG_NAME}.py ${CMAKE_BINARY_DIR}/src/pacmanpp
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${ARG_NAME}.py ${CMAKE_BINARY_DIR}/src/pacmanpp ${CMAKE_BINARY_DIR}/test-data
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
 endfunction(pacmanpp_add_test)
