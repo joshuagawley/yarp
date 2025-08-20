@@ -3,7 +3,6 @@
 #include "query_handler.h"
 
 #include <alpm.h>
-
 #include <alpmpp/file.h>
 #include <alpmpp/package.h>
 #include <alpmpp/types.h>
@@ -85,13 +84,20 @@ int QueryHandler::Execute() const {
   // all installed groups
   if ((options_ & QueryOptions::kGroups) == QueryOptions::kGroups) {
     return HandleGroups();
-  } else if (targets_.empty()) {
-    std::println(stderr, "Error: no targets specified (use -h for help)");
-    return EXIT_FAILURE;
   } else if ((options_ & QueryOptions::kOwns) == QueryOptions::kOwns) {
-    return HandleOwns();
+    if (!targets_.empty()) {
+      return HandleOwns();
+    } else {
+      std::println(stderr, "Error: no targets specified (use -h for help)");
+      return EXIT_FAILURE;
+    }
   } else if ((options_ & QueryOptions::kSearch) == QueryOptions::kSearch) {
-    return HandleSearch();
+    if (!targets_.empty()) {
+      return HandleSearch();
+    } else {
+      std::println(stderr, "Error: no targets specified (use -h for help)");
+      return EXIT_FAILURE;
+    }
   } else {
     const std::vector<alpmpp::AlpmPackage> pkg_list = GetPkgList();
     if (pkg_list.empty()) return EXIT_FAILURE;
