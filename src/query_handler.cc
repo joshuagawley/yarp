@@ -25,9 +25,7 @@ void PrintPkgChangelog(const alpmpp::AlpmPackage &pkg) {
   void *fp = pkg.ChangelogOpen();
   const std::string_view pkg_name = pkg.name();
 
-  if (fp == nullptr) {
-    std::println(stderr, "No changelog available for {}", pkg_name);
-  } else {
+  if (fp != nullptr) {
     std::println("Changelog for {}:", pkg_name);
 
     std::array<char, 1024> buffer{};
@@ -42,6 +40,8 @@ void PrintPkgChangelog(const alpmpp::AlpmPackage &pkg) {
       std::println(stderr, "Error: could not close changelog.");
     }
     std::println("");
+  } else {
+    std::println(stderr, "No changelog available for {}", pkg_name);
   }
 }
 
@@ -50,8 +50,7 @@ void PrintPkgInfo(const alpmpp::AlpmPackage &pkg) {
 }
 
 bool IsUnrequired(const alpmpp::AlpmPackage &pkg) {
-  std::vector<std::string> required_by = pkg.ComputeRequiredBy();
-  return required_by.empty();
+  return pkg.ComputeRequiredBy().empty();
 }
 
 std::optional<std::filesystem::path> GetFromPath(
@@ -80,7 +79,7 @@ std::optional<std::filesystem::path> GetFromPath(
 
 namespace pacmanpp {
 
-int QueryHandler::Execute() {
+int QueryHandler::Execute() const {
   // We check if we're querying for groups before checking for empty targets
   // because if no targets are given when querying for groups, we simply print
   // all installed groups
@@ -188,12 +187,12 @@ int QueryHandler::HandleGroups() const {
       if (group == nullptr) {
         std::println(stderr, "Error: group '{}' was not found", target);
         return EXIT_SUCCESS;
-      }
-
-      for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
-           pkgs = pkgs->next) {
-        alpmpp::AlpmPackage pkg{static_cast<alpm_pkg_t *>(pkgs->data)};
-        std::println("{} {}", group->name, pkg.name());
+      } else {
+        for (const alpm_list_t *pkgs = group->packages; pkgs != nullptr;
+             pkgs = pkgs->next) {
+          alpmpp::AlpmPackage pkg{static_cast<alpm_pkg_t *>(pkgs->data)};
+          std::println("{} {}", group->name, pkg.name());
+        }
       }
     }
   }
@@ -201,7 +200,7 @@ int QueryHandler::HandleGroups() const {
 }
 
 int QueryHandler::HandleOwns() const {
-  std::filesystem::path root_dir = alpm_->OptionGetRoot();
+  const std::filesystem::path root_dir = alpm_->OptionGetRoot();
   const std::vector<alpmpp::AlpmPackage> pkg_list =
       alpmpp::Alpm::DbGetPkgCache(local_db_);
   std::error_code ec;
@@ -250,8 +249,8 @@ int QueryHandler::HandleOwns() const {
 }
 
 int QueryHandler::HandleSearch() const {
-  std::expected<void, std::string> result = PrintPkgSearch();
-  if (result.has_value()) {
+  if (std::expected<void, std::string> result = PrintPkgSearch();
+      result.has_value()) {
     return EXIT_SUCCESS;
   } else {
     std::println("{}", result.error());
@@ -306,25 +305,28 @@ bool QueryHandler::IsUpgradable(const alpmpp::AlpmPackage &pkg) const {
 }
 
 bool QueryHandler::FilterPkg(const alpmpp::AlpmPackage &pkg) const {
-  const bool kOnlyDeps =
+  const bool only_deps =
       (options_ & QueryOptions::kDeps) == QueryOptions::kDeps;
-  const bool kOnlyExplicit =
+  const bool only_explicit =
       (options_ & QueryOptions::kExplicit) == QueryOptions::kExplicit;
-  const bool kOnlyNative =
+  const bool only_native =
       (options_ & QueryOptions::kNative) == QueryOptions::kNative;
-  const bool kOnlyForeign =
+  const bool only_foreign =
       (options_ & QueryOptions::kForeign) == QueryOptions::kForeign;
-  const bool kOnlyUnrequired =
+  const bool only_unrequired =
       (options_ & QueryOptions::kUnrequired) == QueryOptions::kUnrequired;
-  const bool kOnlyUpgrade =
+  const bool only_upgrade =
       (options_ & QueryOptions::kUpgrade) == QueryOptions::kUpgrade;
 
-  return (kOnlyDeps && pkg.reason() != alpmpp::PkgReason::kDepend) ||
-         (kOnlyExplicit && pkg.reason() != alpmpp::PkgReason::kExplicit) ||
-         (kOnlyForeign && GetPkgLocality(pkg) != PkgLocality::kForeign) ||
-         (kOnlyNative && GetPkgLocality(pkg) != PkgLocality::kNative) ||
-         (kOnlyUnrequired && !IsUnrequired(pkg)) ||
-         (kOnlyUpgrade && !IsUpgradable(pkg));
+  const alpmpp::PkgReason pkg_reason = pkg.reason();
+  const PkgLocality pkg_locality = GetPkgLocality(pkg);
+
+  return (only_deps && pkg_reason != alpmpp::PkgReason::kDepend) ||
+         (only_explicit && pkg_reason != alpmpp::PkgReason::kExplicit) ||
+         (only_foreign && pkg_locality != PkgLocality::kForeign) ||
+         (only_native && pkg_locality != PkgLocality::kNative) ||
+         (only_unrequired && !IsUnrequired(pkg)) ||
+         (only_upgrade && !IsUpgradable(pkg));
 }
 
 std::expected<void, std::string> QueryHandler::PrintPkgSearch() const {

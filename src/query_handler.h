@@ -34,7 +34,7 @@ class QueryHandler {
   QueryHandler(QueryHandler &&) = default;
   QueryHandler &operator=(QueryHandler &&) = default;
 
-  int Execute();
+  [[nodiscard]] int Execute() const;
 
  private:
   [[nodiscard]] int HandleGroups() const;
