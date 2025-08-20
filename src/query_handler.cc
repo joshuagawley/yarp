@@ -49,7 +49,7 @@ void PrintPkgInfo(const alpmpp::AlpmPackage &pkg) {
 }
 
 bool IsUnrequired(const alpmpp::AlpmPackage &pkg) {
-  return pkg.ComputeRequiredBy().empty();
+  return pkg.ComputeRequiredBy().empty() && pkg.ComputeOptionalFor().empty();
 }
 
 std::optional<std::filesystem::path> GetFromPath(
