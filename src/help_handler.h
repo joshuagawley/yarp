@@ -3,13 +3,13 @@
 #ifndef PACMANPP_HELP_HANDLER_H_
 #define PACMANPP_HELP_HANDLER_H_
 
-namespace pacmanpp {
+namespace yarp {
 
 class HelpHandler {
  public:
   int Execute();
 };
 
-}  // namespace pacmanpp
+}  // namespace yarp
 
 #endif  // PACMANPP_HELP_HANDLER_H_

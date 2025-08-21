@@ -180,7 +180,7 @@ alpmpp::SigLevel ParseSigLevel(const std::string &sig_level_str) {
 
 }  // namespace
 
-namespace pacmanpp {
+namespace yarp {
 
 namespace detail {
 
@@ -328,4 +328,4 @@ std::expected<void, std::string> PacmanConf::ParseOneFile(
   }
 }
 
-}  // namespace pacmanpp
+}  // namespace yarp

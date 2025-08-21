@@ -7,11 +7,11 @@
 
 #include "settings.h"
 
-namespace pacmanpp {
+namespace yarp {
 
 int VersionHandler::Execute() {
   std::println("{} version {}", kPacmanppName, kPacmanppVersion);
   return EXIT_SUCCESS;
 }
 
-}  // namespace pacmanpp
+}  // namespace yarp

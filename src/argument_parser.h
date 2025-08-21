@@ -9,7 +9,7 @@
 #include "config.h"
 #include "operation.h"
 
-namespace pacmanpp {
+namespace yarp {
 
 class ArgumentParser {
  public:
@@ -24,6 +24,6 @@ class ArgumentParser {
   char **argv_;
 };
 
-}  // namespace pacmanpp
+}  // namespace yarp
 
 #endif  // PACMANPP_ARG_PARSER_H_

@@ -7,7 +7,7 @@
 
 #include "bitwise_enum.h"
 
-namespace pacmanpp {
+namespace yarp {
 
 enum class Operation : std::uint8_t {
   kNone = 1 << 0,
@@ -44,6 +44,6 @@ struct EnableEnumBitwiseOperators<QueryOptions> {
   static constexpr bool enabled = true;
 };
 
-}  // namespace pacmanpp
+}  // namespace yarp
 
 #endif  // PACMANPP_OPERATION_H_

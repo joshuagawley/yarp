@@ -37,7 +37,7 @@ constexpr std::array<option, 22> kOpts = {{
 
 }  // namespace
 
-namespace pacmanpp {
+namespace yarp {
 
 void ArgumentParser::ParseArgs(Operation &operation,
                                QueryOptions &query_options,

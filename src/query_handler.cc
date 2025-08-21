@@ -76,7 +76,7 @@ std::optional<std::filesystem::path> GetFromPath(
 
 }  // namespace
 
-namespace pacmanpp {
+namespace yarp {
 
 int QueryHandler::Execute() const {
   // We check if we're querying for groups before checking for empty targets
@@ -368,4 +368,4 @@ std::expected<void, std::string> QueryHandler::PrintPkgSearch() const {
   return {};
 }
 
-}  // namespace pacmanpp
+}  // namespace yarp

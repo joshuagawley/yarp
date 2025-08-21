@@ -3,13 +3,13 @@
 #ifndef PACMANPP_NOOP_HANDLER_H_
 #define PACMANPP_NOOP_HANDLER_H_
 
-namespace pacmanpp {
+namespace yarp {
 
 class NoOpHandler {
  public:
   int Execute();
 };
 
-}  // namespace pacmanpp
+}  // namespace yarp
 
 #endif  // PACMANPP_NOOP_HANDLER_H_

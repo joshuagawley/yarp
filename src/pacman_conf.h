@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace pacmanpp {
+namespace yarp {
 
 namespace detail {
 
@@ -205,6 +205,6 @@ class PacmanConf {
   std::vector<Repository> repos_;
 };
 
-}  // namespace pacmanpp
+}  // namespace yarp
 
 #endif  // PACMANPP_PACMAN_CONF_H_

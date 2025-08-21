@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace pacmanpp {
+namespace yarp {
 
 template <typename Enum>
 struct EnableEnumBitwiseOperators {
@@ -62,6 +62,6 @@ Enum &operator^=(Enum &lhs, const Enum rhs) {
   return lhs;
 }
 
-}  // namespace pacmanpp
+}  // namespace yarp
 
 #endif  // PACMANPP_BITWISE_ENUM_H_

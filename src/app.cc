@@ -18,7 +18,7 @@
 #include "query_handler.h"
 #include "version_handler.h"
 
-namespace pacmanpp {
+namespace yarp {
 
 using OperationHandler =
     std::variant<NoOpHandler, HelpHandler, QueryHandler, VersionHandler>;
@@ -85,4 +85,4 @@ void App::PrintVerbose() const {
   std::print("{}", ss.str());
 }
 
-}  // namespace pacmanpp
+}  // namespace yarp
