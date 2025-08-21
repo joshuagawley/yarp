@@ -1,4 +1,4 @@
-function(pacmanpp_add_test)
+function(yarp_add_test)
     cmake_parse_arguments(ARG "" "NAME;DESCRIPTION" "" ${ARGN})
 
     if (NOT ARG_NAME)
@@ -10,12 +10,12 @@ function(pacmanpp_add_test)
     endif ()
 
     add_test(NAME "${ARG_DESCRIPTION}"
-            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${ARG_NAME}.py ${CMAKE_BINARY_DIR}/src/pacmanpp
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${ARG_NAME}.py ${CMAKE_BINARY_DIR}/src/yarp
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     )
-endfunction(pacmanpp_add_test)
+endfunction(yarp_add_test)
 
-function(pacmanpp_add_unit_test)
+function(yarp_add_unit_test)
     cmake_parse_arguments(ARG "" "NAME" "SOURCES;COPY_FILES;LIBRARIES" ${ARGN})
 
     if (NOT ARG_NAME)
@@ -53,4 +53,4 @@ function(pacmanpp_add_unit_test)
     endif ()
 
     catch_discover_tests(${ARG_NAME})
-endfunction(pacmanpp_add_unit_test)
+endfunction(yarp_add_unit_test)

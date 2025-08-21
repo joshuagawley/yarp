@@ -8,7 +8,7 @@
 #include "config.h"
 #include "operation.h"
 
-namespace pacmanpp {
+namespace yarp {
 
 enum class PkgLocality { kUnset = 1 << 0, kNative = 1 << 1, kForeign = 1 << 2 };
 
@@ -56,6 +56,6 @@ class QueryHandler {
   alpm_db_t *local_db_ = nullptr;
 };
 
-}  // namespace pacmanpp
+}  // namespace yarp
 
 #endif  // PACMANPP_QUERY_HANDLER_H_

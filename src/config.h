@@ -7,7 +7,7 @@
 
 #include "pacman_conf.h"
 
-namespace pacmanpp {
+namespace yarp {
 
 class Config {
  public:
@@ -88,6 +88,6 @@ class Config {
   PacmanConf pacman_conf_;
 };
 
-}  // namespace pacmanpp
+}  // namespace yarp
 
 #endif  // PACMANPP_CONFIG_H_

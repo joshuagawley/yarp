@@ -3,11 +3,11 @@
 
 #include <string_view>
 
-namespace pacmanpp {
+namespace yarp {
 
 constexpr std::string_view kPacmanppName = "@CMAKE_PROJECT_NAME@";
 constexpr std::string_view kPacmanppVersion = "@CMAKE_PROJECT_VERSION@";
 
-}  // namespace pacmanpp
+}  // namespace yarp
 
 #endif  // PACMANPP_SETTINGS_H_

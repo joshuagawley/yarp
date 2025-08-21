@@ -15,13 +15,13 @@ class TestResult:
 
 
 class Test:
-    def __init__(self, pacmanpp_path: str) -> None:
-        self.pacmanpp = pacmanpp_path
+    def __init__(self, yarp_path: str) -> None:
+        self.yarp = yarp_path
         self._failed: bool = False
         self._failure_messages: List[str] = []
 
-        # pacmanpp binary is located in [build-dir]/src/pacmanpp
-        build_dir = Path(pacmanpp_path).parent.parent
+        # yarp binary is located in [build-dir]/src/yarp
+        build_dir = Path(yarp_path).parent.parent
         self.test_data_dir = build_dir / "tests" / "test-data"
         self.config_path = self.test_data_dir / "pacman.conf"
         self.db_path = self.test_data_dir / "db"
@@ -29,13 +29,13 @@ class Test:
         self.mock_db_args = ["--root", "/var/empty", "--dbpath", str(self.db_path)]
 
     def run(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
-        return self.run_raw(self.pacmanpp, self.mock_db_args + args, env)
+        return self.run_raw(self.yarp, self.mock_db_args + args, env)
     
     def run_pacman(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
         return self.run_raw("pacman", self.mock_db_args + args, env)
     
     def run_raw(self, command: str, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
-        """Run pacman or pacmanpp without mock database arguments (for args tests)"""
+        """Run pacman or yarp without mock database arguments (for args tests)"""
         cmd = [command] + args
 
         result = subprocess.run(
@@ -102,15 +102,15 @@ class Test:
         self.assert_contains(result.stderr, expected_error, "Error message mismatch")
 
     def test_help_output(self, help_flag: str) -> None:
-        result = self.run_raw(self.pacmanpp, [help_flag])
+        result = self.run_raw(self.yarp, [help_flag])
         self.assert_returncode(result, 0)
-        self.assert_contains(result.stdout, f"Usage: pacmanpp <operation>")
+        self.assert_contains(result.stdout, f"Usage: yarp <operation>")
         self.assert_contains(result.stdout, "operations:")
         self.assert_contains(result.stdout, "{-h, --help}")
         self.assert_contains(result.stdout, "{-Q, --query}")
 
     def test_verbose_output(self, verbose_flag: str) -> None:
-        result = self.run_raw(self.pacmanpp, [verbose_flag])
+        result = self.run_raw(self.yarp, [verbose_flag])
         self.assert_returncode(result, 1)
         self.assert_contains(result.stdout, "Root       : /")
         self.assert_contains(result.stdout, "DB Path    : /var/lib/pacman")
@@ -121,6 +121,6 @@ class Test:
         self.assert_contains(result.stdout, "Targets    : None")
 
     def test_version_output(self, version_flag: str) -> None:
-        result = self.run_raw(self.pacmanpp, [version_flag])
+        result = self.run_raw(self.yarp, [version_flag])
         self.assert_returncode(result, 0)
-        self.assert_equals(result.stdout, "pacmanpp version 0.0.0\n")
+        self.assert_equals(result.stdout, "yarp version 0.0.0\n")

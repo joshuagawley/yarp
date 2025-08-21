@@ -1,5 +1,5 @@
 function(
-        pacmanpp_set_project_compile_flags
+        yarp_set_project_compile_flags
         common_target_name
         WARNING_AS_ERRORS
 )
@@ -50,11 +50,9 @@ function(
 
     target_compile_options(
             ${common_target_name}
-            INTERFACE # C++ warnings
+            INTERFACE
             $<$<COMPILE_LANGUAGE:CXX>:${PROJECT_WARNINGS_CXX}>
-            # C warnings
             $<$<COMPILE_LANGUAGE:C>:${PROJECT_WARNINGS_C}>
-            # Cuda warnings
             $<$<COMPILE_LANGUAGE:CUDA>:${PROJECT_WARNINGS_CUDA}>)
 
-endfunction()
+endfunction(yarp_set_project_compile_flags)

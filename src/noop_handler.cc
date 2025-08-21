@@ -5,11 +5,11 @@
 #include <cstdlib>
 #include <print>
 
-namespace pacmanpp {
+namespace yarp {
 
 int NoOpHandler::Execute() {
   std::println(stderr, "Error: no operation specified (use -h for help)");
   return EXIT_FAILURE;
 }
 
-}  // namespace pacmanpp
+}  // namespace yarp

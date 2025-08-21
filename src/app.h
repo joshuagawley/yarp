@@ -12,7 +12,7 @@
 #include "config.h"
 #include "operation.h"
 
-namespace pacmanpp {
+namespace yarp {
 
 class App {
  public:
@@ -31,6 +31,6 @@ class App {
   std::vector<std::string> targets_;
 };
 
-}  // namespace pacmanpp
+}  // namespace yarp
 
 #endif  // PACMANPP_SRC_APP_H_

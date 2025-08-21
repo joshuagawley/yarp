@@ -8,7 +8,7 @@ configure_file(
 )
 
 set(
-        PACMANPP_SOURCES
+        YARP_SOURCES
         app.cc
         argument_parser.cc
         help_handler.cc
@@ -20,7 +20,7 @@ set(
 )
 
 set(
-        PACMANPP_HEADERS
+        YARP_HEADERS
         app.h
         argument_parser.h
         bitwise_enum.h
@@ -34,18 +34,18 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/settings.h
 )
 
-add_executable(pacmanpp)
+add_executable(yarp)
 
 target_sources(
-        pacmanpp
+        yarp
         PRIVATE
-        ${PACMANPP_SOURCES}
+        ${YARP_SOURCES}
 
         PUBLIC
         FILE_SET HEADERS
         TYPE HEADERS
         FILES
-        ${PACMANPP_HEADERS}
+        ${YARP_HEADERS}
 )
 
-target_link_libraries(pacmanpp PRIVATE project_settings alpmpp)
+target_link_libraries(yarp PRIVATE project_settings alpmpp)

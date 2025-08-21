@@ -7,7 +7,7 @@
 
 #include "settings.h"
 
-namespace pacmanpp {
+namespace yarp {
 
 int HelpHandler::Execute() {
   std::println("Usage: {} <operation>", kPacmanppName);
@@ -19,4 +19,4 @@ int HelpHandler::Execute() {
   return EXIT_SUCCESS;
 }
 
-}  // namespace pacmanpp
+}  // namespace yarp

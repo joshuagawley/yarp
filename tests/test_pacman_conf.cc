@@ -11,7 +11,7 @@
 
 SCENARIO("PacmanConf parsing behavior", "[PacmanConf]") {
   GIVEN("A default initialized PacmanConf") {
-    pacmanpp::PacmanConf conf;
+    yarp::PacmanConf conf;
 
     WHEN("We try to parse a non-existant file")
     THEN("an exception is thrown.") {
