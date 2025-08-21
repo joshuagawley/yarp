@@ -1,7 +1,7 @@
 # Yarp
 Aspiring to become just yet another AUR helper?
 
-![Yarp!](https://tenor.com/en-GB/view/yarp-hot-fuzz-gif-12386003)
+![Yarp!](https://media1.tenor.com/m/GzxJhCJmbXIAAAAd/yarp-hot-fuzz.gif)
 
 ## Current feature
 Currently, only querying the local database `yarp -Q` is supported.
