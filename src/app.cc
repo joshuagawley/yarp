@@ -24,9 +24,13 @@ using OperationHandler =
     std::variant<NoOpHandler, HelpHandler, QueryHandler, VersionHandler>;
 
 App::App(std::span<char *> args) {
-  const auto arg_parser =
-      ArgumentParser{static_cast<int>(args.size()), args.data()};
-  arg_parser.ParseArgs(operation_, query_options_, targets_, config_);
+  const ArgumentParser arg_parser{static_cast<int>(args.size()), args.data()};
+  auto _ = arg_parser.ParseArgs(operation_, query_options_, targets_, config_)
+      .or_else([](const std::string &err_string)
+                   -> std::expected<void, std::string> {
+        throw std::runtime_error(
+            std::format("Error parsing arguments: {}", err_string));
+      });
 
   alpm_ = std::make_unique<alpmpp::Alpm>(config_.root_dir(), config_.db_path());
 
