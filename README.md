@@ -3,7 +3,7 @@ Aspiring to become just yet another AUR helper?
 
 ![Yarp!](https://media1.tenor.com/m/GzxJhCJmbXIAAAAd/yarp-hot-fuzz.gif)
 
-## Current feature
+## Current features
 Currently, only querying the local database `yarp -Q` is supported.
 
 ## Building and testing
