@@ -2,7 +2,7 @@
 
 # TODO: determine version using git hash if found
 cmake_minimum_required(VERSION 3.23)
-project(pacmanpp VERSION 0.0.0 LANGUAGES CXX)
+project(yarp VERSION 0.0.0 LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -10,7 +10,7 @@ include(Core)
 include(ProjectSettings)
 
 add_library(project_settings INTERFACE)
-pacmanpp_set_project_settings(project_settings WARNING_AS_ERRORS)
+yarp_set_project_settings(project_settings WARNING_AS_ERRORS)
 
 find_package(Alpm REQUIRED)
 find_package(Jsoncpp REQUIRED)
