@@ -1,16 +1,32 @@
-# Pacman++
+# Yarp
+Aspiring to become just yet another AUR helper?
 
-## Building
+![Yarp!](https://tenor.com/en-GB/view/yarp-hot-fuzz-gif-12386003)
+
+## Current feature
+Currently, only querying the local database `yarp -Q` is supported.
+
+## Building and testing
+Building yarp requires the following dependencies:
+- A C++23 compiler
+- CMake
+- libalpm
+- jsoncpp
+
+Testing additionally requires the following:
+- Catch2
+- Python
+
+If you're hacking on Yarp, the following commands will build the project:
+
 ```
-cmake -B build/Debug -G Ninja 
+cmake -B build/Debug 
 cmake --build build/Debug
 ```
 
-## Running tests
+And to test:
+
 ```
-cmake -B build/Debug -G Ninja 
-cmake --build build/Debug
-cd build/Debug
-ctest
+ctest --test-dir build/Debug
 ```
 
