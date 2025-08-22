@@ -10,7 +10,7 @@
 namespace yarp {
 
 int VersionHandler::Execute() {
-  std::println("{} version {}", kPacmanppName, kPacmanppVersion);
+  std::println("{} version {}", kYarpName, kYarpVersion);
   return EXIT_SUCCESS;
 }
 
