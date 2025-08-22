@@ -2,12 +2,14 @@ set(
         AURPP_SOURCES
         package.cc
         request.cc
+        response.cc
 )
 
 set(
         AURPP_HEADERS
         package.h
         request.h
+        response.h
 )
 
 add_library(aurpp)

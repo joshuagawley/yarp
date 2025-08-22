@@ -68,3 +68,15 @@ yarp_add_unit_test(
         aurpp
         CURL::libcurl
 )
+
+yarp_add_unit_test(
+        NAME test_aur_response
+        SOURCES
+        test_aur_response.cc
+        ${CMAKE_SOURCE_DIR}/src/aurpp/response.cc
+        COPY_FILES
+        paru.json
+        LIBRARIES
+        aurpp
+        CURL::libcurl
+)
