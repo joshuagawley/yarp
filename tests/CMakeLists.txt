@@ -46,6 +46,7 @@ yarp_add_unit_test(
         COPY_FILES
         test_pacman_conf.conf
 )
+
 yarp_add_unit_test(
         NAME test_aur_package
         SOURCES
@@ -56,4 +57,14 @@ yarp_add_unit_test(
         LIBRARIES
         aurpp
         Jsoncpp::Jsoncpp
+)
+
+yarp_add_unit_test(
+        NAME test_aur_request
+        SOURCES
+        test_aur_request.cc
+        ${CMAKE_SOURCE_DIR}/src/aurpp/request.cc
+        LIBRARIES
+        aurpp
+        CURL::libcurl
 )
