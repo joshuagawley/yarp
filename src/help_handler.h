@@ -7,7 +7,7 @@ namespace yarp {
 
 class HelpHandler {
  public:
-  int Execute();
+  static int Execute();
 };
 
 }  // namespace yarp

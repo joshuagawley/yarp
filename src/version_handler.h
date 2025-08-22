@@ -7,7 +7,7 @@ namespace yarp {
 
 class VersionHandler {
  public:
-  int Execute();
+  static int Execute();
 };
 
 }  // namespace yarp

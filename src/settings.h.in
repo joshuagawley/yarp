@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 #ifndef PACMANPP_SETTINGS_H_
 #define PACMANPP_SETTINGS_H_
 
@@ -5,8 +7,8 @@
 
 namespace yarp {
 
-constexpr std::string_view kPacmanppName = "@CMAKE_PROJECT_NAME@";
-constexpr std::string_view kPacmanppVersion = "@CMAKE_PROJECT_VERSION@";
+constexpr std::string_view kYarpName = "@CMAKE_PROJECT_NAME@";
+constexpr std::string_view kYarpVersion = "@CMAKE_PROJECT_VERSION@";
 
 }  // namespace yarp
 

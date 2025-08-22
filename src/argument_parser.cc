@@ -53,7 +53,11 @@ void ArgumentParser::ParseArgs(Operation &operation,
                            &option_index)) != -1) {
     switch (ch) {
       case 'h':
-        operation = Operation::kHelp;
+        if (operation == Operation::kNone) {
+          operation = Operation::kHelp;
+        } else {
+          config.set_print_help(true);
+        }
         break;
       case 'Q':
         operation = Operation::kQuery;

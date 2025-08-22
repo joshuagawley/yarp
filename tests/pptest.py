@@ -30,10 +30,10 @@ class Test:
 
     def run(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
         return self.run_raw(self.yarp, self.mock_db_args + args, env)
-    
+
     def run_pacman(self, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
         return self.run_raw("pacman", self.mock_db_args + args, env)
-    
+
     def run_raw(self, command: str, args: List[str], env: Optional[Dict[str, str]] = None) -> TestResult:
         """Run pacman or yarp without mock database arguments (for args tests)"""
         cmd = [command] + args
@@ -45,7 +45,6 @@ class Test:
         return TestResult(
             returncode=result.returncode, stdout=result.stdout, stderr=result.stderr
         )
-    
 
     def assert_equals(self, actual: Any, expected: Any, message: str = "") -> None:
         if actual != expected:
@@ -106,8 +105,11 @@ class Test:
         self.assert_returncode(result, 0)
         self.assert_contains(result.stdout, f"Usage: yarp <operation>")
         self.assert_contains(result.stdout, "operations:")
-        self.assert_contains(result.stdout, "{-h, --help}")
-        self.assert_contains(result.stdout, "{-Q, --query}")
+        self.assert_contains(result.stdout, "  yarp {-h, --help}")
+        self.assert_contains(result.stdout, "  yarp {-V, --version}")
+        self.assert_contains(result.stdout, "  yarp {-Q, --query} [options] [package(s)]")
+        self.assert_contains(result.stdout, "  yarp {-S, --sync}  [options] [package(s)]")
+        self.assert_contains(result.stdout, "Use 'yarp' {-h --help} with an operation for available options")
 
     def test_verbose_output(self, verbose_flag: str) -> None:
         result = self.run_raw(self.yarp, [verbose_flag])
