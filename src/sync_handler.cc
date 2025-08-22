@@ -4,6 +4,22 @@
 
 #include <print>
 
+namespace {
+
+void PrintPkgInfo(const aurpp::AurPackage &package) {
+  std::stringstream ss;
+
+  std::println(ss, "aur/{} {} [+{} ~{:.2}]", package.name(), package.version(),
+               package.num_votes(), package.popularity());
+  if (package.description().has_value()) {
+    std::print(ss, "    {}", package.description().value());
+  }
+
+  std::println("{}", ss.str());
+}
+
+}  // namespace
+
 namespace yarp {
 
 int SyncHandler::Execute() const {
@@ -24,7 +40,7 @@ int SyncHandler::SearchAur() const {
       const std::vector<aurpp::AurPackage> packages =
           maybe_response.value().packages;
       for (const aurpp::AurPackage &pkg : packages) {
-        std::println("{} {}", pkg.name(), pkg.version());
+        PrintPkgInfo(pkg);
       }
       return 0;
     } else {
