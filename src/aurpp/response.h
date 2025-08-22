@@ -14,7 +14,7 @@ namespace aurpp {
 
 struct RpcResponse {
   static std::expected<RpcResponse, std::string> Parse(
-      std::ifstream &file_contents);
+      std::string file_contents);
 
   constexpr RpcResponse() = default;
   constexpr explicit RpcResponse(std::vector<AurPackage> packages)

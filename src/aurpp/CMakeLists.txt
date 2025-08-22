@@ -7,6 +7,7 @@ set(
 
 set(
         AURPP_HEADERS
+        client.h
         package.h
         request.h
         response.h

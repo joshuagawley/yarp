@@ -48,4 +48,4 @@ target_sources(
         ${YARP_HEADERS}
 )
 
-target_link_libraries(yarp PRIVATE project_settings alpmpp)
+target_link_libraries(yarp PRIVATE project_settings alpmpp aurpp)

@@ -5,14 +5,16 @@
 namespace aurpp {
 
 std::expected<RpcResponse, std::string> RpcResponse::Parse(
-    std::ifstream &file_contents) {
+    std::string file_contents) {
+  std::istringstream file_stream{file_contents};
   Json::CharReaderBuilder reader_builder;
   reader_builder["collectComments"] = false;
+
   Json::Value json;
   std::string errors;
 
   const bool success =
-      Json::parseFromStream(reader_builder, file_contents, &json, &errors);
+      Json::parseFromStream(reader_builder, file_stream, &json, &errors);
   if (!success) {
     return std::unexpected{errors};
   }

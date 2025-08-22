@@ -80,3 +80,16 @@ yarp_add_unit_test(
         aurpp
         CURL::libcurl
 )
+
+yarp_add_unit_test(
+        NAME test_aur_client
+        SOURCES
+        test_aur_client.cc
+        ${CMAKE_SOURCE_DIR}/src/aurpp/request.cc
+        ${CMAKE_SOURCE_DIR}/src/aurpp/response.cc
+        ${CMAKE_SOURCE_DIR}/src/aurpp/package.cc
+        LIBRARIES
+        aurpp
+        CURL::libcurl
+        Jsoncpp::Jsoncpp
+)

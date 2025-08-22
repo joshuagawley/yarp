@@ -4,6 +4,7 @@
 #define PACMANPP_SRC_APP_H_
 
 #include <alpmpp/alpm.h>
+#include <aurpp/client.h>
 
 #include <memory>
 #include <string>
@@ -24,6 +25,7 @@ class App {
   void PrintVerbose() const;
 
   // use unique_ptr for lazy initialization
+ aurpp::Client aur_client_;
   std::unique_ptr<alpmpp::Alpm> alpm_;
   Config config_;
   Operation operation_ = Operation::kNone;
