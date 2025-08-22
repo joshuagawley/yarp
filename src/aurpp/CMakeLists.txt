@@ -1,11 +1,16 @@
 set(
         AURPP_SOURCES
         package.cc
+        request.cc
+        response.cc
 )
 
 set(
         AURPP_HEADERS
+        client.h
         package.h
+        request.h
+        response.h
 )
 
 add_library(aurpp)
@@ -22,4 +27,4 @@ target_sources(
         ${AURPP_HEADERS}
 )
 
-target_link_libraries(aurpp PRIVATE project_settings Jsoncpp::Jsoncpp)
+target_link_libraries(aurpp PRIVATE project_settings CURL::libcurl Jsoncpp::Jsoncpp)

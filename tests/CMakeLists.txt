@@ -36,6 +36,7 @@ yarp_add_test(NAME query019 DESCRIPTION "query019 -- yarp -Qo bar [file doesn't 
 yarp_add_test(NAME query020 DESCRIPTION "query020 -- yarp -Qs pacman [exists in local database]")
 yarp_add_test(NAME query021 DESCRIPTION "query020 -- yarp -Qs yarp [doesn't exist in local database]")
 yarp_add_test(NAME changelog001 DESCRIPTION "changlog001 -- yarp -Qc powertop")
+yarp_add_test(NAME sync001 DESCRIPTION "sync001 -- yarp -Sa paru")
 yarp_add_test(NAME version001 DESCRIPTION "version001 -- yarp -V")
 
 yarp_add_unit_test(
@@ -46,6 +47,7 @@ yarp_add_unit_test(
         COPY_FILES
         test_pacman_conf.conf
 )
+
 yarp_add_unit_test(
         NAME test_aur_package
         SOURCES
@@ -55,5 +57,40 @@ yarp_add_unit_test(
         paru.json
         LIBRARIES
         aurpp
+        Jsoncpp::Jsoncpp
+)
+
+yarp_add_unit_test(
+        NAME test_aur_request
+        SOURCES
+        test_aur_request.cc
+        ${CMAKE_SOURCE_DIR}/src/aurpp/request.cc
+        LIBRARIES
+        aurpp
+        CURL::libcurl
+)
+
+yarp_add_unit_test(
+        NAME test_aur_response
+        SOURCES
+        test_aur_response.cc
+        ${CMAKE_SOURCE_DIR}/src/aurpp/response.cc
+        COPY_FILES
+        paru.json
+        LIBRARIES
+        aurpp
+        CURL::libcurl
+)
+
+yarp_add_unit_test(
+        NAME test_aur_client
+        SOURCES
+        test_aur_client.cc
+        ${CMAKE_SOURCE_DIR}/src/aurpp/request.cc
+        ${CMAKE_SOURCE_DIR}/src/aurpp/response.cc
+        ${CMAKE_SOURCE_DIR}/src/aurpp/package.cc
+        LIBRARIES
+        aurpp
+        CURL::libcurl
         Jsoncpp::Jsoncpp
 )

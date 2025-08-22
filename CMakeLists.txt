@@ -13,6 +13,7 @@ add_library(project_settings INTERFACE)
 yarp_set_project_settings(project_settings WARNING_AS_ERRORS)
 
 find_package(Alpm REQUIRED)
+find_package(CURL REQUIRED)
 find_package(Jsoncpp REQUIRED)
 
 add_subdirectory(src)
