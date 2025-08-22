@@ -16,6 +16,7 @@ set(
         noop_handler.cc
         pacman_conf.cc
         query_handler.cc
+        sync_handler.cc
         version_handler.cc
 )
 
@@ -30,6 +31,7 @@ set(
         operation.h
         pacman_conf.h
         query_handler.h
+        sync_handler.h
         version_handler.h
         ${CMAKE_CURRENT_SOURCE_DIR}/settings.h
 )

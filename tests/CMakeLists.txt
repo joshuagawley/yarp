@@ -36,6 +36,7 @@ yarp_add_test(NAME query019 DESCRIPTION "query019 -- yarp -Qo bar [file doesn't 
 yarp_add_test(NAME query020 DESCRIPTION "query020 -- yarp -Qs pacman [exists in local database]")
 yarp_add_test(NAME query021 DESCRIPTION "query020 -- yarp -Qs yarp [doesn't exist in local database]")
 yarp_add_test(NAME changelog001 DESCRIPTION "changlog001 -- yarp -Qc powertop")
+yarp_add_test(NAME sync001 DESCRIPTION "sync001 -- yarp -Sa paru")
 yarp_add_test(NAME version001 DESCRIPTION "version001 -- yarp -V")
 
 yarp_add_unit_test(

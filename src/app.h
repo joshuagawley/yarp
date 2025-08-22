@@ -24,12 +24,13 @@ class App {
  private:
   void PrintVerbose() const;
 
+  aurpp::Client aur_client_;
   // use unique_ptr for lazy initialization
- aurpp::Client aur_client_;
   std::unique_ptr<alpmpp::Alpm> alpm_;
   Config config_;
   Operation operation_ = Operation::kNone;
   QueryOptions query_options_ = QueryOptions::kNone;
+  SyncOptions sync_options_ = SyncOptions::kNone;
   std::vector<std::string> targets_;
 };
 

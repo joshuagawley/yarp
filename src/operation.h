@@ -13,7 +13,8 @@ enum class Operation : std::uint8_t {
   kNone = 1 << 0,
   kHelp = 1 << 1,
   kQuery = 1 << 2,
-  kVersion = 1 << 3,
+  kSync = 1 << 3,
+  kVersion = 1 << 4,
 };
 
 template <>
@@ -41,6 +42,16 @@ enum class QueryOptions : std::uint16_t {
 
 template <>
 struct EnableEnumBitwiseOperators<QueryOptions> {
+  static constexpr bool enabled = true;
+};
+
+enum class SyncOptions : std::uint16_t {
+  kNone = 1 << 0,
+  kAur = 1 << 1,
+};
+
+template <>
+struct EnableEnumBitwiseOperators<SyncOptions> {
   static constexpr bool enabled = true;
 };
 

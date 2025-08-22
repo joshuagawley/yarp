@@ -8,12 +8,14 @@
 
 namespace {
 
-constexpr std::string_view kOptString = "cdehkmnopstuQVgilv";
+constexpr std::string_view kOptString = "acdehkmnopstuQSVgilv";
 
-constexpr std::array<option, 22> kOpts = {{
+constexpr std::array<option, 24> kOpts = {{
     {"help", no_argument, nullptr, 'h'},
     {"query", optional_argument, nullptr, 'Q'},
+    {"sync", optional_argument, nullptr, 'S'},
     {"version", no_argument, nullptr, 'V'},
+    {"aur", no_argument, nullptr, 'a'},
     {"changelog", no_argument, nullptr, 'c'},
     {"groups", no_argument, nullptr, 'g'},
     {"deps", no_argument, nullptr, 'd'},
@@ -41,6 +43,7 @@ namespace yarp {
 
 void ArgumentParser::ParseArgs(Operation &operation,
                                QueryOptions &query_options,
+                               SyncOptions &sync_options,
                                std::vector<std::string> &targets,
                                Config &config) const {
   int option_index = 0;
@@ -55,8 +58,14 @@ void ArgumentParser::ParseArgs(Operation &operation,
       case 'Q':
         operation = Operation::kQuery;
         break;
+      case 'S':
+        operation = Operation::kSync;
+        break;
       case 'V':
         operation = Operation::kVersion;
+        break;
+      case 'a':
+        sync_options |= SyncOptions::kAur;
         break;
       case 'c':
         query_options |= QueryOptions::kChangelog;
@@ -111,7 +120,7 @@ void ArgumentParser::ParseArgs(Operation &operation,
         config.set_db_path(optarg);
         break;
       case 0:
-        if (kOpts[option_index].flag != 0) {
+        if (kOpts[option_index].flag != nullptr) {
           operation = Operation::kNone;
           break;
         } else if (std::string_view{kOpts[option_index].name} ==
@@ -124,7 +133,7 @@ void ArgumentParser::ParseArgs(Operation &operation,
 
   // we need to process any remaining optional arguments after processing
   // the command line arguments with getopt
-  if (operation == Operation::kQuery && optind < argc_) {
+  if (optind < argc_) {
     for (int i = optind; i < argc_; ++i) {
       targets.emplace_back(argv_[i]);
     }
@@ -135,4 +144,4 @@ void ArgumentParser::ParseArgs(Operation &operation,
     throw std::runtime_error(parse_result.error());
 }
 
-}  // namespace  pacmanpp
+}  // namespace yarp

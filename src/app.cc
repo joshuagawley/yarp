@@ -16,23 +16,25 @@
 #include "noop_handler.h"
 #include "operation.h"
 #include "query_handler.h"
+#include "sync_handler.h"
 #include "version_handler.h"
 
 namespace yarp {
 
-using OperationHandler =
-    std::variant<NoOpHandler, HelpHandler, QueryHandler, VersionHandler>;
+using OperationHandler = std::variant<NoOpHandler, HelpHandler, QueryHandler,
+                                      SyncHandler, VersionHandler>;
 
 App::App(std::span<char *> args) {
   const auto arg_parser =
       ArgumentParser{static_cast<int>(args.size()), args.data()};
-  arg_parser.ParseArgs(operation_, query_options_, targets_, config_);
+  arg_parser.ParseArgs(operation_, query_options_, sync_options_, targets_,
+                       config_);
 
   alpm_ = std::make_unique<alpmpp::Alpm>(config_.root_dir(), config_.db_path());
 
   // Register sync databases
   for (const Repository &repo : config_.repos()) {
-    alpm_db_t *db =
+    const alpm_db_t *db =
         alpm_->RegisterSyncDb(repo.name, std::to_underlying(repo.sig_level));
     if (db == nullptr) {
       throw std::runtime_error(
@@ -58,6 +60,10 @@ int App::Run() {
     case Operation::kQuery:
       handler = QueryHandler{alpm_.get(), &config_, query_options_,
                              std::move(targets_)};
+      break;
+    case Operation::kSync:
+      handler = SyncHandler{alpm_.get(), &aur_client_, &config_, sync_options_,
+                            std::move(targets_)};
       break;
     case Operation::kVersion:
       handler = VersionHandler{};
