@@ -24,6 +24,10 @@ class Config {
 
   [[nodiscard]] constexpr bool verbose() const noexcept { return verbose_; }
 
+  [[nodiscard]] constexpr bool print_help() const noexcept {
+    return print_help_;
+  }
+
   [[nodiscard]] constexpr std::string root_dir() const noexcept {
     return pacman_conf_.root_dir();
   }
@@ -74,6 +78,10 @@ class Config {
 
   constexpr void set_verbose(const bool new_verbose) { verbose_ = new_verbose; }
 
+  constexpr void set_print_help(const bool new_print_help) {
+    print_help_ = new_print_help;
+  }
+
   void set_root(const std::string_view new_root_dir) noexcept {
     pacman_conf_.set_root_dir(new_root_dir);
   }
@@ -84,6 +92,7 @@ class Config {
 
  private:
   bool verbose_ = false;
+  bool print_help_ = false;
   std::filesystem::path conf_file_ = "/etc/pacman.conf";
   PacmanConf pacman_conf_;
 };

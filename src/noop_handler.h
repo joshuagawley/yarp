@@ -7,7 +7,7 @@ namespace yarp {
 
 class NoOpHandler {
  public:
-  int Execute();
+  static int Execute();
 };
 
 }  // namespace yarp
