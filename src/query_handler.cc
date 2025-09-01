@@ -20,6 +20,34 @@
 
 namespace {
 
+int PrintHelp() {
+  std::stringstream ss{};
+
+  std::println(ss, "Usage: yarp {{-Q --query}} [options] [packages(s)]");
+  std::println(ss, "options:");
+  std::println(ss, "  -b, --dbpath <path>");
+  std::println(ss, "  -c, --changelog");
+  std::println(ss, "  -d, --deps");
+  std::println(ss, "  -e, --explicit");
+  std::println(ss, "  -g, --groups");
+  std::println(ss, "  -i, --info");
+  std::println(ss, "  -k, --check");
+  std::println(ss, "  -l, --list");
+  std::println(ss, "  -m, --foreign");
+  std::println(ss, "  -n, --native");
+  std::println(ss, "  -o, --owns <file>");
+  std::println(ss, "  -p, --file <package>");
+  std::println(ss, "  -r, --root <path>");
+  std::println(ss, "  -s, --search <regex>");
+  std::println(ss, "  -t, --unrequired");
+  std::println(ss, "  -u, --upgrades");
+  std::println(ss, "  -v, --verbose");
+
+  std::print("{}", ss.str());
+
+  return 0;
+}
+
 void PrintPkgChangelog(const alpmpp::AlpmPackage &pkg) {
   void *fp = pkg.ChangelogOpen();
   const std::string_view pkg_name = pkg.name();
@@ -82,7 +110,9 @@ int QueryHandler::Execute() const {
   // We check if we're querying for groups before checking for empty targets
   // because if no targets are given when querying for groups, we simply print
   // all installed groups
-  if ((options_ & QueryOptions::kGroups) == QueryOptions::kGroups) {
+  if (config_->print_help()) {
+    return PrintHelp();
+  } else if ((options_ & QueryOptions::kGroups) == QueryOptions::kGroups) {
     return HandleGroups();
   } else if ((options_ & QueryOptions::kOwns) == QueryOptions::kOwns) {
     if (!targets_.empty()) {
