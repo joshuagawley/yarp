@@ -2,6 +2,8 @@
 
 #include "sync_handler.h"
 
+#include <utils.h>
+
 #include <print>
 
 namespace {
@@ -25,6 +27,20 @@ namespace yarp {
 int SyncHandler::Execute() const {
   if ((options_ & SyncOptions::kAur) == SyncOptions::kAur) {
     return SearchAur();
+  } else if ((options_ & SyncOptions::kSearch) == SyncOptions::kSearch) {
+    return HandleSearch();
+  } else {
+    return 0;
+  }
+}
+
+int SyncHandler::HandleSearch() const {
+  const int repo_search_result = SearchRepos();
+  const int aur_search_result = SearchAur();
+
+  if (repo_search_result == 1 && aur_search_result == 1) {
+    std::println("Error: targets not found in either official repos or AUR");
+    return 1;
   } else {
     return 0;
   }
@@ -49,6 +65,22 @@ int SyncHandler::SearchAur() const {
     }
   }
   return 0;
+}
+
+int SyncHandler::SearchRepos() const {
+  auto errors = 0;
+  std::vector<std::expected<void, std::string>> results{};
+  for (alpm_db_t *db : alpm_->GetSyncDbs()) {
+    results.push_back(utils::PrintPkgSearch(db, targets_));
+  }
+
+  for (const auto result : results) {
+    if (!result.has_value()) {
+      // std::println("{}", result.error());
+      ++errors;
+    }
+  }
+  return errors != 0;
 }
 
 }  // namespace yarp

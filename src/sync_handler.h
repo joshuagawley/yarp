@@ -31,7 +31,9 @@ class SyncHandler {
   [[nodiscard]] int Execute() const;
 
  private:
-  int SearchAur() const;
+  [[nodiscard]] int HandleSearch() const;
+  [[nodiscard]] int SearchAur() const;
+  [[nodiscard]] int SearchRepos() const;
 
   alpmpp::Alpm *alpm_;
   aurpp::Client *aur_client_;

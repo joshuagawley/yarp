@@ -47,7 +47,7 @@ class QueryHandler {
       const alpmpp::AlpmPackage &pkg) const;
   [[nodiscard]] bool FilterPkg(const alpmpp::AlpmPackage &pkg) const;
   [[nodiscard]] bool IsUpgradable(const alpmpp::AlpmPackage &pkg) const;
-  [[nodiscard]] std::expected<void, std::string> PrintPkgSearch() const;
+  // [[nodiscard]] std::expected<void, std::string> PrintPkgSearch() const;
 
   alpmpp::Alpm *alpm_;
   Config *config_;

@@ -8,5 +8,5 @@ test = pptest.Test(sys.argv[1])
 result = test.run(["-Sa", "paru"])
 
 test.assert_returncode(result, 0)
-test.assert_contains(result.stdout, "aur/paru 2.1.0-1 [+1063 ~24]\n    Feature packed AUR helper\n")
+test.assert_contains(result.stdout, "aur/paru 2.1.0-1 [+1068 ~24]\n    Feature packed AUR helper\n")
 test.exit_with_result()
