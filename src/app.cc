@@ -81,12 +81,12 @@ void App::PrintVerbose() const {
   std::println(ss, "Conf File  : {}", config_.conf_file().c_str());
   std::println(ss, "DB Path    : {}", config_.db_path());
 
-  alpmpp::util::PrintStringVector(ss, "Cache Dirs : ", config_.cache_dirs());
-  alpmpp::util::PrintStringVector(ss, "Hook Dirs  : ", config_.hook_dirs());
+  alpmpp::util::PrintJoinedLine(ss, "Cache Dirs : ", config_.cache_dirs());
+  alpmpp::util::PrintJoinedLine(ss, "Hook Dirs  : ", config_.hook_dirs());
   // std::println("Lock File  : {}", config_.lock_file());
   std::println(ss, "Log File   : {}", config_.log_file());
   std::println(ss, "GPG Dir    : {}", config_.gpg_dir());
-  alpmpp::util::PrintStringVector(ss, "Targets    : ", targets_);
+  alpmpp::util::PrintJoinedLine(ss, "Targets    : ", targets_);
 
   std::print("{}", ss.str());
 }

@@ -55,9 +55,7 @@ int SyncHandler::SearchAur() const {
     if (maybe_response.has_value()) {
       const std::vector<aurpp::AurPackage> packages =
           maybe_response.value().packages;
-      for (const aurpp::AurPackage &pkg : packages) {
-        PrintPkgInfo(pkg);
-      }
+      std::ranges::for_each(packages, PrintPkgInfo);
       return 0;
     } else {
       std::println("{}", maybe_response.error());
@@ -68,19 +66,15 @@ int SyncHandler::SearchAur() const {
 }
 
 int SyncHandler::SearchRepos() const {
-  auto errors = 0;
-  std::vector<std::expected<void, std::string>> results{};
-  for (alpm_db_t *db : alpm_->GetSyncDbs()) {
-    results.push_back(utils::PrintPkgSearch(db, targets_));
-  }
-
-  for (const auto result : results) {
-    if (!result.has_value()) {
-      // std::println("{}", result.error());
-      ++errors;
-    }
-  }
-  return errors != 0;
+  return std::ranges::fold_left(
+             alpm_->GetSyncDbs(), 0,
+             [this](const int errors, alpm_db_t *db) {
+               return errors + (!utils::PrintPkgSearch(db, targets_).has_value()
+                                    ? 1
+                                    : 0);
+             }) > 0
+             ? 1
+             : 0;
 }
 
 }  // namespace yarp

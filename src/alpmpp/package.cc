@@ -3,37 +3,27 @@
 #include "package.h"
 
 #include <alpm.h>
-
-#include <format>
-#include <iomanip>
-#include <print>
-#include <sstream>
-#include <string>
-#include <vector>
-
 #include <alpmpp/depend.h>
 #include <alpmpp/file.h>
 #include <alpmpp/types.h>
 #include <alpmpp/util.h>
 
+#include <algorithm>
+#include <format>
+#include <iomanip>
+#include <print>
+#include <ranges>
+#include <sstream>
+#include <string>
+#include <vector>
+
 namespace {
 
 void PrintDependsList(std::stringstream &ss, const std::string_view prefix,
                       std::vector<alpmpp::AlpmDepend> depends) {
-  if (depends.empty()) {
-    std::println(ss, "{}None", prefix);
-  } else {
-    std::print(ss, "{}", prefix);
-    for (alpmpp::AlpmDepend &depend : depends) {
-      if (&depend != &depends.back()) {
-        std::print(ss, "{}  ",
-                   depend.name());  // Not the last item, add space
-      } else {
-        std::println(ss, "{}",
-                     depend.name());  // Last item, no trailing space
-      }
-    }
-  }
+  auto names =
+      depends | std::views::transform([](auto &dep) { return dep.name(); });
+  alpmpp::util::PrintJoinedLine(ss, prefix, names);
 }
 
 void PrintOptDependsList(std::stringstream &ss,
@@ -75,8 +65,9 @@ void PrintInstallReason(std::stringstream &ss, const alpmpp::PkgReason reason) {
 
 void PrintHumanizedSize(std::stringstream &ss, const std::string_view prefix,
                         const off_t size) {
-  constexpr std::array<const char *, 6> units{"B",   "KiB", "MiB",
-                                              "GiB", "TiB", "PiB"};
+  constexpr std::array units{std::string_view{"B"},   std::string_view{"KiB"},
+                             std::string_view{"MiB"}, std::string_view{"GiB"},
+                             std::string_view{"TiB"}, std::string_view{"PiB"}};
   auto size_d = static_cast<double>(size);
   std::size_t i{};
 
@@ -111,31 +102,32 @@ void PrintInstallScript(std::stringstream &ss, const bool has_scriptlet) {
 void PrintValidation(std::stringstream &ss,
                      const alpmpp::PkgValidation validation) {
   std::print(ss, "Validated By    : ");
+
   if ((validation & alpmpp::PkgValidation::kNone) ==
       alpmpp::PkgValidation::kNone) {
     std::println(ss, "None");
   } else {
-    std::vector<std::string> validation_methods;
+    constexpr std::array kValidations{
+        std::pair{alpmpp::PkgValidation::kMd5, std::string_view{"MD5 Sum"}},
+        std::pair{alpmpp::PkgValidation::kSha256,
+                  std::string_view{"SHA-256 Sum"}},
+        std::pair{alpmpp::PkgValidation::kSignature,
+                  std::string_view{"Signature"}},
+    };
 
-    if ((validation & alpmpp::PkgValidation::kMd5) ==
-        alpmpp::PkgValidation::kMd5) {
-      validation_methods.emplace_back("MD5 Sum");
-    }
-    if ((validation & alpmpp::PkgValidation::kSha256) ==
-        alpmpp::PkgValidation::kSha256) {
-      validation_methods.emplace_back("SHA-256 Sum");
-    }
-    if ((validation & alpmpp::PkgValidation::kSignature) ==
-        alpmpp::PkgValidation::kSignature) {
-      validation_methods.emplace_back("Signature");
-    }
+    auto active_validations =
+        kValidations | std::views::filter([validation](const auto &pair) {
+          return (validation & pair.first) == pair.first;
+        }) |
+        std::views::transform([](const auto &pair) { return pair.second; });
 
-    for (const std::string_view method : validation_methods) {
-      if (method != validation_methods.back()) {
-        std::print(ss, "{}  ", method);
-      }
-      std::print(ss, "{}", method);
-    }
+    auto joined =
+        active_validations | std::views::join_with(std::string_view{" "});
+
+    std::ranges::for_each(joined,
+                          [&ss](const char c) { std::print(ss, "{}", c); });
+
+    std::println(ss, "");
   }
 }
 
@@ -162,14 +154,14 @@ std::string AlpmPackage::GetInfo() const {
   std::println(ss, "Architecture    : {}", arch());
   std::println(ss, "URL             : {}", url());
 
-  util::PrintStringVector(ss, "Licenses        : ", licenses());
-  util::PrintStringVector(ss, "Groups          : ", groups());
+  util::PrintJoinedLine(ss, "Licenses        : ", licenses());
+  util::PrintJoinedLine(ss, "Groups          : ", groups());
   PrintDependsList(ss, "Provides        : ", provides());
   PrintDependsList(ss, "Depends On      : ", depends());
   PrintOptDependsList(ss, opt_depends());
   // alpm_pkg_compute_* don't free the list, so we set free_list to true
-  util::PrintStringVector(ss, "Required By     : ", ComputeRequiredBy());
-  util::PrintStringVector(ss, "Optional For    : ", ComputeOptionalFor());
+  util::PrintJoinedLine(ss, "Required By     : ", ComputeRequiredBy());
+  util::PrintJoinedLine(ss, "Optional For    : ", ComputeOptionalFor());
 
   PrintDependsList(ss, "Conflicts With  : ", conflicts());
   PrintDependsList(ss, "Replaces        : ", replaces());
@@ -225,7 +217,7 @@ std::vector<AlpmDepend> AlpmPackage::provides() const noexcept {
 
 std::vector<std::string_view> AlpmPackage::groups() const noexcept {
   return util::AlpmListToVector<const char *, std::string_view>(
-      (alpm_pkg_get_groups(pkg_)));
+      alpm_pkg_get_groups(pkg_));
 }
 
 std::vector<std::string_view> AlpmPackage::licenses() const noexcept {
@@ -244,12 +236,12 @@ std::vector<AlpmDepend> AlpmPackage::replaces() const noexcept {
 }
 
 std::vector<AlpmFile> AlpmPackage::files() const noexcept {
-  std::vector<AlpmFile> result;
-  alpm_filelist_t *file_list = alpm_pkg_get_files(pkg_);
-  for (std::size_t i = 0; i < file_list->count; ++i) {
-    result.emplace_back(&file_list->files[i]);
-  }
-  return result;
+  const alpm_filelist_t *file_list = alpm_pkg_get_files(pkg_);
+  std::span files_span{file_list->files, file_list->count};
+
+  return files_span |
+         std::views::transform([](auto &file) { return AlpmFile{&file}; }) |
+         std::ranges::to<std::vector>();
 }
 
 std::vector<std::string> AlpmPackage::ComputeOptionalFor() const noexcept {

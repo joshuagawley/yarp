@@ -72,17 +72,11 @@ void Trim(std::string &str) {
   str.erase(std::begin(str), std::ranges::find_if(str, kIsNotSpace));
 }
 
-std::vector<std::string> SplitByWhitespace(std::string str) {
-  std::vector<std::string> result;
-  std::size_t pos = 0;
-
-  while ((pos = str.find(' ')) != std::string::npos) {
-    result.emplace_back(str.substr(0, pos));
-    str.erase(0, pos + 1);
-  }
-  result.push_back(str);
-
-  return result;
+std::vector<std::string> SplitByWhitespace(const std::string_view str) {
+  return str | std::views::split(' ') | std::views::transform([](auto &&range) {
+           return std::string{std::begin(range), std::end(range)};
+         }) |
+         std::ranges::to<std::vector>();
 }
 
 std::pair<std::string, std::string> SplitKeyValue(const std::string_view line) {
