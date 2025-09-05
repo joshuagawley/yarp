@@ -225,7 +225,7 @@ std::vector<AlpmDepend> AlpmPackage::provides() const noexcept {
 
 std::vector<std::string_view> AlpmPackage::groups() const noexcept {
   return util::AlpmListToVector<const char *, std::string_view>(
-      (alpm_pkg_get_groups(pkg_)));
+      alpm_pkg_get_groups(pkg_));
 }
 
 std::vector<std::string_view> AlpmPackage::licenses() const noexcept {
