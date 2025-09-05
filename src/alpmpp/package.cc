@@ -3,18 +3,18 @@
 #include "package.h"
 
 #include <alpm.h>
-
-#include <format>
-#include <iomanip>
-#include <print>
-#include <sstream>
-#include <string>
-#include <vector>
-
 #include <alpmpp/depend.h>
 #include <alpmpp/file.h>
 #include <alpmpp/types.h>
 #include <alpmpp/util.h>
+
+#include <format>
+#include <iomanip>
+#include <print>
+#include <ranges>
+#include <sstream>
+#include <string>
+#include <vector>
 
 namespace {
 
@@ -244,12 +244,12 @@ std::vector<AlpmDepend> AlpmPackage::replaces() const noexcept {
 }
 
 std::vector<AlpmFile> AlpmPackage::files() const noexcept {
-  std::vector<AlpmFile> result;
-  alpm_filelist_t *file_list = alpm_pkg_get_files(pkg_);
-  for (std::size_t i = 0; i < file_list->count; ++i) {
-    result.emplace_back(&file_list->files[i]);
-  }
-  return result;
+  const alpm_filelist_t *file_list = alpm_pkg_get_files(pkg_);
+  std::span files_span{file_list->files, file_list->count};
+
+  return files_span |
+         std::views::transform([](auto &file) { return AlpmFile{&file}; }) |
+         std::ranges::to<std::vector>();
 }
 
 std::vector<std::string> AlpmPackage::ComputeOptionalFor() const noexcept {
