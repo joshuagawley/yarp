@@ -12,7 +12,6 @@
 #include <cstdlib>
 #include <filesystem>
 #include <functional>
-#include <iostream>
 #include <print>
 #include <ranges>
 
@@ -286,7 +285,8 @@ int QueryHandler::HandleOwns() const {
 }
 
 int QueryHandler::HandleSearch() const {
-  if (std::expected<void, std::string> result = utils::PrintPkgSearch(local_db_, targets_);
+  if (std::expected<void, std::string> result =
+          utils::PrintPkgSearch(local_db_, targets_);
       result.has_value()) {
     return EXIT_SUCCESS;
   } else {
@@ -296,26 +296,28 @@ int QueryHandler::HandleSearch() const {
 }
 
 void QueryHandler::CheckPkgFiles(const alpmpp::AlpmPackage &pkg) const {
-  int errors{};
   const std::vector<alpmpp::AlpmFile> files = pkg.files();
   const std::string_view root = alpm_->OptionGetRoot();
 
-  for (const alpmpp::AlpmFile &file : files) {
-    // TODO: see if we can avoid creating a new string here
+  auto errors = std::ranges::count_if(files, [&](const alpmpp::AlpmFile &file) {
     const std::string absolute_file_name =
         std::format("{}{}", root, file.name());
-    if (std::filesystem::exists(absolute_file_name)) {
+
+    if (!std::filesystem::exists(absolute_file_name)) {
+      return true;
+    } else {
       const bool expect_dir = absolute_file_name.back() == '/';
       const bool is_dir = std::filesystem::is_directory(absolute_file_name);
+
       if (expect_dir != is_dir) {
         std::println("{}: {} (File type mismatch)", pkg.name(),
                      absolute_file_name);
-        ++errors;
+        return true;
+      } else {
+        return false;
       }
-    } else {
-      ++errors;
     }
-  }
+  });
 
   std::println("{}: {} total files, {} missing files", pkg.name(), files.size(),
                errors);
