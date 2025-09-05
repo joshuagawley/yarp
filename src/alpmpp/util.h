@@ -5,6 +5,7 @@
 
 #include <alpm_list.h>
 
+#include <sstream>
 #include <vector>
 
 namespace alpmpp {
