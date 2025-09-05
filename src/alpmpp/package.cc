@@ -21,20 +21,9 @@ namespace {
 
 void PrintDependsList(std::stringstream &ss, const std::string_view prefix,
                       std::vector<alpmpp::AlpmDepend> depends) {
-  if (depends.empty()) {
-    std::println(ss, "{}None", prefix);
-  } else {
-    std::print(ss, "{}", prefix);
-    for (alpmpp::AlpmDepend &depend : depends) {
-      if (&depend != &depends.back()) {
-        std::print(ss, "{}  ",
-                   depend.name());  // Not the last item, add space
-      } else {
-        std::println(ss, "{}",
-                     depend.name());  // Last item, no trailing space
-      }
-    }
-  }
+  auto names =
+      depends | std::views::transform([](auto &dep) { return dep.name(); });
+  alpmpp::util::PrintJoinedLine(ss, prefix, names);
 }
 
 void PrintOptDependsList(std::stringstream &ss,
@@ -76,8 +65,9 @@ void PrintInstallReason(std::stringstream &ss, const alpmpp::PkgReason reason) {
 
 void PrintHumanizedSize(std::stringstream &ss, const std::string_view prefix,
                         const off_t size) {
-  constexpr std::array<const char *, 6> units{"B",   "KiB", "MiB",
-                                              "GiB", "TiB", "PiB"};
+  constexpr std::array units{std::string_view{"B"},   std::string_view{"KiB"},
+                             std::string_view{"MiB"}, std::string_view{"GiB"},
+                             std::string_view{"TiB"}, std::string_view{"PiB"}};
   auto size_d = static_cast<double>(size);
   std::size_t i{};
 
@@ -164,14 +154,14 @@ std::string AlpmPackage::GetInfo() const {
   std::println(ss, "Architecture    : {}", arch());
   std::println(ss, "URL             : {}", url());
 
-  util::PrintStringVector(ss, "Licenses        : ", licenses());
-  util::PrintStringVector(ss, "Groups          : ", groups());
+  util::PrintJoinedLine(ss, "Licenses        : ", licenses());
+  util::PrintJoinedLine(ss, "Groups          : ", groups());
   PrintDependsList(ss, "Provides        : ", provides());
   PrintDependsList(ss, "Depends On      : ", depends());
   PrintOptDependsList(ss, opt_depends());
   // alpm_pkg_compute_* don't free the list, so we set free_list to true
-  util::PrintStringVector(ss, "Required By     : ", ComputeRequiredBy());
-  util::PrintStringVector(ss, "Optional For    : ", ComputeOptionalFor());
+  util::PrintJoinedLine(ss, "Required By     : ", ComputeRequiredBy());
+  util::PrintJoinedLine(ss, "Optional For    : ", ComputeOptionalFor());
 
   PrintDependsList(ss, "Conflicts With  : ", conflicts());
   PrintDependsList(ss, "Replaces        : ", replaces());

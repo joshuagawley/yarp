@@ -12,22 +12,31 @@ namespace alpmpp {
 
 namespace util {
 
-template <typename T>
-  requires std::formattable<T, char>
-void PrintStringVector(std::stringstream &ss, const std::string_view prefix,
-                       const std::vector<T> &vector) {
-  if (vector.empty()) {
-    std::println(ss, "{}None", prefix);
+template <std::ranges::input_range Range>
+constexpr void PrintJoined(std::stringstream &ss, Range &&range,
+                           std::string_view separator,
+                           std::string_view empty_text = "None") {
+  auto it = std::ranges::begin(range);
+  auto end = std::ranges::end(range);
+
+  if (it == end) {
+    std::print(ss, "{}", empty_text);
   } else {
-    std::print(ss, "{}", prefix);
-    for (const T &elem : vector) {
-      if (elem != *(std::end(vector) - 1)) {
-        std::print(ss, "{}  ", elem);  // Not the last item, add space
-      } else {
-        std::println(ss, "{}", elem);  // Last item, no trailing space
-      }
+    std::print(ss, "{}", *it);
+    ++it;
+    for (; it != end; ++it) {
+      std::print(ss, "{}{}", separator, *it);
     }
   }
+}
+
+template <std::ranges::input_range Range>
+constexpr void PrintJoinedLine(std::stringstream &ss, std::string_view prefix,
+                               Range &&range, std::string_view separator = " ",
+                               std::string_view empty_text = "None") {
+  std::print(ss, "{}", prefix);
+  PrintJoined(ss, std::forward<Range>(range), separator, empty_text);
+  std::println(ss, "");
 }
 
 template <typename Input, typename Output>
@@ -43,11 +52,13 @@ constexpr std::vector<Output> AlpmListToVector(const alpm_list_t *list) {
   return result;
 }
 
-inline alpm_list_t *StringVectorToAlpmList(const std::vector<std::string> &vec) {
+inline alpm_list_t *StringVectorToAlpmList(
+    const std::vector<std::string> &vec) {
   alpm_list_t *list = nullptr;
 
   for (const std::string &str : vec) {
-    list = alpm_list_add(list, const_cast<void *>(reinterpret_cast<const void*>(str.c_str())));
+    list = alpm_list_add(
+        list, const_cast<void *>(reinterpret_cast<const void *>(str.c_str())));
   }
 
   return list;
