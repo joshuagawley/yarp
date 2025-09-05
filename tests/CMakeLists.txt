@@ -38,6 +38,7 @@ yarp_add_test(NAME query021 DESCRIPTION "query021 -- yarp -Qs yarp [doesn't exis
 yarp_add_test(NAME query022 DESCRIPTION "query022 -- yarp -Qh")
 yarp_add_test(NAME changelog001 DESCRIPTION "changlog001 -- yarp -Qc powertop")
 yarp_add_test(NAME sync001 DESCRIPTION "sync001 -- yarp -Sa paru")
+yarp_add_test(NAME sync002 DESCRIPTION "sync002 -- yarp -Ss pacman")
 yarp_add_test(NAME version001 DESCRIPTION "version001 -- yarp -V")
 
 yarp_add_unit_test(

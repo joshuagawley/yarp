@@ -48,6 +48,7 @@ struct EnableEnumBitwiseOperators<QueryOptions> {
 enum class SyncOptions : std::uint16_t {
   kNone = 1 << 0,
   kAur = 1 << 1,
+  kSearch = 1 << 2,
 };
 
 template <>

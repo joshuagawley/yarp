@@ -105,8 +105,19 @@ void ArgumentParser::ParseArgs(Operation &operation,
         query_options |= QueryOptions::kIsFile;
         break;
       case 's':
-        query_options |= QueryOptions::kSearch;
-        break;
+        switch (operation) {
+          case Operation::kQuery: {
+            query_options |= QueryOptions::kSearch;
+            break;
+          }
+          case Operation::kSync: {
+            sync_options |= SyncOptions::kSearch;
+            break;
+          }
+          default:
+            break;
+        }
+
       case 't':
         query_options |= QueryOptions::kUnrequired;
         break;

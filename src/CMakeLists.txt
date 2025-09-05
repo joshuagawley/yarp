@@ -17,6 +17,7 @@ set(
         pacman_conf.cc
         query_handler.cc
         sync_handler.cc
+        utils.cc
         version_handler.cc
 )
 
@@ -32,6 +33,7 @@ set(
         pacman_conf.h
         query_handler.h
         sync_handler.h
+        utils.h
         version_handler.h
         ${CMAKE_CURRENT_SOURCE_DIR}/settings.h
 )
