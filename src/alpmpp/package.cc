@@ -8,6 +8,7 @@
 #include <alpmpp/types.h>
 #include <alpmpp/util.h>
 
+#include <algorithm>
 #include <format>
 #include <iomanip>
 #include <print>
@@ -111,31 +112,32 @@ void PrintInstallScript(std::stringstream &ss, const bool has_scriptlet) {
 void PrintValidation(std::stringstream &ss,
                      const alpmpp::PkgValidation validation) {
   std::print(ss, "Validated By    : ");
+
   if ((validation & alpmpp::PkgValidation::kNone) ==
       alpmpp::PkgValidation::kNone) {
     std::println(ss, "None");
   } else {
-    std::vector<std::string> validation_methods;
+    constexpr std::array kValidations{
+        std::pair{alpmpp::PkgValidation::kMd5, std::string_view{"MD5 Sum"}},
+        std::pair{alpmpp::PkgValidation::kSha256,
+                  std::string_view{"SHA-256 Sum"}},
+        std::pair{alpmpp::PkgValidation::kSignature,
+                  std::string_view{"Signature"}},
+    };
 
-    if ((validation & alpmpp::PkgValidation::kMd5) ==
-        alpmpp::PkgValidation::kMd5) {
-      validation_methods.emplace_back("MD5 Sum");
-    }
-    if ((validation & alpmpp::PkgValidation::kSha256) ==
-        alpmpp::PkgValidation::kSha256) {
-      validation_methods.emplace_back("SHA-256 Sum");
-    }
-    if ((validation & alpmpp::PkgValidation::kSignature) ==
-        alpmpp::PkgValidation::kSignature) {
-      validation_methods.emplace_back("Signature");
-    }
+    auto active_validations =
+        kValidations | std::views::filter([validation](const auto &pair) {
+          return (validation & pair.first) == pair.first;
+        }) |
+        std::views::transform([](const auto &pair) { return pair.second; });
 
-    for (const std::string_view method : validation_methods) {
-      if (method != validation_methods.back()) {
-        std::print(ss, "{}  ", method);
-      }
-      std::print(ss, "{}", method);
-    }
+    auto joined =
+        active_validations | std::views::join_with(std::string_view{" "});
+
+    std::ranges::for_each(joined,
+                          [&ss](const char c) { std::print(ss, "{}", c); });
+
+    std::println(ss, "");
   }
 }
 
