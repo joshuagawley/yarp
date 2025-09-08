@@ -19,51 +19,46 @@
 
 namespace {
 
-void PrintDependsList(std::stringstream &ss, const std::string_view prefix,
+template <typename OutputIter>
+void PrintDependsList(OutputIter output_iter, const std::string_view prefix,
                       std::vector<alpmpp::AlpmDepend> depends) {
   auto names =
       depends | std::views::transform([](auto &dep) { return dep.name(); });
-  alpmpp::util::PrintJoinedLine(ss, prefix, names);
+  alpmpp::util::PrintJoinedLine(output_iter, prefix, names);
 }
 
-void PrintOptDependsList(std::stringstream &ss,
+template <typename OutputIter>
+void PrintOptDependsList(OutputIter output_iter,
                          std::vector<alpmpp::AlpmDepend> opt_depends) {
   constexpr std::string_view kPrefix{"Optional Deps   : "};
 
-  if (opt_depends.empty()) {
-    std::println(ss, "{}None", kPrefix);
-  } else {
-    std::print(ss, "{}", kPrefix);
-    for (alpmpp::AlpmDepend &depend : opt_depends) {
-      std::string dep_string = depend.ComputeString();
-      if (&depend != &opt_depends.back()) {
-        std::print(ss, "{}  ",
-                   dep_string);  // Not the last item, add space
-      } else {
-        std::println(ss, "{}",
-                     dep_string);  // Last item, no trailing space
-      }
-    }
-  }
+  auto dep_strings = opt_depends | std::views::transform([](auto &dep) {
+                       return dep.ComputeString();
+                     });
+
+  alpmpp::util::PrintJoinedLine(output_iter, kPrefix, dep_strings);
 }
 
-void PrintInstallReason(std::stringstream &ss, const alpmpp::PkgReason reason) {
+template <typename OutputIter>
+void PrintInstallReason(OutputIter output_iter,
+                        const alpmpp::PkgReason reason) {
   switch (reason) {
     case alpmpp::PkgReason::kExplicit:
-      std::println(ss, "Install Reason  : Explicitly installed");
+      std::format_to(output_iter, "Install Reason  : Explicitly installed\n");
       break;
     case alpmpp::PkgReason::kDepend:
-      std::println(ss,
-                   "Install Reason  : Installed as a dependency for another "
-                   "package");
+      std::format_to(output_iter,
+                     "Install Reason  : Installed as a dependency for another "
+                     "package\n");
       break;
     case alpmpp::PkgReason::kUnknown:
-      std::println(ss, "Install Reason  : Unknown");
+      std::format_to(output_iter, "Install Reason  : Unknown\n");
       break;
   }
 }
 
-void PrintHumanizedSize(std::stringstream &ss, const std::string_view prefix,
+template <typename OutputIter>
+void PrintHumanizedSize(OutputIter output_iter, const std::string_view prefix,
                         const off_t size) {
   constexpr std::array units{std::string_view{"B"},   std::string_view{"KiB"},
                              std::string_view{"MiB"}, std::string_view{"GiB"},
@@ -76,36 +71,41 @@ void PrintHumanizedSize(std::stringstream &ss, const std::string_view prefix,
     ++i;
   }
 
-  std::print(ss, "{} ", prefix);
+  std::format_to(output_iter, "{} ", prefix);
   if (i == 0) {
-    std::println(ss, "{:.0f} {}", size_d, units[i]);
+    std::format_to(output_iter, "{:.0f} {}\n", size_d, units[i]);
   } else {
-    std::println(ss, "{:.2f} {}", size_d, units[i]);
+    std::format_to(output_iter, "{:.2f} {}\n", size_d, units[i]);
   }
 }
 
-void PrintHumanizedDate(std::stringstream &ss, const std::string_view prefix,
+template <typename OutputIter>
+void PrintHumanizedDate(OutputIter output_iter, const std::string_view prefix,
                         const alpm_time_t alpm_time) {
   // We use C-style time API instead of std::chrono
   const auto time = static_cast<std::time_t>(alpm_time);
   const tm *local_time = std::localtime(&time);
 
   // std::put_time doesn't work with std::format
+  std::stringstream ss;
   ss << prefix << std::put_time(local_time, "%a %d %b %Y %H:%M:%S %Z") << '\n';
+  std::format_to(output_iter, "{}", ss.str());
 }
 
-void PrintInstallScript(std::stringstream &ss, const bool has_scriptlet) {
+template <typename OutputIter>
+void PrintInstallScript(OutputIter output_iter, const bool has_scriptlet) {
   const std::string_view scriptlet_str = has_scriptlet ? "Yes" : "No";
-  std::println(ss, "Install Script  : {}", scriptlet_str);
+  std::format_to(output_iter, "Install Script  : {}\n", scriptlet_str);
 }
 
-void PrintValidation(std::stringstream &ss,
+template <typename OutputIter>
+void PrintValidation(OutputIter output_iter,
                      const alpmpp::PkgValidation validation) {
-  std::print(ss, "Validated By    : ");
+  std::format_to(output_iter, "Validated By    : ");
 
   if ((validation & alpmpp::PkgValidation::kNone) ==
       alpmpp::PkgValidation::kNone) {
-    std::println(ss, "None");
+    std::format_to(output_iter, "None\n");
   } else {
     constexpr std::array kValidations{
         std::pair{alpmpp::PkgValidation::kMd5, std::string_view{"MD5 Sum"}},
@@ -124,10 +124,11 @@ void PrintValidation(std::stringstream &ss,
     auto joined =
         active_validations | std::views::join_with(std::string_view{" "});
 
-    std::ranges::for_each(joined,
-                          [&ss](const char c) { std::print(ss, "{}", c); });
+    std::ranges::for_each(joined, [output_iter](const char c) {
+      std::format_to(output_iter, "{}", c);
+    });
 
-    std::println(ss, "");
+    std::format_to(output_iter, "\n");
   }
 }
 
@@ -136,44 +137,55 @@ void PrintValidation(std::stringstream &ss,
 namespace alpmpp {
 
 std::string AlpmPackage::GetFileList(std::string_view root_path) const {
-  std::stringstream ss;
+  std::string result;
 
   for (const AlpmFile &file : files()) {
-    std::println(ss, "{} {}{}", name(), root_path, file.name());
+    std::format_to(std::back_inserter(result), "{} {}{}\n", name(), root_path,
+                   file.name());
   }
 
-  return ss.str();
+  return result;
 }
 
 std::string AlpmPackage::GetInfo() const {
-  std::stringstream ss;
+  std::string result;
 
-  std::println(ss, "Name            : {}", name());
-  std::println(ss, "Version         : {}", version());
-  std::println(ss, "Description     : {}", desc());
-  std::println(ss, "Architecture    : {}", arch());
-  std::println(ss, "URL             : {}", url());
+  std::format_to(std::back_inserter(result), "Name            : {}\n", name());
+  std::format_to(std::back_inserter(result), "Version         : {}\n",
+                 version());
+  std::format_to(std::back_inserter(result), "Description     : {}\n", desc());
+  std::format_to(std::back_inserter(result), "Architecture    : {}\n", arch());
+  std::format_to(std::back_inserter(result), "URL             : {}\n", url());
 
-  util::PrintJoinedLine(ss, "Licenses        : ", licenses());
-  util::PrintJoinedLine(ss, "Groups          : ", groups());
-  PrintDependsList(ss, "Provides        : ", provides());
-  PrintDependsList(ss, "Depends On      : ", depends());
-  PrintOptDependsList(ss, opt_depends());
+  util::PrintJoinedLine(std::back_inserter(result), "Licenses        : ", licenses());
+  util::PrintJoinedLine(std::back_inserter(result),
+                        "Groups          : ", groups());
+  PrintDependsList(std::back_inserter(result),
+                   "Provides        : ", provides());
+  PrintDependsList(std::back_inserter(result), "Depends On      : ", depends());
+  PrintOptDependsList(std::back_inserter(result), opt_depends());
   // alpm_pkg_compute_* don't free the list, so we set free_list to true
-  util::PrintJoinedLine(ss, "Required By     : ", ComputeRequiredBy());
-  util::PrintJoinedLine(ss, "Optional For    : ", ComputeOptionalFor());
+  util::PrintJoinedLine(std::back_inserter(result),
+                        "Required By     : ", ComputeRequiredBy());
+  util::PrintJoinedLine(std::back_inserter(result),
+                        "Optional For    : ", ComputeOptionalFor());
 
-  PrintDependsList(ss, "Conflicts With  : ", conflicts());
-  PrintDependsList(ss, "Replaces        : ", replaces());
-  PrintHumanizedSize(ss, "Installed Size  :", i_size());
-  std::println(ss, "Packager        : {}", packager());
-  PrintHumanizedDate(ss, "Build Date      : ", build_date());
-  PrintHumanizedDate(ss, "Install Date    : ", install_date());
-  PrintInstallReason(ss, reason());
-  PrintInstallScript(ss, HasScriptlet());
-  PrintValidation(ss, validation());
+  PrintDependsList(std::back_inserter(result),
+                   "Conflicts With  : ", conflicts());
+  PrintDependsList(std::back_inserter(result),
+                   "Replaces        : ", replaces());
+  PrintHumanizedSize(std::back_inserter(result), "Installed Size  :", i_size());
+  std::format_to(std::back_inserter(result), "Packager        : {}\n",
+                 packager());
+  PrintHumanizedDate(std::back_inserter(result),
+                     "Build Date      : ", build_date());
+  PrintHumanizedDate(std::back_inserter(result),
+                     "Install Date    : ", install_date());
+  PrintInstallReason(std::back_inserter(result), reason());
+  PrintInstallScript(std::back_inserter(result), HasScriptlet());
+  PrintValidation(std::back_inserter(result), validation());
 
-  return ss.str();
+  return result;
 }
 
 std::string_view AlpmPackage::name() const noexcept {

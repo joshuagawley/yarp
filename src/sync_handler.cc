@@ -9,15 +9,15 @@
 namespace {
 
 void PrintPkgInfo(const aurpp::AurPackage &package) {
-  std::stringstream ss;
+  std::string result;
 
-  std::println(ss, "aur/{} {} [+{} ~{:.2}]", package.name(), package.version(),
+  std::format_to(std::back_inserter(result), "aur/{} {} [+{} ~{:.2}]\n", package.name(), package.version(),
                package.num_votes(), package.popularity());
   if (package.description().has_value()) {
-    std::print(ss, "    {}", package.description().value());
+    std::format_to(std::back_inserter(result), "    {}", package.description().value());
   }
 
-  std::println("{}", ss.str());
+  std::println("{}", result);
 }
 
 }  // namespace
@@ -66,15 +66,19 @@ int SyncHandler::SearchAur() const {
 }
 
 int SyncHandler::SearchRepos() const {
-  return std::ranges::fold_left(
+  const int total_errors = std::ranges::fold_left(
              alpm_->GetSyncDbs(), 0,
              [this](const int errors, alpm_db_t *db) {
-               return errors + (!utils::PrintPkgSearch(db, targets_).has_value()
-                                    ? 1
-                                    : 0);
-             }) > 0
-             ? 1
-             : 0;
+               std::expected<std::string, std::string> search_result =
+                   utils::PrintPkgSearch(db, targets_);
+               if (search_result.has_value()) {
+                 std::println("{}", search_result.value());
+                 return errors;
+               } else {
+                 return errors + 1;
+               }
+             });
+  return total_errors > 0;
 }
 
 }  // namespace yarp

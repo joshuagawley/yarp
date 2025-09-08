@@ -21,29 +21,30 @@
 namespace {
 
 int PrintHelp() {
-  std::stringstream ss{};
+  std::string result;
+  result.reserve(1024);
 
-  std::println(ss, "Usage: yarp {{-Q --query}} [options] [packages(s)]");
-  std::println(ss, "options:");
-  std::println(ss, "  -b, --dbpath <path>");
-  std::println(ss, "  -c, --changelog");
-  std::println(ss, "  -d, --deps");
-  std::println(ss, "  -e, --explicit");
-  std::println(ss, "  -g, --groups");
-  std::println(ss, "  -i, --info");
-  std::println(ss, "  -k, --check");
-  std::println(ss, "  -l, --list");
-  std::println(ss, "  -m, --foreign");
-  std::println(ss, "  -n, --native");
-  std::println(ss, "  -o, --owns <file>");
-  std::println(ss, "  -p, --file <package>");
-  std::println(ss, "  -r, --root <path>");
-  std::println(ss, "  -s, --search <regex>");
-  std::println(ss, "  -t, --unrequired");
-  std::println(ss, "  -u, --upgrades");
-  std::println(ss, "  -v, --verbose");
+  std::format_to(std::back_inserter(result), "Usage: yarp {{-Q --query}} [options] [packages(s)]\n");
+  std::format_to(std::back_inserter(result), "options:\n");
+  std::format_to(std::back_inserter(result), "  -b, --dbpath <path>\n");
+  std::format_to(std::back_inserter(result), "  -c, --changelog\n");
+  std::format_to(std::back_inserter(result), "  -d, --deps\n");
+  std::format_to(std::back_inserter(result), "  -e, --explicit\n");
+  std::format_to(std::back_inserter(result), "  -g, --groups\n");
+  std::format_to(std::back_inserter(result), "  -i, --info\n");
+  std::format_to(std::back_inserter(result), "  -k, --check\n");
+  std::format_to(std::back_inserter(result), "  -l, --list\n");
+  std::format_to(std::back_inserter(result), "  -m, --foreign\n");
+  std::format_to(std::back_inserter(result), "  -n, --native\n");
+  std::format_to(std::back_inserter(result), "  -o, --owns <file>\n");
+  std::format_to(std::back_inserter(result), "  -p, --file <package>\n");
+  std::format_to(std::back_inserter(result), "  -r, --root <path>\n");
+  std::format_to(std::back_inserter(result), "  -s, --search <regex>\n");
+  std::format_to(std::back_inserter(result), "  -t, --unrequired\n");
+  std::format_to(std::back_inserter(result), "  -u, --upgrades\n");
+  std::format_to(std::back_inserter(result), "  -v, --verbose\n");
 
-  std::print("{}", ss.str());
+  std::print("{}", result);
 
   return 0;
 }
@@ -285,9 +286,10 @@ int QueryHandler::HandleOwns() const {
 }
 
 int QueryHandler::HandleSearch() const {
-  if (std::expected<void, std::string> result =
+  if (std::expected<std::string, std::string> result =
           utils::PrintPkgSearch(local_db_, targets_);
       result.has_value()) {
+    std::println("{}", result.value());
     return EXIT_SUCCESS;
   } else {
     std::println("{}", result.error());

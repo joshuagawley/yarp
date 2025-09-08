@@ -11,18 +11,26 @@
 namespace yarp {
 
 int HelpHandler::Execute() {
-  std::stringstream ss{};
-  std::println(ss, "Usage: {} <operation>", kYarpName);
-  std::println(ss, "operations:");
-  std::println(ss, "  {} {{-h, --help}}", kYarpName);
-  std::println(ss, "  {} {{-V, --version}}", kYarpName);
-  std::println(ss, "  {} {{-Q, --query}} [options] [package(s)]", kYarpName);
-  std::println(ss, "  {} {{-S, --sync}}  [options] [package(s)]", kYarpName);
-  std::print(ss,
-             "Use '{}' {{-h --help}} with an operation for available options",
-             kYarpName);
+  std::string result;
 
-  std::print("{}", ss.str());
+  std::format_to(std::back_inserter(result), "Usage: {} <operation>\n",
+                 kYarpName);
+  std::format_to(std::back_inserter(result), "operations:\n");
+  std::format_to(std::back_inserter(result), "  {} {{-h, --help}}\n",
+                 kYarpName);
+  std::format_to(std::back_inserter(result), "  {} {{-V, --version}}\n",
+                 kYarpName);
+  std::format_to(std::back_inserter(result),
+                 "  {} {{-Q, --query}} [options] [package(s)]\n", kYarpName);
+  std::format_to(std::back_inserter(result),
+                 "  {} {{-S, --sync}}  [options] [package(s)]\n", kYarpName);
+  std::format_to(
+      std::back_inserter(result),
+      "Use '{}' {{-h --help}} with an operation for available options",
+      kYarpName);
+
+  std::print("{}", result);
+
   return EXIT_SUCCESS;
 }
 

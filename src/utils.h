@@ -11,7 +11,7 @@
 
 namespace yarp::utils {
 
-std::expected<void, std::string> PrintPkgSearch(alpm_db_t *db, const std::vector<std::string> &targets);
+std::expected<std::string, std::string> PrintPkgSearch(alpm_db_t *db, const std::vector<std::string> &targets);
 
 }  // namespace yarp::utils
 
