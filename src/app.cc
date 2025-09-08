@@ -76,19 +76,27 @@ int App::Run() {
 }
 
 void App::PrintVerbose() const {
-  std::stringstream ss;
-  std::println(ss, "Root       : {}", config_.root_dir());
-  std::println(ss, "Conf File  : {}", config_.conf_file().c_str());
-  std::println(ss, "DB Path    : {}", config_.db_path());
+  std::string result;
+  std::format_to(std::back_inserter(result), "Root       : {}\n",
+                 config_.root_dir());
+  std::format_to(std::back_inserter(result), "Conf File  : {}\n",
+                 config_.conf_file().c_str());
+  std::format_to(std::back_inserter(result), "DB Path    : {}\n",
+                 config_.db_path());
 
-  alpmpp::util::PrintJoinedLine(ss, "Cache Dirs : ", config_.cache_dirs());
-  alpmpp::util::PrintJoinedLine(ss, "Hook Dirs  : ", config_.hook_dirs());
+  alpmpp::util::PrintJoinedLine(std::back_inserter(result),
+                                "Cache Dirs : ", config_.cache_dirs());
+  alpmpp::util::PrintJoinedLine(std::back_inserter(result),
+                                "Hook Dirs  : ", config_.hook_dirs());
   // std::println("Lock File  : {}", config_.lock_file());
-  std::println(ss, "Log File   : {}", config_.log_file());
-  std::println(ss, "GPG Dir    : {}", config_.gpg_dir());
-  alpmpp::util::PrintJoinedLine(ss, "Targets    : ", targets_);
+  std::format_to(std::back_inserter(result), "Log File   : {}\n",
+                 config_.log_file());
+  std::format_to(std::back_inserter(result), "GPG Dir    : {}\n",
+                 config_.gpg_dir());
+  alpmpp::util::PrintJoinedLine(std::back_inserter(result),
+                                "Targets    : ", targets_);
 
-  std::print("{}", ss.str());
+  std::print("{}", result);
 }
 
 }  // namespace yarp

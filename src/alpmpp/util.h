@@ -12,31 +12,31 @@ namespace alpmpp {
 
 namespace util {
 
-template <std::ranges::input_range Range>
-constexpr void PrintJoined(std::stringstream &ss, Range &&range,
+template <std::ranges::input_range Range, typename OutputIter>
+constexpr void PrintJoined(OutputIter output_iter, Range &&range,
                            std::string_view separator,
                            std::string_view empty_text = "None") {
   auto it = std::ranges::begin(range);
   auto end = std::ranges::end(range);
 
   if (it == end) {
-    std::print(ss, "{}", empty_text);
+    std::format_to(output_iter, "{}", empty_text);
   } else {
-    std::print(ss, "{}", *it);
+    std::format_to(output_iter, "{}", *it);
     ++it;
     for (; it != end; ++it) {
-      std::print(ss, "{}{}", separator, *it);
+      std::format_to(output_iter, "{}{}", separator, *it);
     }
   }
 }
 
-template <std::ranges::input_range Range>
-constexpr void PrintJoinedLine(std::stringstream &ss, std::string_view prefix,
+template <std::ranges::input_range Range, typename OutputIter>
+constexpr void PrintJoinedLine(OutputIter output_iter, std::string_view prefix,
                                Range &&range, std::string_view separator = " ",
                                std::string_view empty_text = "None") {
-  std::print(ss, "{}", prefix);
-  PrintJoined(ss, std::forward<Range>(range), separator, empty_text);
-  std::println(ss, "");
+  std::format_to(output_iter, "{}", prefix);
+  PrintJoined(output_iter, std::forward<Range>(range), separator, empty_text);
+  std::format_to(output_iter, "{}", '\n');
 }
 
 template <typename Input, typename Output>

@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: MIT
 
-#include <print>
-#include <sstream>
-
 #include "utils.h"
+
+#include <alpmpp/util.h>
+
+#include <print>
+#include <ranges>
+#include <sstream>
 
 namespace yarp::utils {
 
-std::expected<void, std::string> PrintPkgSearch(alpm_db_t *db, const std::vector<std::string> &targets) {
+std::expected<std::string, std::string> PrintPkgSearch(
+    alpm_db_t *db, const std::vector<std::string> &targets) {
   const std::vector<alpmpp::AlpmPackage> search_list =
       alpmpp::Alpm::DbSearch(db, targets);
 
@@ -15,29 +19,21 @@ std::expected<void, std::string> PrintPkgSearch(alpm_db_t *db, const std::vector
     return std::unexpected("Error: could not determine search list");
   }
 
-  std::stringstream ss;
+  std::string result;
 
   for (const alpmpp::AlpmPackage &pkg : search_list) {
     const std::vector<std::string_view> groups = pkg.groups();
 
-    std::print(ss, "{}/{} {}", alpm_db_get_name(db), pkg.name(),
-               pkg.version());
+    std::format_to(std::back_inserter(result), "{}/{} {}", alpm_db_get_name(db),
+                   pkg.name(), pkg.version());
     if (!groups.empty()) {
-      std::print(ss, " (");
-      for (const std::string_view &group : groups) {
-        if (group != *(std::end(groups) - 1)) {
-          std::print(ss, "{}  ", group);  // Not the last item, add space
-        } else {
-          std::print(ss, "{}", group);  // Last item, no trailing space
-        }
-      }
-      std::print(ss, ")");
+      std::format_to(std::back_inserter(result), " (");
+      alpmpp::util::PrintJoined(std::back_inserter(result), groups, " ", "");
+      std::format_to(std::back_inserter(result), ")");
     }
-    std::println(ss, "\n    {}", pkg.desc());
+    std::format_to(std::back_inserter(result), "\n    {}\n", pkg.desc());
   }
-  std::println("{}", ss.str());
-
-  return {};
+  return result;
 }
 
-} //
+}  // namespace yarp::utils

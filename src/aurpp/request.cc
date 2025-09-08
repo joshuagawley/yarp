@@ -8,17 +8,17 @@
 namespace aurpp {
 
 std::string RpcRequest::Payload() const {
-  std::stringstream ss{};
+  std::string result;
 
   for (const QueryParameter &param : params_) {
     if (param != params_.back()) {
-      std::print(ss, "{}&", param);
+      std::format_to(std::back_inserter(result), "{}&", param);
     } else {
-      std::print(ss, "{}", param);
+      std::format_to(std::back_inserter(result), "{}", param);
     }
   }
 
-  return ss.str();
+  return result;
 }
 
 }  // namespace aurpp
